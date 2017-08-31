@@ -26,6 +26,3 @@ _testmain.go
 # tools and virtualenv
 .idea
 env/
-
-# GO binary
-tcpMaxConn

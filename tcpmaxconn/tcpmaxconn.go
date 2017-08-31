@@ -1,4 +1,4 @@
-package main
+package tcpmaxconn
 
 import (
 	"bufio"
