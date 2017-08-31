@@ -3,6 +3,7 @@ import threading
 import logging
 from time import sleep
 
+
 # Most of it from http://stackoverflow.com/questions/23828264/how-to-make-a-simple-multithreaded-socket-server-in-python-that-remembers-client
 class ThreadedServer(object):
     max_queue = 100
@@ -23,9 +24,10 @@ class ThreadedServer(object):
         self.sock.listen(self.max_queue)
         while True:
             # try:
-                client, address = self.sock.accept()
-                client.settimeout(self.client_polling_seconds)
-                threading.Thread(target = self.listenToClient,args = (client,address)).start()
+            client, address = self.sock.accept()
+            client.settimeout(self.client_polling_seconds)
+            threading.Thread(target=self.listenToClient, args=(client, address)).start()
+
 
     def listenToClient(self, client, address):
         logging.info("Client connection from : {}".format(address))
@@ -40,19 +42,23 @@ class ThreadedServer(object):
                 client.close()
                 return False
 
+
 def configure_logger():
     logging.basicConfig(
         level=logging.DEBUG,
         format='%(asctime)s %(message)s'
     )
-# main()
+
+
 if __name__ == "__main__":
     port_num = 8888
     host = 'localhost'
     configure_logger()
     logging.debug("Preparing main thread")
-    server = ThreadedServer(host,port_num)
-    threading.Thread(target = server.listen,daemon=True).start()
+    server = ThreadedServer(host, port_num)
+    mythread = threading.Thread(target=server.listen)
+    mythread.daemon = True
+    mythread.start()
     logging.info('Daemon is listening on {}:{}... '.format(host, port_num))
     try:
         while True:
