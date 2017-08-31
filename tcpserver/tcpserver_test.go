@@ -5,6 +5,6 @@ import (
 	"testing"
 )
 
-func TestTcpMaxConn(t *testing.T) {
+func TestTcpServer(t *testing.T) {
 	fmt.Println("\nTerminating Program")	
 }

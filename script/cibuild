@@ -2,6 +2,8 @@
 
 set -e
 
-echo "Go Unitesting..."
+echo "[*] Running Unit Tests"
 
 go test -cover ./...
+
+echo "[*] Running Funtional Tests"
