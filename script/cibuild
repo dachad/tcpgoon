@@ -1,0 +1,14 @@
+#!/bin/bash
+
+set -e
+
+export ITERATION=$TRAVIS_JOB_ID
+export VERSION
+
+if [[ $TRAVIS_BRANCH == master ]]; then
+    VERSION="1.$(date +%Y%m%d%H%M%S)"
+else
+    VERSION="0.$(date +%Y%m%d%H%M%S)"
+fi
+
+echo $VERSION

@@ -1,0 +1,10 @@
+language: go
+go:
+- '1.8'
+env:
+  global:
+    - CGO_ENABLED=0
+
+# gobuild_args: -a -tags netgo -ldflags '-w'
+# go_import_path: 
+script: script/cibuild
