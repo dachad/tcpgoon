@@ -2,8 +2,4 @@
 
 set -e
 
-echo "[*] Running Unit Tests"
-
-go test -cover ./...
-
-echo "[*] Running Funtional Tests"
+. script/test
