@@ -1,4 +1,5 @@
-package main
+package tcpserver
+
 import (
     "strconv"
     "net"
@@ -27,33 +28,32 @@ func (h *Handler) Listen() { // listen connection for incomming data
             h.closed <- true // send to dispatcher, that connection is closed
             return
         }
-
         // ... some business logic with data
     }
 }
 
 type Dispatcher struct {
-    handlers map[string]*Handler `map[ip]*Handler`
+    Handlers map[string]*Handler //`type:"map[ip]*Handler"`
 }
 
 func (d *Dispatcher) AddHandler(conn net.Conn) {
     addr := conn.RemoteAddr().String()
     handler := &Handler{conn, make(chan bool, 1)}
-    d.handlers[addr] = handler
+    d.Handlers[addr] = handler
 
     go handler.Listen()
 
     <-handler.closed // when connection closed, remove handler from handlers
-    delete(d.handlers, addr)
+    delete(d.Handlers, addr)
 }
 
-func (d *Dispatcher) ListenHandlers(port int) {
+func (d *Dispatcher) ListenHandlers(port int) error {
     sport := strconv.Itoa(port)
 
     ln, err := net.Listen("tcp", ":" + sport)
     if err != nil {
         log.Println(err)
-        return
+        return err
     }
 
     defer ln.Close()
@@ -74,7 +74,3 @@ func (d *Dispatcher) ListenHandlers(port int) {
     }
 }
 
-func main() {
-    dispatcher := &Dispatcher{make(map[string]*Handler)}
-    dispatcher.ListenHandlers(8888)
-}
