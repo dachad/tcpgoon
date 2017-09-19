@@ -4,7 +4,6 @@ import (
 	"bufio"
 	"fmt"
 	"net"
-	"os"
 	"runtime"
 	"sync"
 	"strconv"
@@ -12,12 +11,12 @@ import (
 	"flag"
 )
 
-func connection_handler(id int, host string, port int, wg *sync.WaitGroup) {
+func connection_handler(id int, host string, port int, wg *sync.WaitGroup) error{
 	fmt.Println("\t runner "+strconv.Itoa(id)+" is initiating a connection")
 	conn, err := net.Dial("tcp", host+":"+strconv.Itoa(port))
 	if err != nil {
 		fmt.Println(err)
-		os.Exit(1)
+		return err
 	}
 	fmt.Println("\t runner "+strconv.Itoa(id)+" established the connection")
 	connBuf := bufio.NewReader(conn)
@@ -27,11 +26,11 @@ func connection_handler(id int, host string, port int, wg *sync.WaitGroup) {
 			fmt.Println(str)
 		}
 		if err!= nil {
-			break
+			wg.Done()
+			return err
 		}
 	}
-	fmt.Println("\t runner "+strconv.Itoa(id)+" got its connection closed")
-	wg.Done()
+	// fmt.Println("\t runner "+strconv.Itoa(id)+" got its connection closed")
 }
 
 func run_threads(numberConnections int, delay int, host string, port int) {
