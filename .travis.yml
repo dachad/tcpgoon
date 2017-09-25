@@ -2,6 +2,8 @@ language: go
 go:
 - 1.9
 
+gobuild_args: -ldflags "-X main.VersionString=`date -u +.%Y%m%d.%H%M%S`"
+
 go_import_path: github.com/dachad/check-max-tcp-connections
 
 script: script/cibuild

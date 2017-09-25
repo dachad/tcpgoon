@@ -50,6 +50,8 @@ func run_threads(numberConnections int, delay int, host string, port int) {
 	wg.Wait()
 }
 
+var VersionString = "unset"
+
 func main() {
 	hostPtr := flag.String("host", "localhost", "Host you want to open tcp connections against")
 	portPtr := flag.Int("port", 8888, "Port you want to open tcp connections against")
@@ -58,6 +60,8 @@ func main() {
 
 	flag.Parse()
 
+	fmt.Println("Running Version: ", VersionString)
+	
 	run_threads(*numberConnectionsPtr, *delayPtr, *hostPtr, *portPtr )
 
 	fmt.Println("\nTerminating Program")
