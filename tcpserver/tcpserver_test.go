@@ -28,6 +28,7 @@ func TestTcpServer(t *testing.T) {
 	time.Sleep(1 * time.Second)
 	conn, err := net.Dial("tcp", "127.0.0.1:8888")
 	if err != nil {
-		t.Fatal("Coudl not connect to TCP server", err)
+		t.Fatal("Could not connect to TCP server", err)
 	}
-	conn.Close()}
+	conn.Close()
+}

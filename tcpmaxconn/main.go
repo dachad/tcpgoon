@@ -26,11 +26,11 @@ func connection_handler(id int, host string, port int, wg *sync.WaitGroup) error
 			fmt.Println(str)
 		}
 		if err!= nil {
+			fmt.Println("\t runner "+strconv.Itoa(id)+" got its connection closed")
 			wg.Done()
 			return err
 		}
 	}
-	// fmt.Println("\t runner "+strconv.Itoa(id)+" got its connection closed")
 }
 
 func run_threads(numberConnections int, delay int, host string, port int) {

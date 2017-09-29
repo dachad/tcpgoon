@@ -28,7 +28,6 @@ func (h *Handler) Listen() { // listen connection for incomming data
             h.closed <- true // send to dispatcher, that connection is closed
             return
         }
-        // ... some business logic with data
     }
 }
 
@@ -59,7 +58,7 @@ func (d *Dispatcher) ListenHandlers(port int) error {
     defer ln.Close()
 
     for {
-        conn, err := ln.Accept() // accept connection
+        conn, err := ln.Accept()
         if err != nil {
             log.Println(err)
             continue
