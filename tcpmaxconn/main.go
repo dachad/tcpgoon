@@ -16,6 +16,7 @@ func connectionHandler(id int, host string, port int, wg *sync.WaitGroup) error 
 	conn, err := net.Dial("tcp", host+":"+strconv.Itoa(port))
 	if err != nil {
 		fmt.Println(err)
+		wg.Done()
 		return err
 	}
 	fmt.Println("\t runner " + strconv.Itoa(id) + " established the connection")
