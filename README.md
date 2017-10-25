@@ -1,5 +1,7 @@
 # TCP concurrent connection tester
 
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/b211244c4a674049864d45020aa8e883)](https://www.codacy.com/app/chadell/check-max-tcp-connections?utm_source=github.com&utm_medium=referral&utm_content=dachad/check-max-tcp-connections&utm_campaign=badger)
+
 ## TL;DR
 
 Script to test the concurrent connections towards a server listening to a TCP port
