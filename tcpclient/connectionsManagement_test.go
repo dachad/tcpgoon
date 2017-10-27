@@ -6,6 +6,7 @@ import (
 	"testing"
 	"time"
 	"github.com/dachad/check-max-tcp-connections/tcpserver"
+	"io/ioutil"
 )
 
 func TestTcpConnect(t *testing.T) {
@@ -30,7 +31,7 @@ func TestTcpConnect(t *testing.T) {
 
 	for runner := 1; runner <= numberConnections; runner++ {
 		t.Log("Initiating runner # ", strconv.Itoa(runner))
-		go TcpConnect(runner, host, port, &wg)
+		go TcpConnect(runner, host, port, &wg, ioutil.Discard, make(chan Connection, numberConnections))
 		time.Sleep(time.Duration(delay) * time.Millisecond)
 		t.Logf("Runner %s initated. Remaining: %s", strconv.Itoa(runner), strconv.Itoa(numberConnections-runner))
 	}

@@ -3,29 +3,52 @@ package main
 import (
 	"flag"
 	"fmt"
+	"github.com/dachad/check-max-tcp-connections/tcpclient"
+	"io"
+	"io/ioutil"
+	"os"
 	"runtime"
 	"strconv"
 	"sync"
 	"time"
-	"github.com/dachad/check-max-tcp-connections/tcpclient"
 )
 
-func runTcpConnectionsInParallel(numberConnections int, delay int, host string, port int) {
-	runtime.GOMAXPROCS(numberConnections)
+var debugOut io.Writer = ioutil.Discard
+
+func runTcpConnectionsInParallel(numberConnections int, delay int, host string, port int, rinterval int) {
+	runtime.GOMAXPROCS(numberConnections+2)
+	connStatusCh := make(chan tcpclient.Connection, numberConnections*3)
+	connStatusTracker := make([]tcpclient.Connection, numberConnections)
+
+	// moving these outside of runTcpCOnnectionsInParallel may have a lot of sense.. now this is
+	//  doing too much staff. We should also think about moving to the client package..
+	go reportConnectionsStatus(connStatusTracker, rinterval)
+	go collectConnectionsStatus(connStatusTracker, connStatusCh)
 
 	var wg sync.WaitGroup
 	wg.Add(numberConnections)
-
-	for runner := 1; runner <= numberConnections; runner++ {
-		fmt.Println("Initiating runner # " + strconv.Itoa(runner))
-		go tcpclient.TcpConnect(runner, host, port, &wg)
+	for runner := 0; runner < numberConnections; runner++ {
+		fmt.Fprintln(debugOut, "Initiating runner # "+strconv.Itoa(runner))
+		go tcpclient.TcpConnect(runner, host, port, &wg, debugOut, connStatusCh)
 		time.Sleep(time.Duration(delay) * time.Millisecond)
-		fmt.Println("Runner " + strconv.Itoa(runner) +
-			" initated. Remaining: " + strconv.Itoa(numberConnections-runner))
+		fmt.Fprintln(debugOut, "Runner "+strconv.Itoa(runner)+
+			" initated. Remaining: "+strconv.Itoa(numberConnections-runner))
 	}
-
-	fmt.Println("Waiting runners to finish")
+	fmt.Fprintln(debugOut, "Waiting runners to finish")
 	wg.Wait()
+}
+func collectConnectionsStatus(connectionDescriptions []tcpclient.Connection, statusChannel <- chan tcpclient.Connection) {
+	for {
+		connectionStatus := <- statusChannel
+		connectionDescriptions[connectionStatus.Id] = connectionStatus
+
+	}
+}
+func reportConnectionsStatus(connectionDescriptions []tcpclient.Connection, intervalBetweenUpdates int) {
+	for {
+		fmt.Println(tcpclient.PrintGroupOfConnections(connectionDescriptions))
+		time.Sleep(time.Duration(intervalBetweenUpdates)* time.Second)
+	}
 }
 
 func main() {
@@ -34,10 +57,14 @@ func main() {
 	portPtr := flag.Int("port", 9998, "Port you want to open tcp connections against")
 	numberConnectionsPtr := flag.Int("connections", 100, "Number of connections you want to open")
 	delayPtr := flag.Int("delay", 10, "Number of ms you want to sleep between each connection creation")
-
+	debugPtr := flag.Bool("debug", false, "Print debugging information to standard error")
+	reportingIntervalPtr := flag.Int("interval", 1, "Interval, in seconds, between updating connections status")
 	flag.Parse()
+	if *debugPtr {
+		debugOut = os.Stderr
+	}
 
-	runTcpConnectionsInParallel(*numberConnectionsPtr, *delayPtr, *hostPtr, *portPtr)
+	runTcpConnectionsInParallel(*numberConnectionsPtr, *delayPtr, *hostPtr, *portPtr, *reportingIntervalPtr)
 
-	fmt.Println("\nTerminating Program")
+	fmt.Fprintln(debugOut, "\nTerminating Program")
 }
