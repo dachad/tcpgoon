@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net"
 	"bufio"
+	"strconv"
 )
 
 func TcpConnect(id int, host string, port int, wg *sync.WaitGroup) error {

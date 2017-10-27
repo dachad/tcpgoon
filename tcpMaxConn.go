@@ -1,10 +1,8 @@
 package main
 
 import (
-	"bufio"
 	"flag"
 	"fmt"
-	"net"
 	"runtime"
 	"strconv"
 	"sync"
