@@ -1,26 +1,26 @@
 package tcpserver
 
 import (
+	"net"
+	"sync"
 	"testing"
 	"time"
-	"sync"
-	"net"
 )
 
 var once sync.Once
 
-func tcpServer(t *testing.T) func () {
+func tcpServer(t *testing.T) func() {
 	return func() {
 		t.Log("Starting TCP server")
-		dispatcher := &Dispatcher{make(map[string]*Handler)}		
+		dispatcher := &Dispatcher{make(map[string]*Handler)}
 		if err := dispatcher.ListenHandlers(8888); err != nil {
 			t.Error("Could not start the TCP server", err)
 			return
-		} else {
-			t.Log("TCP server started")
 		}
+		t.Log("TCP server started")
 	}
 }
+
 func TestTcpServer(t *testing.T) {
 	t.Log("Testing TCP server")
 	f := tcpServer(t)
