@@ -1,15 +1,14 @@
-package main
+package tcpclient
 
 import (
 	"strconv"
 	"sync"
 	"testing"
 	"time"
-
 	"github.com/dachad/check-max-tcp-connections/tcpserver"
 )
 
-func TestConnectionHandler(t *testing.T) {
+func TestTcpConnect(t *testing.T) {
 	var numberConnections = 2
 	var host = "127.0.0.1"
 	var port = 55555
@@ -31,7 +30,7 @@ func TestConnectionHandler(t *testing.T) {
 
 	for runner := 1; runner <= numberConnections; runner++ {
 		t.Log("Initiating runner # ", strconv.Itoa(runner))
-		go connectionHandler(runner, host, port, &wg)
+		go TcpConnect(runner, host, port, &wg)
 		time.Sleep(time.Duration(delay) * time.Millisecond)
 		t.Logf("Runner %s initated. Remaining: %s", strconv.Itoa(runner), strconv.Itoa(numberConnections-runner))
 	}

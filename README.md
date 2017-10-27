@@ -1,6 +1,6 @@
 # TCP concurrent connection tester
 
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/b211244c4a674049864d45020aa8e883)](https://www.codacy.com/app/chadell/check-max-tcp-connections?utm_source=github.com&utm_medium=referral&utm_content=dachad/check-max-tcp-connections&utm_campaign=badger)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/b211244c4a674049864d45020aa8e883)](https://www.codacy.com/app/chadell/check-max-tcp-connections?utm_source=github.com&utm_medium=referral&utm_content=dachad/check-max-tcp-connections&utm_campaign=badger) [![Build Status](https://travis-ci.org/dachad/check-max-tcp-connections.svg?branch=master)](https://travis-ci.org/dachad/check-max-tcp-connections)
 
 ## TL;DR
 
@@ -25,7 +25,7 @@ Usage of ./tcpMaxConn:
   -host string
         Host you want to open tcp connections against (default "localhost")
   -port int
-        Port you want to open tcp connections against (default 8888)
+        Port you want to open tcp connections against (default 9998)
 ```
 
 ## Example
