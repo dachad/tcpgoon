@@ -25,7 +25,7 @@ Usage of ./tcpMaxConn:
   -host string
         Host you want to open tcp connections against (default "localhost")
   -port int
-        Port you want to open tcp connections against (default 8888)
+        Port you want to open tcp connections against (default 9998)
 ```
 
 ## Example
