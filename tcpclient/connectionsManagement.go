@@ -7,20 +7,25 @@ import (
 	"net"
 	"strconv"
 	"sync"
+	"time"
 )
 
-func reportConnectionStatus(debugOut io.Writer, statusChannel chan<- Connection, connectionDescription Connection)  {
+// this can be an argument in the future
+var defaultDialTimeoutInSecs int = 10
+
+func reportConnectionStatus(debugOut io.Writer, statusChannel chan<- Connection, connectionDescription Connection) {
 	statusChannel <- connectionDescription
 	fmt.Fprintln(debugOut, "\t", connectionDescription)
 }
 
-func TcpConnect(id int, host string, port int, wg *sync.WaitGroup, debugOut io.Writer, statusChannel chan<- Connection) error {
+func TCPConnect(id int, host string, port int, wg *sync.WaitGroup, debugOut io.Writer, statusChannel chan<- Connection) error {
 	connectionDescription := Connection{
-		Id: id,
+		Id:     id,
 		status: ConnectionDialing,
 	}
 	reportConnectionStatus(debugOut, statusChannel, connectionDescription)
-	conn, err := net.Dial("tcp", host+":"+strconv.Itoa(port))
+	conn, err := net.DialTimeout("tcp", host+":"+strconv.Itoa(port),
+		time.Duration(defaultDialTimeoutInSecs)*time.Second)
 	if err != nil {
 		connectionDescription.status = ConnectionError
 		reportConnectionStatus(debugOut, statusChannel, connectionDescription)

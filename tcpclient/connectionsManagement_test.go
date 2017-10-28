@@ -33,7 +33,7 @@ func TestTcpConnect(t *testing.T) {
 
 	for runner := 1; runner <= numberConnections; runner++ {
 		t.Log("Initiating runner # ", strconv.Itoa(runner))
-		go TcpConnect(runner, host, port, &wg, ioutil.Discard, make(chan Connection, numberConnections))
+		go TCPConnect(runner, host, port, &wg, ioutil.Discard, make(chan Connection, numberConnections))
 		t.Logf("Runner %s initated. Remaining: %s", strconv.Itoa(runner), strconv.Itoa(numberConnections-runner))
 	}
 
@@ -43,7 +43,7 @@ func TestTcpConnect(t *testing.T) {
 	// Marking wait groups as done after a second does not make sense...
 	// and in case one client finishes before this loop being executed (because of an error?)
 	// we will get an exception (panic: sync: negative WaitGroup counter [recovered])
-	
+
 	//for runner := 1; runner <= numberConnections; runner++ {
 	//	t.Log("Closing runner #", strconv.Itoa(runner))
 	//	wg.Done()

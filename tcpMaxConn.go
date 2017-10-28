@@ -15,9 +15,12 @@ import (
 
 var debugOut io.Writer = ioutil.Discard
 
-func runTcpConnectionsInParallel(numberConnections int, delay int, host string, port int, rinterval int) {
-	runtime.GOMAXPROCS(numberConnections+2)
-	connStatusCh := make(chan tcpclient.Connection, numberConnections*3)
+func runTCPConnectionsInParallel(numberConnections int, delay int, host string, port int, rinterval int) {
+	const numberOfGoRoutinesToCollectAndReportStatus = 2
+	runtime.GOMAXPROCS(numberConnections + numberOfGoRoutinesToCollectAndReportStatus)
+	// A connection may report up to 3 messages: Dialing -> Established -> Connected
+	const MaxMessagesWeMayGetPerConnection = 3
+	connStatusCh := make(chan tcpclient.Connection, numberConnections*MaxMessagesWeMayGetPerConnection)
 	connStatusTracker := make([]tcpclient.Connection, numberConnections)
 
 	// moving these outside of runTcpCOnnectionsInParallel may have a lot of sense.. now this is
@@ -29,7 +32,7 @@ func runTcpConnectionsInParallel(numberConnections int, delay int, host string, 
 	wg.Add(numberConnections)
 	for runner := 0; runner < numberConnections; runner++ {
 		fmt.Fprintln(debugOut, "Initiating runner # "+strconv.Itoa(runner))
-		go tcpclient.TcpConnect(runner, host, port, &wg, debugOut, connStatusCh)
+		go tcpclient.TCPConnect(runner, host, port, &wg, debugOut, connStatusCh)
 		time.Sleep(time.Duration(delay) * time.Millisecond)
 		fmt.Fprintln(debugOut, "Runner "+strconv.Itoa(runner)+
 			" initated. Remaining: "+strconv.Itoa(numberConnections-runner))
@@ -37,9 +40,9 @@ func runTcpConnectionsInParallel(numberConnections int, delay int, host string, 
 	fmt.Fprintln(debugOut, "Waiting runners to finish")
 	wg.Wait()
 }
-func collectConnectionsStatus(connectionDescriptions []tcpclient.Connection, statusChannel <- chan tcpclient.Connection) {
+func collectConnectionsStatus(connectionDescriptions []tcpclient.Connection, statusChannel <-chan tcpclient.Connection) {
 	for {
-		connectionStatus := <- statusChannel
+		connectionStatus := <-statusChannel
 		connectionDescriptions[connectionStatus.Id] = connectionStatus
 
 	}
@@ -47,7 +50,7 @@ func collectConnectionsStatus(connectionDescriptions []tcpclient.Connection, sta
 func reportConnectionsStatus(connectionDescriptions []tcpclient.Connection, intervalBetweenUpdates int) {
 	for {
 		fmt.Println(tcpclient.PrintGroupOfConnections(connectionDescriptions))
-		time.Sleep(time.Duration(intervalBetweenUpdates)* time.Second)
+		time.Sleep(time.Duration(intervalBetweenUpdates) * time.Second)
 	}
 }
 
@@ -64,7 +67,7 @@ func main() {
 		debugOut = os.Stderr
 	}
 
-	runTcpConnectionsInParallel(*numberConnectionsPtr, *delayPtr, *hostPtr, *portPtr, *reportingIntervalPtr)
+	runTCPConnectionsInParallel(*numberConnectionsPtr, *delayPtr, *hostPtr, *portPtr, *reportingIntervalPtr)
 
 	fmt.Fprintln(debugOut, "\nTerminating Program")
 }
