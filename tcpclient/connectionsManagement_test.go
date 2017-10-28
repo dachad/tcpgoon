@@ -9,11 +9,13 @@ import (
 	"io/ioutil"
 )
 
+// We really need to refactor this test. We should verify connections do become established,
+// rather than just waiting for a second and finish
+// We should also test "failing" connections, and ensure their status is reported properly
 func TestTcpConnect(t *testing.T) {
 	var numberConnections = 2
 	var host = "127.0.0.1"
 	var port = 55555
-	var delay = 1
 
 	dispatcher := &tcpserver.Dispatcher{make(map[string]*tcpserver.Handler)}
 
@@ -32,16 +34,19 @@ func TestTcpConnect(t *testing.T) {
 	for runner := 1; runner <= numberConnections; runner++ {
 		t.Log("Initiating runner # ", strconv.Itoa(runner))
 		go TcpConnect(runner, host, port, &wg, ioutil.Discard, make(chan Connection, numberConnections))
-		time.Sleep(time.Duration(delay) * time.Millisecond)
 		t.Logf("Runner %s initated. Remaining: %s", strconv.Itoa(runner), strconv.Itoa(numberConnections-runner))
 	}
 
 	t.Log("Waiting runners to finish")
-	time.Sleep(time.Duration(delay) * time.Second)
+	time.Sleep(time.Second)
 
-	for runner := 1; runner <= numberConnections; runner++ {
-		t.Log("Closing runner #", strconv.Itoa(runner))
-		wg.Done()
-	}
+	// Marking wait groups as done after a second does not make sense...
+	// and in case one client finishes before this loop being executed (because of an error?)
+	// we will get an exception (panic: sync: negative WaitGroup counter [recovered])
+	
+	//for runner := 1; runner <= numberConnections; runner++ {
+	//	t.Log("Closing runner #", strconv.Itoa(runner))
+	//	wg.Done()
+	//}
 
 }
