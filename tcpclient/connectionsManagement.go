@@ -18,7 +18,7 @@ func reportConnectionStatus(debugOut io.Writer, statusChannel chan<- Connection,
 	fmt.Fprintln(debugOut, "\t", connectionDescription)
 }
 
-// TCP connects just opens a TCP connection against the target described by
+// TCPconnect just opens a TCP connection against the target described by
 // the host:port, and considers the id to report back status changes through the
 // status goChannel with descriptors matching the Connection struct supplied in this
 // same package.

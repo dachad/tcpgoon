@@ -57,3 +57,5 @@ Total: 10, Dialing: 0, Established: 10, Closed: 0, Error: 0, NotInitiated: 0
 - more test coverage
 - "auto-incremental" mode; it opens connections at an specific rate until it fails or it times-out, giving you an idea of the max concurrency your service supports
 - distributed executions; several daemons may be able to collaborate to measure the capacity of an specific target
+- Docker image and OS packages for the most common distros
+- See also the issues in this Github repo!!
