@@ -11,13 +11,18 @@ import (
 )
 
 // this can be an argument in the future
-var defaultDialTimeoutInSecs int = 10
+var defaultDialTimeoutInSecs = 10
 
 func reportConnectionStatus(debugOut io.Writer, statusChannel chan<- Connection, connectionDescription Connection) {
 	statusChannel <- connectionDescription
 	fmt.Fprintln(debugOut, "\t", connectionDescription)
 }
 
+// TCP connects just opens a TCP connection against the target described by
+// the host:port, and considers the id to report back status changes through the
+// status goChannel with descriptors matching the Connection struct supplied in this
+// same package.
+// It also needs an iowriter to print debugging information.
 func TCPConnect(id int, host string, port int, wg *sync.WaitGroup, debugOut io.Writer, statusChannel chan<- Connection) error {
 	connectionDescription := Connection{
 		Id:     id,
