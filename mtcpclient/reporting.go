@@ -21,7 +21,7 @@ func reportConnectionsStatus(connectionDescriptions []tcpclient.Connection, inte
 	}
 }
 
-// startReportingLogic starts some goroutines to capture and report data from the tcpclient
+// StartReportingLogic starts some goroutines to capture and report data from the tcpclient
 // routines. It initializes and returns the channel that will be used for these communications
 func StartReportingLogic(numberConnections int, rinterval int) chan tcpclient.Connection {
 	// A connection may report up to 3 messages: Dialing -> Established -> Closed
