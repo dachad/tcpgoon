@@ -15,7 +15,7 @@ func main() {
 	portPtr := pflag.IntP("port", "p", 9998, "Port you want to open tcp connections against")
 	numberConnectionsPtr := pflag.IntP("connections", "c", 100, "Number of connections you want to open")
 	delayPtr := pflag.IntP("sleep", "s", 10, "Time you want to sleep between connections, in ms")
-	debugPtr := pflag.BoolP("debug", "d", false, "Print debugging information to standard error")
+	debugPtr := pflag.BoolP("debug", "d", false, "Print debugging information to the standard error")
 	reportingIntervalPtr := pflag.IntP("interval", "i", 1, "Interval, in seconds, between stats updates")
 	pflag.Parse()
 
