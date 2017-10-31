@@ -1,0 +1,7 @@
+language: go
+go:
+- 1.9
+
+gobuild_args: -ldflags "-X main.VersionString=`date -u +.%Y%m%d.%H%M%S`"
+
+script: _script/cibuild
