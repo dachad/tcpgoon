@@ -18,9 +18,9 @@ var debugOut io.Writer = ioutil.Discard
 func runTCPConnectionsInParallel(numberConnections int, delay int, host string, port int, rinterval int) {
 	const numberOfGoRoutinesToCollectAndReportStatus = 2
 	runtime.GOMAXPROCS(numberConnections + numberOfGoRoutinesToCollectAndReportStatus)
-	// A connection may report up to 3 messages: Dialing -> Established -> Connected
-	const MaxMessagesWeMayGetPerConnection = 3
-	connStatusCh := make(chan tcpclient.Connection, numberConnections*MaxMessagesWeMayGetPerConnection)
+	// A connection may report up to 3 messages: Dialing -> Established -> Closed
+	const maxMessagesWeMayGetPerConnection = 3
+	connStatusCh := make(chan tcpclient.Connection, numberConnections* maxMessagesWeMayGetPerConnection)
 	connStatusTracker := make([]tcpclient.Connection, numberConnections)
 
 	// moving these outside of runTcpCOnnectionsInParallel may have a lot of sense.. now this is
