@@ -3,30 +3,11 @@ package main
 import (
 	"flag"
 	"fmt"
-	"runtime"
-	"strconv"
-	"sync"
-	"time"
-	"github.com/dachad/check-max-tcp-connections/tcpclient"
+	"io"
+	"io/ioutil"
+	"os"
+	"github.com/dachad/check-max-tcp-connections/mtcpclient"
 )
-
-func runTcpConnectionsInParallel(numberConnections int, delay int, host string, port int) {
-	runtime.GOMAXPROCS(numberConnections)
-
-	var wg sync.WaitGroup
-	wg.Add(numberConnections)
-
-	for runner := 1; runner <= numberConnections; runner++ {
-		fmt.Println("Initiating runner # " + strconv.Itoa(runner))
-		go tcpclient.TcpConnect(runner, host, port, &wg)
-		time.Sleep(time.Duration(delay) * time.Millisecond)
-		fmt.Println("Runner " + strconv.Itoa(runner) +
-			" initated. Remaining: " + strconv.Itoa(numberConnections-runner))
-	}
-
-	fmt.Println("Waiting runners to finish")
-	wg.Wait()
-}
 
 func main() {
 	hostPtr := flag.String("host", "localhost", "Host you want to open tcp connections against")
@@ -34,10 +15,20 @@ func main() {
 	portPtr := flag.Int("port", 9998, "Port you want to open tcp connections against")
 	numberConnectionsPtr := flag.Int("connections", 100, "Number of connections you want to open")
 	delayPtr := flag.Int("delay", 10, "Number of ms you want to sleep between each connection creation")
-
+	debugPtr := flag.Bool("debug", false, "Print debugging information to standard error")
+	reportingIntervalPtr := flag.Int("interval", 1, "Interval, in seconds, between updating connections status")
 	flag.Parse()
 
-	runTcpConnectionsInParallel(*numberConnectionsPtr, *delayPtr, *hostPtr, *portPtr)
+	var debugOut io.Writer = ioutil.Discard
+	if *debugPtr {
+		debugOut = os.Stderr
+	}
 
-	fmt.Println("\nTerminating Program")
+	connStatusCh := mtcpclient.StartReportingLogic(*numberConnectionsPtr, *reportingIntervalPtr)
+
+	mtcpclient.MultiTCPConnect(*numberConnectionsPtr, *delayPtr, *hostPtr, *portPtr, connStatusCh, debugOut)
+
+	fmt.Fprintln(debugOut, "\nTerminating Program")
 }
+
+
