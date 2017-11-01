@@ -9,6 +9,10 @@ import (
 	"strconv"
 )
 
+// MultiTCPConnect tries to open us many TCP connections as numberConnections against
+// host:port, with a delay between them of delay (ms). You can supply a
+// debugOut to get debugging messages, while connStatusCh will be streaming
+// tcpclient.Connection descriptions on each status update of the connections
 func MultiTCPConnect(numberConnections int, delay int, host string, port int,
 		connStatusCh chan tcpclient.Connection, debugOut io.Writer) {
 	var wg sync.WaitGroup
