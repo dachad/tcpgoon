@@ -20,18 +20,19 @@ updates to the standard output...
 ```bash
 % ./tcpMaxConn --help
 Usage of ./tcpMaxConn:
+  -y, --assume-yes        Force execution without asking for confirmation
   -c, --connections int   Number of connections you want to open (default 100)
   -d, --debug             Print debugging information to the standard error
-  -h, --host string       Host you want to open tcp connections against (default "localhost")
+  -h, --host string       Host you want to open tcp connections against (Required)
   -i, --interval int      Interval, in seconds, between stats updates (default 1)
-  -p, --port int          Port you want to open tcp connections against (default 9998)
+  -p, --port int          Port you want to open tcp connections against (Required)
   -s, --sleep int         Time you want to sleep between connections, in ms (default 10)
 ```
 
 ## Example
 
 ```bash
-% ./tcpMaxConn --host myhttpsamplehost.com --port 80 --connections 10 --sleep 1000 
+% ./tcpMaxConn --host myhttpsamplehost.com --port 80 --connections 10 --sleep 1000 -y
 Total: 10, Dialing: 0, Established: 0, Closed: 0, Error: 0, NotInitiated: 10
 Total: 10, Dialing: 0, Established: 1, Closed: 0, Error: 0, NotInitiated: 9
 Total: 10, Dialing: 1, Established: 2, Closed: 0, Error: 0, NotInitiated: 7
