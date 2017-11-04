@@ -41,5 +41,3 @@ func printClosureReport(host string, port int, connections []tcpclient.Connectio
 	mtcpclient.ReportConnectionsStatus(connections, 0)
 }
 
-
-

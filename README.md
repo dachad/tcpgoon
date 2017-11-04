@@ -5,6 +5,7 @@
 ## TL;DR
 
 Tool to test concurrent connections towards a server listening to a TCP port
+Script to test concurrent connections towards a server listening to a TCP port
 
 ## Description/Script steps
 
@@ -12,7 +13,7 @@ Tool to test concurrent connections towards a server listening to a TCP port
 a delay between connections (10ms by default) and an interval between stats
 updates to the standard output...
 - It will use goroutines to open a tcp connection and try to read from it
-- 
+- The tool will exit once all connections have been dialed (successfully or not)
 
 ## Usage
 

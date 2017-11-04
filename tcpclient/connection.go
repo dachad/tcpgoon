@@ -34,6 +34,7 @@ func (c Connection) String() string {
 	return fmt.Sprintf("Connection %d is %s", c.Id, status)
 }
 
+<<<<<<< HEAD
 func PendingConnections(c []Connection) bool {
 	for _, item := range c {
 		if item.status == ConnectionNotInitiated || item.status == ConnectionDialing {
@@ -43,6 +44,8 @@ func PendingConnections(c []Connection) bool {
 	return false
 }
 
+=======
+>>>>>>> upstream/master
 func PrintGroupOfConnections(c []Connection) string {
 	var nDialing, nEstablished, nClosed, nNotInitiated, nError, nTotal int = 0, 0, 0, 0, 0, 0
 	for _, item := range c {

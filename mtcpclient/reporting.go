@@ -16,7 +16,9 @@ func collectConnectionsStatus(connectionDescriptions []tcpclient.Connection, sta
 func ReportConnectionsStatus(connectionDescriptions []tcpclient.Connection, intervalBetweenUpdates int) {
 	for {
 		fmt.Println(tcpclient.PrintGroupOfConnections(connectionDescriptions))
-		if intervalBetweenUpdates == 0 { break }
+		if intervalBetweenUpdates == 0 {
+			break
+		}
 		time.Sleep(time.Duration(intervalBetweenUpdates) * time.Second)
 	}
 }
