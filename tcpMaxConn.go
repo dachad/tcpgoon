@@ -50,7 +50,7 @@ func main() {
 func printClosureReport(host string, port int, connections []tcpclient.Connection) {
 	// workaround to allow last status updates to be collected properly
 	time.Sleep(time.Duration(50) * time.Millisecond)
-	fmt.Println(strings.Repeat("-", 3), host + ":" + string(port), "tcp test statistics", strings.Repeat("-", 3))
+	fmt.Println(strings.Repeat("-", 3), host + ":" + strconv.Itoa(port), "tcp test statistics", strings.Repeat("-", 3))
 	mtcpclient.ReportConnectionsStatus(connections, 0)
 }
 
@@ -66,7 +66,7 @@ func stringInSlice(a string, list []string) bool {
 func askForUserConfirmation(host string, port int, connections int) bool {
 
 	fmt.Println("****************************** WARNING ******************************")
-	fmt.Println("* You are going to  run a TCP stress check with these arguments:")
+	fmt.Println("* You are going to run a TCP stress check with these arguments:")
 	fmt.Println("*	- Target: " + host)
 	fmt.Println("*	- TCP Port: " + strconv.Itoa(port))
 	fmt.Println("*	- # of concurrent connections: " + strconv.Itoa(connections))
