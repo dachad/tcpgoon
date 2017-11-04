@@ -7,6 +7,9 @@ import (
 	"os"
 	"github.com/dachad/check-max-tcp-connections/mtcpclient"
 	"github.com/spf13/pflag"
+	"github.com/dachad/check-max-tcp-connections/tcpclient"
+	"strings"
+	"time"
 )
 
 func main() {
@@ -24,11 +27,19 @@ func main() {
 		debugOut = os.Stderr
 	}
 
-	connStatusCh := mtcpclient.StartReportingLogic(*numberConnectionsPtr, *reportingIntervalPtr)
+	connStatusCh, connStatusTracker := mtcpclient.StartBackgroundReporting(*numberConnectionsPtr, *reportingIntervalPtr)
+	closureCh := mtcpclient.StartBackgroundClosureTrigger(connStatusTracker)
+	mtcpclient.MultiTCPConnect(*numberConnectionsPtr, *delayPtr, *hostPtr, *portPtr, connStatusCh, closureCh, debugOut)
 
-	mtcpclient.MultiTCPConnect(*numberConnectionsPtr, *delayPtr, *hostPtr, *portPtr, connStatusCh, debugOut)
-
+	printClosureReport(*hostPtr, *portPtr, connStatusTracker)
 	fmt.Fprintln(debugOut, "\nTerminating Program")
 }
+func printClosureReport(host string, port int, connections []tcpclient.Connection) {
+	// workaround to allow last status updates to be collected properly
+	time.Sleep(time.Duration(50) * time.Millisecond)
+	fmt.Println(strings.Repeat("-", 3), host + ":" + string(port), "tcp test statistics", strings.Repeat("-", 3))
+	mtcpclient.ReportConnectionsStatus(connections, 0)
+}
+
 
 

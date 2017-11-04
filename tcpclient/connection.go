@@ -29,9 +29,18 @@ func (c Connection) String() string {
 	case ConnectionClosed:
 		status = "closed"
 	case ConnectionError:
-		status = "error"
+		status = "errored"
 	}
 	return fmt.Sprintf("Connection %d is %s", c.Id, status)
+}
+
+func PendingConnections(c []Connection) bool {
+	for _, item := range c {
+		if item.status == ConnectionNotInitiated || item.status == ConnectionDialing {
+			return true
+		}
+	}
+	return false
 }
 
 func PrintGroupOfConnections(c []Connection) string {

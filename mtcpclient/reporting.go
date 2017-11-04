@@ -1,8 +1,8 @@
 package mtcpclient
 
 import (
-	"github.com/dachad/check-max-tcp-connections/tcpclient"
 	"fmt"
+	"github.com/dachad/check-max-tcp-connections/tcpclient"
 	"time"
 )
 
@@ -10,27 +10,27 @@ func collectConnectionsStatus(connectionDescriptions []tcpclient.Connection, sta
 	for {
 		connectionStatus := <-statusChannel
 		connectionDescriptions[connectionStatus.Id] = connectionStatus
-
 	}
 }
 
-func reportConnectionsStatus(connectionDescriptions []tcpclient.Connection, intervalBetweenUpdates int) {
+func ReportConnectionsStatus(connectionDescriptions []tcpclient.Connection, intervalBetweenUpdates int) {
 	for {
 		fmt.Println(tcpclient.PrintGroupOfConnections(connectionDescriptions))
+		if intervalBetweenUpdates == 0 { break }
 		time.Sleep(time.Duration(intervalBetweenUpdates) * time.Second)
 	}
 }
 
-// startReportingLogic starts some goroutines to capture and report data from the tcpclient
+// startReportingLogic starts some goroutines (so it's not blocking) to capture and report data from the tcpclient
 // routines. It initializes and returns the channel that will be used for these communications
-func StartReportingLogic(numberConnections int, rinterval int) chan tcpclient.Connection {
+func StartBackgroundReporting(numberConnections int, rinterval int) (chan tcpclient.Connection, []tcpclient.Connection) {
 	// A connection may report up to 3 messages: Dialing -> Established -> Closed
 	const maxMessagesWeMayGetPerConnection = 3
-	connStatusCh := make(chan tcpclient.Connection, numberConnections*maxMessagesWeMayGetPerConnection)
+	connStatusCh := make(chan tcpclient.Connection, numberConnections * maxMessagesWeMayGetPerConnection)
 	connStatusTracker := make([]tcpclient.Connection, numberConnections)
 
-	go reportConnectionsStatus(connStatusTracker, rinterval)
+	go ReportConnectionsStatus(connStatusTracker, rinterval)
 	go collectConnectionsStatus(connStatusTracker, connStatusCh)
 
-	return connStatusCh
+	return connStatusCh, connStatusTracker
 }
