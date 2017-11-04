@@ -4,14 +4,15 @@
 
 ## TL;DR
 
-Script to test concurrent connections towards a server listening to a TCP port
+Tool to test concurrent connections towards a server listening to a TCP port
 
 ## Description/Script steps
 
-- Given a hostname, port, and optionally the number of connections (100 by default) and delay between connections (10ms by default)...
-- It will use goroutines to open a tcp connection and try to read from it, waiting the specified delay between each light-thread creation
-- The main flow will just wait until all goroutines have finished (that is, when the OS detects the tcp connection as closed)
-
+- Given a hostname, port, the number of connections (100 by default), 
+a delay between connections (10ms by default) and an interval between stats
+updates to the standard output...
+- It will use goroutines to open a tcp connection and try to read from it
+- 
 
 ## Usage
 
