@@ -29,13 +29,13 @@ func TCPConnect(id int, host string, port int, wg *sync.WaitGroup, debugOut io.W
 		statusChannel chan<- Connection, closeRequest <-chan bool) error {
 	connectionDescription := Connection{
 		Id:     id,
-		status: ConnectionDialing,
+		status: connectionDialing,
 	}
 	reportConnectionStatus(debugOut, statusChannel, connectionDescription)
 	conn, err := net.DialTimeout("tcp", host+":"+strconv.Itoa(port),
 		time.Duration(DefaultDialTimeoutInSecs)*time.Second)
 	if err != nil {
-		connectionDescription.status = ConnectionError
+		connectionDescription.status = connectionError
 		reportConnectionStatus(debugOut, statusChannel, connectionDescription)
 		fmt.Fprintln(debugOut, "Connection", id, "was unable to open the connection. Error:")
 		fmt.Fprintln(debugOut, err)
@@ -44,7 +44,7 @@ func TCPConnect(id int, host string, port int, wg *sync.WaitGroup, debugOut io.W
 	}
 
 	defer conn.Close()
-	connectionDescription.status = ConnectionEstablished
+	connectionDescription.status = connectionEstablished
 	reportConnectionStatus(debugOut, statusChannel, connectionDescription)
 	connBuf := bufio.NewReader(conn)
 	for {
@@ -65,7 +65,7 @@ func TCPConnect(id int, host string, port int, wg *sync.WaitGroup, debugOut io.W
 			} else if err != nil {
 				fmt.Fprintln(debugOut, "Connection", id, "looks closed. Error", reflect.TypeOf(err),"when reading:")
 				fmt.Fprintln(debugOut, err)
-				connectionDescription.status = ConnectionClosed
+				connectionDescription.status = connectionClosed
 				reportConnectionStatus(debugOut, statusChannel, connectionDescription)
 				wg.Done()
 				return err

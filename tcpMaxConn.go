@@ -1,18 +1,16 @@
 package main
 
 import (
-	"bufio"
 	"fmt"
 	"io"
 	"io/ioutil"
 	"os"
-	"strconv"
-	"strings"
-	"github.com/dachad/check-max-tcp-connections/mtcpclient"
 	"github.com/spf13/pflag"
-	"github.com/dachad/check-max-tcp-connections/tcpclient"
-	"time"
+	"github.com/dachad/check-max-tcp-connections/mtcpclient"
+	"github.com/dachad/check-max-tcp-connections/cmdutil"
 )
+
+
 
 func main() {
 	hostPtr := pflag.StringP("host", "h", "", "Host you want to open tcp connections against (Required)")
@@ -36,60 +34,15 @@ func main() {
 		debugOut = os.Stderr
 	}
 
-	if *assumeyesPtr || askForUserConfirmation(*hostPtr, *portPtr, *numberConnectionsPtr) {
-		connStatusCh, connStatusTracker := mtcpclient.StartBackgroundReporting(*numberConnectionsPtr, *reportingIntervalPtr)
-		closureCh := mtcpclient.StartBackgroundClosureTrigger(connStatusTracker)
-		mtcpclient.MultiTCPConnect(*numberConnectionsPtr, *delayPtr, *hostPtr, *portPtr, connStatusCh, closureCh, debugOut)
-
-		printClosureReport(*hostPtr, *portPtr, connStatusTracker)
-		fmt.Fprintln(debugOut, "\nTerminating Program")
-	} else {
-		fmt.Println("\n*** Execution aborted as prompted by the user ***")
+	if !(*assumeyesPtr || cmdutil.AskForUserConfirmation(*hostPtr, *portPtr, *numberConnectionsPtr)) {
+		fmt.Fprintln(debugOut, "Execution not approved by the user")
+		cmdutil.CloseAbruptly()
 	}
-}
-func printClosureReport(host string, port int, connections []tcpclient.Connection) {
-	// workaround to allow last status updates to be collected properly
-	time.Sleep(time.Duration(50) * time.Millisecond)
-	fmt.Println(strings.Repeat("-", 3), host + ":" + strconv.Itoa(port), "tcp test statistics", strings.Repeat("-", 3))
-	mtcpclient.ReportConnectionsStatus(connections, 0)
-}
 
-func stringInSlice(a string, list []string) bool {
-	for _, b := range list {
-		if b == a {
-			return true
-		}
-	}
-	return false
-}
+	connStatusCh, connStatusTracker := mtcpclient.StartBackgroundReporting(*numberConnectionsPtr, *reportingIntervalPtr)
+	closureCh := mtcpclient.StartBackgroundClosureTrigger(connStatusTracker)
+	mtcpclient.MultiTCPConnect(*numberConnectionsPtr, *delayPtr, *hostPtr, *portPtr, connStatusCh, closureCh, debugOut)
+	fmt.Fprintln(debugOut, "Tests execution completed")
 
-func askForUserConfirmation(host string, port int, connections int) bool {
-
-	fmt.Println("****************************** WARNING ******************************")
-	fmt.Println("* You are going to run a TCP stress check with these arguments:")
-	fmt.Println("*	- Target: " + host)
-	fmt.Println("*	- TCP Port: " + strconv.Itoa(port))
-	fmt.Println("*	- # of concurrent connections: " + strconv.Itoa(connections))
-	fmt.Println("*********************************************************************")
-
-	reader := bufio.NewReader(os.Stdin)
-	for {
-		fmt.Print("Do you want to continue? (y/N): ")
-		response, err := reader.ReadString('\n')
-		if err != nil {
-			fmt.Println("Response not processed")
-			os.Exit(1)
-		}
-
-		response = strings.TrimSuffix(response, "\n")
-		response = strings.ToLower(response)
-		switch {
-		case stringInSlice(response, []string{"yes", "y"}):
-			return true
-		case stringInSlice(response, []string{"no", "n", ""}):
-			return false
-		default:
-			fmt.Println("\nSorry, response not recongized. Try again, please")
-		}
-	}
+	cmdutil.CloseNicely(*hostPtr, *portPtr, connStatusTracker, debugOut)
 }

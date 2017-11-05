@@ -7,13 +7,15 @@
 Tool to test concurrent connections towards a server listening to a TCP port
 Script to test concurrent connections towards a server listening to a TCP port
 
-## Description/Script steps
+## Description
 
 - Given a hostname, port, the number of connections (100 by default), 
 a delay between connections (10ms by default) and an interval between stats
 updates to the standard output...
 - It will use goroutines to open a tcp connection and try to read from it
 - The tool will exit once all connections have been dialed (successfully or not)
+- Exit status different from 0 represent executions where all connections were not 
+established successfully
 
 ## Usage
 
@@ -31,6 +33,7 @@ Usage of ./tcpMaxConn:
 
 ## Example
 
+Successful execution:
 ```bash
 % ./tcpMaxConn --host myhttpsamplehost.com --port 80 --connections 10 --sleep 1000 -y
 Total: 10, Dialing: 0, Established: 0, Closed: 0, Error: 0, NotInitiated: 10
@@ -45,6 +48,9 @@ Total: 10, Dialing: 1, Established: 8, Closed: 0, Error: 0, NotInitiated: 1
 Total: 10, Dialing: 1, Established: 9, Closed: 0, Error: 0, NotInitiated: 0
 Total: 10, Dialing: 0, Established: 10, Closed: 0, Error: 0, NotInitiated: 0
 Total: 10, Dialing: 0, Established: 10, Closed: 0, Error: 0, NotInitiated: 0
+```
+Unsuccessful execution:
+```bash
 ```
 
 ## TO-DO
