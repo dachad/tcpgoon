@@ -11,8 +11,7 @@ import (
 	"reflect"
 )
 
-var DefaultDialTimeoutInSecs = 5
-var defaultReadTimeoutInSecs = 1
+var DefaultDialTimeoutInMs = 5000
 
 func reportConnectionStatus(debugOut io.Writer, statusChannel chan<- Connection, connectionDescription Connection) {
 	statusChannel <- connectionDescription
@@ -32,7 +31,7 @@ func TCPConnect(id int, host string, port int, wg *sync.WaitGroup, debugOut io.W
 	}
 	reportConnectionStatus(debugOut, statusChannel, connectionDescription)
 	conn, err := net.DialTimeout("tcp", host+":"+strconv.Itoa(port),
-		time.Duration(DefaultDialTimeoutInSecs)*time.Second)
+		time.Duration(DefaultDialTimeoutInMs)*time.Millisecond)
 	if err != nil {
 		connectionDescription.status = connectionError
 		reportConnectionStatus(debugOut, statusChannel, connectionDescription)
@@ -55,12 +54,11 @@ func TCPConnect(id int, host string, port int, wg *sync.WaitGroup, debugOut io.W
 			wg.Done()
 			return nil
 		default:
-			conn.SetReadDeadline(time.Now().Add(time.Duration(defaultReadTimeoutInSecs) * time.Second))
+			const ReadTimeoutAndBetweenPollsInMs = 1000
+			conn.SetReadDeadline(time.Now().Add(time.Duration(ReadTimeoutAndBetweenPollsInMs) * time.Millisecond))
 			str, err := connBuf.ReadString('\n')
-			if len(str) > 0 {
-				fmt.Fprintln(debugOut, "Connection", id, "got", str)
-			} else if terr, ok := err.(net.Error); ok && terr.Timeout() {
-				fmt.Fprintln(debugOut, "No info from connection", id, "before timing out. Reading again..")
+			if terr, ok := err.(net.Error); ok && terr.Timeout() {
+				fmt.Fprintln(debugOut, "No info from connection", id, "before timing out. Reading again...")
 			} else if err != nil {
 				fmt.Fprintln(debugOut, "Connection", id, "looks closed. Error", reflect.TypeOf(err),"when reading:")
 				fmt.Fprintln(debugOut, err)
@@ -68,6 +66,8 @@ func TCPConnect(id int, host string, port int, wg *sync.WaitGroup, debugOut io.W
 				reportConnectionStatus(debugOut, statusChannel, connectionDescription)
 				wg.Done()
 				return err
+			} else if len(str) > 0 {
+				fmt.Fprintln(debugOut, "Connection", id, "got", str)
 			}
 		}
 

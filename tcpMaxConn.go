@@ -15,11 +15,10 @@ import (
 
 func main() {
 	hostPtr := pflag.StringP("host", "h", "", "Host you want to open tcp connections against (Required)")
-	// according to https://en.wikipedia.org/wiki/List_of_TCP_and_UDP_port_numbers, you are probably not using this
 	portPtr := pflag.IntP("port", "p", 0, "Port you want to open tcp connections against (Required)")
 	numberConnectionsPtr := pflag.IntP("connections", "c", 100, "Number of connections you want to open")
 	delayPtr := pflag.IntP("sleep", "s", 10, "Time you want to sleep between connections, in ms")
-	connDialTimeoutPtr := pflag.IntP("dial-timeout", "t", 5, "Connection dialing timeout, in s")
+	connDialTimeoutPtr := pflag.IntP("dial-timeout", "t", 5000, "Connection dialing timeout, in ms")
 	debugPtr := pflag.BoolP("debug", "d", false, "Print debugging information to the standard error")
 	reportingIntervalPtr := pflag.IntP("interval", "i", 1, "Interval, in seconds, between stats updates")
 	assumeyesPtr := pflag.BoolP("assume-yes", "y", false, "Force execution without asking for confirmation")
@@ -31,7 +30,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	tcpclient.DefaultDialTimeoutInSecs = *connDialTimeoutPtr
+	tcpclient.DefaultDialTimeoutInMs = *connDialTimeoutPtr
 
 	var debugOut io.Writer = ioutil.Discard
 	if *debugPtr {

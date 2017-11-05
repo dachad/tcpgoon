@@ -21,17 +21,17 @@ debugOut io.Writer) {
 	for runner := 0; runner < numberConnections; runner++ {
 		select {
 		case <-closureCh:
-			fmt.Fprintln(debugOut, "Runner got the closure request")
+			fmt.Fprintln(debugOut, "MultiTCPConnect routine got the closure request")
 			break
 		default:
-			fmt.Fprintln(debugOut, "Initiating runner # " + strconv.Itoa(runner))
+			fmt.Fprintln(debugOut, "Initiating gothread # " + strconv.Itoa(runner) + " to start a new connection")
 			wg.Add(1)
 			go tcpclient.TCPConnect(runner, host, port, &wg, debugOut, connStatusCh, closureCh)
-			fmt.Fprintln(debugOut, "Runner " + strconv.Itoa(runner) +
+			fmt.Fprintln(debugOut, "Gothread # " + strconv.Itoa(runner) +
 				" initated. Remaining: " + strconv.Itoa(numberConnections - runner))
 			time.Sleep(time.Duration(delay) * time.Millisecond)
 		}
 	}
-	fmt.Fprintln(debugOut, "Waiting runners to finish")
+	fmt.Fprintln(debugOut, "Waiting gothreads to finish")
 	wg.Wait()
 }

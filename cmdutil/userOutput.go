@@ -12,8 +12,9 @@ import (
 )
 
 func printClosureReport(host string, port int, connections []tcpclient.Connection) {
-	// workaround to allow last status updates to be collected properly
-	time.Sleep(time.Duration(50) * time.Millisecond)
+	// workaround to allow last status updates - messages in channels - to be collected properly
+	const timeToWaitForClosureReportInMs = 100
+	time.Sleep(time.Duration(timeToWaitForClosureReportInMs) * time.Millisecond)
 	fmt.Println(strings.Repeat("-", 3), host + ":" + strconv.Itoa(port), "tcp test statistics", strings.Repeat("-", 3))
 	mtcpclient.ReportConnectionsStatus(connections, 0)
 }

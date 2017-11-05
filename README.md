@@ -34,7 +34,7 @@ Usage of ./tcpMaxConn:
 
 ## Example
 
-Successful execution:
+Successful execution (connections were opened as expected):
 ```bash
 % ./tcpMaxConn --host myhttpsamplehost.com --port 80 --connections 10 --sleep 999 -y 
 Total: 10, Dialing: 0, Established: 0, Closed: 0, Error: 0, NotInitiated: 10
@@ -48,12 +48,12 @@ Total: 10, Dialing: 1, Established: 7, Closed: 0, Error: 0, NotInitiated: 2
 Total: 10, Dialing: 1, Established: 8, Closed: 0, Error: 0, NotInitiated: 1
 Total: 10, Dialing: 1, Established: 9, Closed: 0, Error: 0, NotInitiated: 0
 Total: 10, Dialing: 0, Established: 10, Closed: 0, Error: 0, NotInitiated: 0
---- www.google.es:80 tcp test statistics ---
+--- myhttpsamplehost.com:80 tcp test statistics ---
 Total: 10, Dialing: 0, Established: 10, Closed: 0, Error: 0, NotInitiated: 0
 % echo $?
 0
 ```
-Unsuccessful execution:
+Unsuccessful execution (unable to open connections against the destination host:port):
 ```bash
 % ./tcpMaxConn --host myhttpsamplehost.com --port 81 --connections 10 --sleep 999 -y
 Total: 10, Dialing: 0, Established: 0, Closed: 0, Error: 0, NotInitiated: 10
@@ -68,7 +68,7 @@ Total: 10, Dialing: 3, Established: 0, Closed: 0, Error: 6, NotInitiated: 1
 Total: 10, Dialing: 3, Established: 0, Closed: 0, Error: 7, NotInitiated: 0
 Total: 10, Dialing: 2, Established: 0, Closed: 0, Error: 8, NotInitiated: 0
 Total: 10, Dialing: 1, Established: 0, Closed: 0, Error: 9, NotInitiated: 0
---- www.google.es:81 tcp test statistics ---
+--- myhttpsamplehost.com:81 tcp test statistics ---
 Total: 10, Dialing: 0, Established: 0, Closed: 0, Error: 10, NotInitiated: 0
 % echo $?
 2

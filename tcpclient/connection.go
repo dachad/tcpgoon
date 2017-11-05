@@ -4,20 +4,20 @@ import "fmt"
 
 type Connection struct {
 	Id     int
-	status ConnectionStatus
+	status connectionStatus
 }
 
-type ConnectionStatus int
+type connectionStatus int
 
 const (
-	connectionNotInitiated ConnectionStatus = 0
-	connectionDialing      ConnectionStatus = 1
-	connectionEstablished  ConnectionStatus = 2
-	connectionClosed       ConnectionStatus = 3
-	connectionError        ConnectionStatus = 4
+	connectionNotInitiated connectionStatus = 0
+	connectionDialing connectionStatus = 1
+	connectionEstablished connectionStatus = 2
+	connectionClosed connectionStatus = 3
+	connectionError connectionStatus = 4
 )
 
-func (cs ConnectionStatus) isIn(connections []Connection) bool {
+func (cs connectionStatus) isIn(connections []Connection) bool {
 	for _, item := range connections {
 		if item.status == cs {
 			return true
