@@ -12,18 +12,25 @@ import (
 // MultiTCPConnect tries to open us many TCP connections as numberConnections against
 // host:port, with a delay between them of delay (ms). You can supply a
 // debugOut to get debugging messages, while connStatusCh will be streaming
-// tcpclient.Connection descriptions on each status update of the connections
+// tcpclient.Connection descriptions on each status update of the connections.
+// closureCh will interrupt execution when closed
 func MultiTCPConnect(numberConnections int, delay int, host string, port int,
-		connStatusCh chan<- tcpclient.Connection, closureCh <-chan bool,
-		debugOut io.Writer) {
+connStatusCh chan <- tcpclient.Connection, closureCh <-chan bool,
+debugOut io.Writer) {
 	var wg sync.WaitGroup
-	wg.Add(numberConnections)
 	for runner := 0; runner < numberConnections; runner++ {
-		fmt.Fprintln(debugOut, "Initiating runner # " + strconv.Itoa(runner))
-		go tcpclient.TCPConnect(runner, host, port, &wg, debugOut, connStatusCh,  closureCh)
-		time.Sleep(time.Duration(delay) * time.Millisecond)
-		fmt.Fprintln(debugOut, "Runner " + strconv.Itoa(runner) +
-			" initated. Remaining: " + strconv.Itoa(numberConnections - runner))
+		select {
+		case <-closureCh:
+			fmt.Fprintln(debugOut, "Runner got the closure request")
+			break
+		default:
+			fmt.Fprintln(debugOut, "Initiating runner # " + strconv.Itoa(runner))
+			wg.Add(1)
+			go tcpclient.TCPConnect(runner, host, port, &wg, debugOut, connStatusCh, closureCh)
+			fmt.Fprintln(debugOut, "Runner " + strconv.Itoa(runner) +
+				" initated. Remaining: " + strconv.Itoa(numberConnections - runner))
+			time.Sleep(time.Duration(delay) * time.Millisecond)
+		}
 	}
 	fmt.Fprintln(debugOut, "Waiting runners to finish")
 	wg.Wait()
