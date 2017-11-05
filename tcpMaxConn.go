@@ -8,6 +8,7 @@ import (
 	"github.com/spf13/pflag"
 	"github.com/dachad/check-max-tcp-connections/mtcpclient"
 	"github.com/dachad/check-max-tcp-connections/cmdutil"
+	"github.com/dachad/check-max-tcp-connections/tcpclient"
 )
 
 
@@ -18,6 +19,7 @@ func main() {
 	portPtr := pflag.IntP("port", "p", 0, "Port you want to open tcp connections against (Required)")
 	numberConnectionsPtr := pflag.IntP("connections", "c", 100, "Number of connections you want to open")
 	delayPtr := pflag.IntP("sleep", "s", 10, "Time you want to sleep between connections, in ms")
+	connDialTimeoutPtr := pflag.IntP("dial-timeout", "t", 5, "Connection dialing timeout, in s")
 	debugPtr := pflag.BoolP("debug", "d", false, "Print debugging information to the standard error")
 	reportingIntervalPtr := pflag.IntP("interval", "i", 1, "Interval, in seconds, between stats updates")
 	assumeyesPtr := pflag.BoolP("assume-yes", "y", false, "Force execution without asking for confirmation")
@@ -28,6 +30,8 @@ func main() {
 		pflag.PrintDefaults()
 		os.Exit(1)
 	}
+
+	tcpclient.DefaultDialTimeoutInSecs = *connDialTimeoutPtr
 
 	var debugOut io.Writer = ioutil.Discard
 	if *debugPtr {
@@ -40,7 +44,7 @@ func main() {
 	}
 
 	connStatusCh, connStatusTracker := mtcpclient.StartBackgroundReporting(*numberConnectionsPtr, *reportingIntervalPtr)
-	closureCh := mtcpclient.StartBackgroundClosureTrigger(connStatusTracker)
+	closureCh := mtcpclient.StartBackgroundClosureTrigger(connStatusTracker, debugOut)
 	mtcpclient.MultiTCPConnect(*numberConnectionsPtr, *delayPtr, *hostPtr, *portPtr, connStatusCh, closureCh, debugOut)
 	fmt.Fprintln(debugOut, "Tests execution completed")
 
