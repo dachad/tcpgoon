@@ -56,17 +56,17 @@ func PrintGroupOfConnections(c []Connection) string {
 	for _, item := range c {
 		switch item.status {
 		case connectionDialing:
-			nDialing += 1
+			nDialing++
 		case connectionEstablished:
-			nEstablished += 1
+			nEstablished++
 		case connectionClosed:
-			nClosed += 1
+			nClosed++
 		case connectionError:
-			nError += 1
+			nError++
 		case connectionNotInitiated:
-			nNotInitiated += 1
+			nNotInitiated++
 		}
-		nTotal += 1
+		nTotal++
 	}
 	return fmt.Sprintf("Total: %d, Dialing: %d, Established: %d, Closed: %d, Error: %d, NotInitiated: %d",
 		nTotal, nDialing, nEstablished, nClosed, nError, nNotInitiated)

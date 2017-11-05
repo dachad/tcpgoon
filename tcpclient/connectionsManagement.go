@@ -11,7 +11,6 @@ import (
 	"reflect"
 )
 
-// this first one can be a flag in the future
 var DefaultDialTimeoutInSecs = 5
 var defaultReadTimeoutInSecs = 1
 
