@@ -4,35 +4,41 @@
 
 ## TL;DR
 
+Tool to test concurrent connections towards a server listening to a TCP port
 Script to test concurrent connections towards a server listening to a TCP port
 
-## Description/Script steps
+## Description
 
-- Given a hostname, port, and optionally the number of connections (100 by default) and delay between connections (10ms by default)...
-- It will use goroutines to open a tcp connection and try to read from it, waiting the specified delay between each light-thread creation
-- The main flow will just wait until all goroutines have finished (that is, when the OS detects the tcp connection as closed)
-
+- Given a hostname, port, the number of connections (100 by default), 
+a delay between connections (10ms by default) and an interval between stats
+updates to the standard output...
+- It will use goroutines to open a tcp connection and try to read from it
+- The tool will exit once all connections have been dialed (successfully or not)
+- Exit status different from 0 represent executions where all connections were not 
+established successfully
 
 ## Usage
 
 ```bash
 % ./tcpMaxConn --help
 Usage of ./tcpMaxConn:
-  -y, --assume-yes        Force execution without asking for confirmation
-  -c, --connections int   Number of connections you want to open (default 100)
-  -d, --debug             Print debugging information to the standard error
-  -h, --host string       Host you want to open tcp connections against (Required)
-  -i, --interval int      Interval, in seconds, between stats updates (default 1)
-  -p, --port int          Port you want to open tcp connections against (Required)
-  -s, --sleep int         Time you want to sleep between connections, in ms (default 10)
+  -y, --assume-yes         Force execution without asking for confirmation
+  -c, --connections int    Number of connections you want to open (default 100)
+  -d, --debug              Print debugging information to the standard error
+  -t, --dial-timeout int   Connection dialing timeout, in s (default 5)
+  -h, --host string        Host you want to open tcp connections against (Required)
+  -i, --interval int       Interval, in seconds, between stats updates (default 1)
+  -p, --port int           Port you want to open tcp connections against (Required)
+  -s, --sleep int          Time you want to sleep between connections, in ms (default 10)
 ```
 
 ## Example
 
+Successful execution (connections were opened as expected):
 ```bash
-% ./tcpMaxConn --host myhttpsamplehost.com --port 80 --connections 10 --sleep 1000 -y
+% ./tcpMaxConn --host myhttpsamplehost.com --port 80 --connections 10 --sleep 999 -y 
 Total: 10, Dialing: 0, Established: 0, Closed: 0, Error: 0, NotInitiated: 10
-Total: 10, Dialing: 0, Established: 1, Closed: 0, Error: 0, NotInitiated: 9
+Total: 10, Dialing: 1, Established: 1, Closed: 0, Error: 0, NotInitiated: 8
 Total: 10, Dialing: 1, Established: 2, Closed: 0, Error: 0, NotInitiated: 7
 Total: 10, Dialing: 1, Established: 3, Closed: 0, Error: 0, NotInitiated: 6
 Total: 10, Dialing: 1, Established: 4, Closed: 0, Error: 0, NotInitiated: 5
@@ -42,7 +48,30 @@ Total: 10, Dialing: 1, Established: 7, Closed: 0, Error: 0, NotInitiated: 2
 Total: 10, Dialing: 1, Established: 8, Closed: 0, Error: 0, NotInitiated: 1
 Total: 10, Dialing: 1, Established: 9, Closed: 0, Error: 0, NotInitiated: 0
 Total: 10, Dialing: 0, Established: 10, Closed: 0, Error: 0, NotInitiated: 0
+--- myhttpsamplehost.com:80 tcp test statistics ---
 Total: 10, Dialing: 0, Established: 10, Closed: 0, Error: 0, NotInitiated: 0
+% echo $?
+0
+```
+Unsuccessful execution (unable to open connections against the destination host:port):
+```bash
+% ./tcpMaxConn --host myhttpsamplehost.com --port 81 --connections 10 --sleep 999 -y
+Total: 10, Dialing: 0, Established: 0, Closed: 0, Error: 0, NotInitiated: 10
+Total: 10, Dialing: 2, Established: 0, Closed: 0, Error: 0, NotInitiated: 8
+Total: 10, Dialing: 3, Established: 0, Closed: 0, Error: 0, NotInitiated: 7
+Total: 10, Dialing: 3, Established: 0, Closed: 0, Error: 1, NotInitiated: 6
+Total: 10, Dialing: 3, Established: 0, Closed: 0, Error: 2, NotInitiated: 5
+Total: 10, Dialing: 3, Established: 0, Closed: 0, Error: 3, NotInitiated: 4
+Total: 10, Dialing: 3, Established: 0, Closed: 0, Error: 4, NotInitiated: 3
+Total: 10, Dialing: 3, Established: 0, Closed: 0, Error: 5, NotInitiated: 2
+Total: 10, Dialing: 3, Established: 0, Closed: 0, Error: 6, NotInitiated: 1
+Total: 10, Dialing: 3, Established: 0, Closed: 0, Error: 7, NotInitiated: 0
+Total: 10, Dialing: 2, Established: 0, Closed: 0, Error: 8, NotInitiated: 0
+Total: 10, Dialing: 1, Established: 0, Closed: 0, Error: 9, NotInitiated: 0
+--- myhttpsamplehost.com:81 tcp test statistics ---
+Total: 10, Dialing: 0, Established: 0, Closed: 0, Error: 10, NotInitiated: 0
+% echo $?
+2
 ```
 
 ## TO-DO

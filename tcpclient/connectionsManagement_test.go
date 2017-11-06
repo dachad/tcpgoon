@@ -33,7 +33,7 @@ func TestTcpConnect(t *testing.T) {
 
 	for runner := 1; runner <= numberConnections; runner++ {
 		t.Log("Initiating runner # ", strconv.Itoa(runner))
-		go TCPConnect(runner, host, port, &wg, ioutil.Discard, make(chan Connection, numberConnections))
+		go TCPConnect(runner, host, port, &wg, ioutil.Discard, make(chan Connection, numberConnections), make(chan bool))
 		t.Logf("Runner %s initated. Remaining: %s", strconv.Itoa(runner), strconv.Itoa(numberConnections-runner))
 	}
 

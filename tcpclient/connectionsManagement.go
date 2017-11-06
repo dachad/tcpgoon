@@ -8,10 +8,10 @@ import (
 	"strconv"
 	"sync"
 	"time"
+	"reflect"
 )
 
-// this can be an argument in the future
-var defaultDialTimeoutInSecs = 10
+var DefaultDialTimeoutInMs = 5000
 
 func reportConnectionStatus(debugOut io.Writer, statusChannel chan<- Connection, connectionDescription Connection) {
 	statusChannel <- connectionDescription
@@ -21,18 +21,19 @@ func reportConnectionStatus(debugOut io.Writer, statusChannel chan<- Connection,
 // TCPConnect just opens a TCP connection against the target described by
 // the host:port, and considers the id to report back status changes through the
 // status goChannel with descriptors matching the Connection struct supplied in this
-// same package.
-// It also needs an iowriter to print debugging information.
-func TCPConnect(id int, host string, port int, wg *sync.WaitGroup, debugOut io.Writer, statusChannel chan<- Connection) error {
+// same package. It also needs an iowriter to print debugging information (it can be
+// ioutil.Discard.
+func TCPConnect(id int, host string, port int, wg *sync.WaitGroup, debugOut io.Writer,
+		statusChannel chan<- Connection, closeRequest <-chan bool) error {
 	connectionDescription := Connection{
 		Id:     id,
-		status: ConnectionDialing,
+		status: connectionDialing,
 	}
 	reportConnectionStatus(debugOut, statusChannel, connectionDescription)
 	conn, err := net.DialTimeout("tcp", host+":"+strconv.Itoa(port),
-		time.Duration(defaultDialTimeoutInSecs)*time.Second)
+		time.Duration(DefaultDialTimeoutInMs)*time.Millisecond)
 	if err != nil {
-		connectionDescription.status = ConnectionError
+		connectionDescription.status = connectionError
 		reportConnectionStatus(debugOut, statusChannel, connectionDescription)
 		fmt.Fprintln(debugOut, "Connection", id, "was unable to open the connection. Error:")
 		fmt.Fprintln(debugOut, err)
@@ -40,19 +41,35 @@ func TCPConnect(id int, host string, port int, wg *sync.WaitGroup, debugOut io.W
 		return err
 	}
 
-	connectionDescription.status = ConnectionEstablished
+	defer conn.Close()
+	connectionDescription.status = connectionEstablished
 	reportConnectionStatus(debugOut, statusChannel, connectionDescription)
 	connBuf := bufio.NewReader(conn)
 	for {
-		str, err := connBuf.ReadString('\n')
-		if len(str) > 0 {
-			fmt.Fprintln(debugOut, "Connection", id, "got", str)
-		}
-		if err != nil {
-			connectionDescription.status = ConnectionClosed
-			reportConnectionStatus(debugOut, statusChannel, connectionDescription)
+		select {
+		case <-closeRequest:
+			fmt.Fprintln(debugOut, "Connection", id, "is being requested to close")
+			// we don't mark connection as closed, as its us closing cleanly at the end of the execution,
+			//  so final report can consider it was established when finishing and not closed by the other end
 			wg.Done()
-			return err
+			return nil
+		default:
+			const ReadTimeoutAndBetweenPollsInMs = 1000
+			conn.SetReadDeadline(time.Now().Add(time.Duration(ReadTimeoutAndBetweenPollsInMs) * time.Millisecond))
+			str, err := connBuf.ReadString('\n')
+			if terr, ok := err.(net.Error); ok && terr.Timeout() {
+				fmt.Fprintln(debugOut, "No info from connection", id, "before timing out. Reading again...")
+			} else if err != nil {
+				fmt.Fprintln(debugOut, "Connection", id, "looks closed. Error", reflect.TypeOf(err),"when reading:")
+				fmt.Fprintln(debugOut, err)
+				connectionDescription.status = connectionClosed
+				reportConnectionStatus(debugOut, statusChannel, connectionDescription)
+				wg.Done()
+				return err
+			} else if len(str) > 0 {
+				fmt.Fprintln(debugOut, "Connection", id, "got", str)
+			}
 		}
+
 	}
 }
