@@ -9,7 +9,7 @@ import (
 func collectConnectionsStatus(connectionsStatusRegistry []tcpclient.Connection, statusChannel <-chan tcpclient.Connection) {
 	for {
 		newConnectionStatusReported := <-statusChannel
-		connectionsStatusRegistry[newConnectionStatusReported.Id] = newConnectionStatusReported
+		connectionsStatusRegistry[newConnectionStatusReported.ID] = newConnectionStatusReported
 	}
 }
 

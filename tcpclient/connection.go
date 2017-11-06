@@ -3,7 +3,7 @@ package tcpclient
 import "fmt"
 
 type Connection struct {
-	Id     int
+	ID     int
 	status connectionStatus
 }
 
@@ -11,10 +11,10 @@ type connectionStatus int
 
 const (
 	connectionNotInitiated connectionStatus = 0
-	connectionDialing connectionStatus = 1
-	connectionEstablished connectionStatus = 2
-	connectionClosed connectionStatus = 3
-	connectionError connectionStatus = 4
+	connectionDialing      connectionStatus = 1
+	connectionEstablished  connectionStatus = 2
+	connectionClosed       connectionStatus = 3
+	connectionError        connectionStatus = 4
 )
 
 func (cs connectionStatus) isIn(connections []Connection) bool {
@@ -40,7 +40,7 @@ func (c Connection) String() string {
 	case connectionError:
 		status = "errored"
 	}
-	return fmt.Sprintf("Connection %d is %s", c.Id, status)
+	return fmt.Sprintf("Connection %d is %s", c.ID, status)
 }
 
 func PendingConnections(c []Connection) bool {

@@ -26,7 +26,7 @@ func reportConnectionStatus(debugOut io.Writer, statusChannel chan<- Connection,
 func TCPConnect(id int, host string, port int, wg *sync.WaitGroup, debugOut io.Writer,
 		statusChannel chan<- Connection, closeRequest <-chan bool) error {
 	connectionDescription := Connection{
-		Id:     id,
+		ID:     id,
 		status: connectionDialing,
 	}
 	reportConnectionStatus(debugOut, statusChannel, connectionDescription)
