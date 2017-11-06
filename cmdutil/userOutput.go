@@ -44,7 +44,7 @@ func AskForUserConfirmation(host string, port int, connections int) bool {
 		case stringInSlice(response, []string{"no", "n", ""}):
 			return false
 		default:
-			fmt.Println("\nSorry, response not recongized. Try again, please")
+			fmt.Println("\nSorry, response not recognized. Try again, please")
 		}
 	}
 }
