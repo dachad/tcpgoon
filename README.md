@@ -1,9 +1,9 @@
 # TCP concurrent connection tester
 
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/b211244c4a674049864d45020aa8e883)](https://www.codacy.com/app/dachad/check-max-tcp-connections?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=dachad/check-max-tcp-connections&amp;utm_campaign=Badge_Grade)
-[![Build Status](https://travis-ci.org/dachad/check-max-tcp-connections.svg?branch=master)](https://travis-ci.org/dachad/check-max-tcp-connections)
-[![Go Report Card](https://goreportcard.com/badge/github.com/dachad/check-max-tcp-connections)](https://goreportcard.com/report/github.com/dachad/check-max-tcp-connections)
-[![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/dachad/check-max-tcp-connections/blob/master/LICENSE)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/b211244c4a674049864d45020aa8e883)](https://www.codacy.com/app/dachad/tcpgoon?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=dachad/tcpgoon&amp;utm_campaign=Badge_Grade)
+[![Build Status](https://travis-ci.org/dachad/tcpgoon.svg?branch=master)](https://travis-ci.org/dachad/tcpgoon)
+[![Go Report Card](https://goreportcard.com/badge/github.com/dachad/tcpgoon)](https://goreportcard.com/report/github.com/dachad/tcpgoon)
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/dachad/tcpgoon/blob/master/LICENSE)
 
 ## TL;DR
 
@@ -22,8 +22,8 @@ established successfully
 ## Usage
 
 ```bash
-% ./tcpMaxConn --help
-Usage of ./tcpMaxConn:
+% ./tcpgoon --help
+Usage of ./tcpgoon:
   -y, --assume-yes         Force execution without asking for confirmation
   -c, --connections int    Number of connections you want to open (default 100)
   -d, --debug              Print debugging information to the standard error
@@ -38,7 +38,7 @@ Usage of ./tcpMaxConn:
 
 Successful execution (connections were opened as expected):
 ```bash
-% ./tcpMaxConn --host myhttpsamplehost.com --port 80 --connections 10 --sleep 999 -y 
+% ./tcpgoon --host myhttpsamplehost.com --port 80 --connections 10 --sleep 999 -y 
 Total: 10, Dialing: 0, Established: 0, Closed: 0, Error: 0, NotInitiated: 10
 Total: 10, Dialing: 1, Established: 1, Closed: 0, Error: 0, NotInitiated: 8
 Total: 10, Dialing: 1, Established: 2, Closed: 0, Error: 0, NotInitiated: 7
@@ -57,7 +57,7 @@ Total: 10, Dialing: 0, Established: 10, Closed: 0, Error: 0, NotInitiated: 0
 ```
 Unsuccessful execution (unable to open connections against the destination host:port):
 ```bash
-% ./tcpMaxConn --host myhttpsamplehost.com --port 81 --connections 10 --sleep 999 -y
+% ./tcpgoon --host myhttpsamplehost.com --port 81 --connections 10 --sleep 999 -y
 Total: 10, Dialing: 0, Established: 0, Closed: 0, Error: 0, NotInitiated: 10
 Total: 10, Dialing: 2, Established: 0, Closed: 0, Error: 0, NotInitiated: 8
 Total: 10, Dialing: 3, Established: 0, Closed: 0, Error: 0, NotInitiated: 7

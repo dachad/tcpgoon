@@ -2,8 +2,9 @@ package mtcpclient
 
 import (
 	"fmt"
-	"github.com/dachad/check-max-tcp-connections/tcpclient"
 	"time"
+
+	"github.com/dachad/tcpgoon/tcpclient"
 )
 
 func collectConnectionsStatus(connectionsStatusRegistry []tcpclient.Connection, statusChannel <-chan tcpclient.Connection) {
