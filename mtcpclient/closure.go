@@ -2,12 +2,13 @@ package mtcpclient
 
 import (
 	"fmt"
-	"github.com/dachad/check-max-tcp-connections/tcpclient"
 	"io"
 	"os"
 	"os/signal"
 	"syscall"
 	"time"
+
+	"github.com/dachad/tcpgoon/tcpclient"
 )
 
 func StartBackgroundClosureTrigger(connections []tcpclient.Connection, debugOut io.Writer) <-chan bool {

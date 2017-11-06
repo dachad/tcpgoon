@@ -3,12 +3,13 @@ package cmdutil
 import (
 	"bufio"
 	"fmt"
-	"github.com/dachad/check-max-tcp-connections/mtcpclient"
-	"github.com/dachad/check-max-tcp-connections/tcpclient"
 	"os"
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/dachad/tcpgoon/mtcpclient"
+	"github.com/dachad/tcpgoon/tcpclient"
 )
 
 func printClosureReport(host string, port int, connections []tcpclient.Connection) {

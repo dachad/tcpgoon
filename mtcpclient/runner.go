@@ -2,11 +2,12 @@ package mtcpclient
 
 import (
 	"fmt"
-	"github.com/dachad/check-max-tcp-connections/tcpclient"
 	"io"
 	"strconv"
 	"sync"
 	"time"
+
+	"github.com/dachad/tcpgoon/tcpclient"
 )
 
 // MultiTCPConnect tries to open us many TCP connections as numberConnections against

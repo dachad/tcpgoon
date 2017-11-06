@@ -2,9 +2,10 @@ package cmdutil
 
 import (
 	"fmt"
-	"github.com/dachad/check-max-tcp-connections/tcpclient"
 	"io"
 	"os"
+
+	"github.com/dachad/tcpgoon/tcpclient"
 )
 
 const (

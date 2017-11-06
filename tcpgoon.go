@@ -2,13 +2,14 @@ package main
 
 import (
 	"fmt"
-	"github.com/dachad/check-max-tcp-connections/cmdutil"
-	"github.com/dachad/check-max-tcp-connections/mtcpclient"
-	"github.com/dachad/check-max-tcp-connections/tcpclient"
-	"github.com/spf13/pflag"
 	"io"
 	"io/ioutil"
 	"os"
+
+	"github.com/dachad/tcpgoon/cmdutil"
+	"github.com/dachad/tcpgoon/mtcpclient"
+	"github.com/dachad/tcpgoon/tcpclient"
+	"github.com/spf13/pflag"
 )
 
 func main() {
