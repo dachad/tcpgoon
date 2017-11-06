@@ -1,4 +1,6 @@
-# TCP concurrent connection tester
+<p align="center">
+<img src="http://www.confusedcoders.com/wp-content/uploads/2016/10/golang-1.jpg" alt="tcpgoon" title="tcpgoon" />
+</p>
 
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/b211244c4a674049864d45020aa8e883)](https://www.codacy.com/app/dachad/tcpgoon?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=dachad/tcpgoon&amp;utm_campaign=Badge_Grade)
 [![Build Status](https://travis-ci.org/dachad/tcpgoon.svg?branch=master)](https://travis-ci.org/dachad/tcpgoon)
