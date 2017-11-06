@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
-set -exu
+set -exuo pipefail
+
+cd $(dirname $0)/..
 
 ./_script/test
+./_script/formatting_checks

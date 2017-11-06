@@ -2,16 +2,14 @@ package main
 
 import (
 	"fmt"
+	"github.com/dachad/check-max-tcp-connections/cmdutil"
+	"github.com/dachad/check-max-tcp-connections/mtcpclient"
+	"github.com/dachad/check-max-tcp-connections/tcpclient"
+	"github.com/spf13/pflag"
 	"io"
 	"io/ioutil"
 	"os"
-	"github.com/spf13/pflag"
-	"github.com/dachad/check-max-tcp-connections/mtcpclient"
-	"github.com/dachad/check-max-tcp-connections/cmdutil"
-	"github.com/dachad/check-max-tcp-connections/tcpclient"
 )
-
-
 
 func main() {
 	hostPtr := pflag.StringP("host", "h", "", "Host you want to open tcp connections against (Required)")

@@ -1,16 +1,16 @@
 package mtcpclient
 
 import (
+	"fmt"
 	"github.com/dachad/check-max-tcp-connections/tcpclient"
-	"time"
+	"io"
 	"os"
 	"os/signal"
 	"syscall"
-	"fmt"
-	"io"
+	"time"
 )
 
-func StartBackgroundClosureTrigger(connections []tcpclient.Connection, debugOut io.Writer) (<-chan bool) {
+func StartBackgroundClosureTrigger(connections []tcpclient.Connection, debugOut io.Writer) <-chan bool {
 	closureCh := make(chan bool)
 
 	signalsCh := make(chan os.Signal, 1)
@@ -32,7 +32,7 @@ func registerProperSignals(signalsCh chan os.Signal) {
 // closureMonitor polls a connections slice, to see if there's connections pending
 //  to be triggered, and a signal channel, in case execution is interrupted
 func closureMonitor(connections []tcpclient.Connection, signalsCh chan os.Signal,
-		    closureCh chan bool, debugOut io.Writer) {
+	closureCh chan bool, debugOut io.Writer) {
 	const pullingPeriodInMs = 500
 	for {
 		select {

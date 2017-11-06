@@ -1,12 +1,12 @@
 package tcpclient
 
 import (
+	"github.com/dachad/check-max-tcp-connections/tcpserver"
+	"io/ioutil"
 	"strconv"
 	"sync"
 	"testing"
 	"time"
-	"github.com/dachad/check-max-tcp-connections/tcpserver"
-	"io/ioutil"
 )
 
 // We really need to refactor this test. We should verify connections do become established,

@@ -1,15 +1,15 @@
 package cmdutil
 
 import (
-	"os"
 	"fmt"
-	"io"
 	"github.com/dachad/check-max-tcp-connections/tcpclient"
+	"io"
+	"os"
 )
 
 const (
-	okExitStatus = 0
-	incompleteExecutionExitStatus = 1
+	okExitStatus                     = 0
+	incompleteExecutionExitStatus    = 1
 	completedButConnErrorsExitStatus = 2
 )
 
@@ -27,7 +27,7 @@ func CloseNicely(host string, port int, connections []tcpclient.Connection, debu
 	os.Exit(okExitStatus)
 }
 
-func CloseAbruptly()  {
+func CloseAbruptly() {
 	fmt.Println("\n*** Execution aborted as prompted by the user ***")
 	os.Exit(incompleteExecutionExitStatus)
 }

@@ -5,10 +5,10 @@ import (
 	"fmt"
 	"io"
 	"net"
+	"reflect"
 	"strconv"
 	"sync"
 	"time"
-	"reflect"
 )
 
 var DefaultDialTimeoutInMs = 5000
@@ -24,9 +24,9 @@ func reportConnectionStatus(debugOut io.Writer, statusChannel chan<- Connection,
 // same package. It also needs an iowriter to print debugging information (it can be
 // ioutil.Discard.
 func TCPConnect(id int, host string, port int, wg *sync.WaitGroup, debugOut io.Writer,
-		statusChannel chan<- Connection, closeRequest <-chan bool) error {
+	statusChannel chan<- Connection, closeRequest <-chan bool) error {
 	connectionDescription := Connection{
-		Id:     id,
+		ID:     id,
 		status: connectionDialing,
 	}
 	reportConnectionStatus(debugOut, statusChannel, connectionDescription)
@@ -60,7 +60,7 @@ func TCPConnect(id int, host string, port int, wg *sync.WaitGroup, debugOut io.W
 			if terr, ok := err.(net.Error); ok && terr.Timeout() {
 				fmt.Fprintln(debugOut, "No info from connection", id, "before timing out. Reading again...")
 			} else if err != nil {
-				fmt.Fprintln(debugOut, "Connection", id, "looks closed. Error", reflect.TypeOf(err),"when reading:")
+				fmt.Fprintln(debugOut, "Connection", id, "looks closed. Error", reflect.TypeOf(err), "when reading:")
 				fmt.Fprintln(debugOut, err)
 				connectionDescription.status = connectionClosed
 				reportConnectionStatus(debugOut, statusChannel, connectionDescription)
