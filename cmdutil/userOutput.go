@@ -1,21 +1,21 @@
 package cmdutil
 
 import (
-	"github.com/dachad/check-max-tcp-connections/tcpclient"
-	"time"
-	"fmt"
-	"strings"
-	"github.com/dachad/check-max-tcp-connections/mtcpclient"
 	"bufio"
+	"fmt"
+	"github.com/dachad/check-max-tcp-connections/mtcpclient"
+	"github.com/dachad/check-max-tcp-connections/tcpclient"
 	"os"
 	"strconv"
+	"strings"
+	"time"
 )
 
 func printClosureReport(host string, port int, connections []tcpclient.Connection) {
 	// workaround to allow last status updates - messages in channels - to be collected properly
 	const timeToWaitForClosureReportInMs = 100
 	time.Sleep(time.Duration(timeToWaitForClosureReportInMs) * time.Millisecond)
-	fmt.Println(strings.Repeat("-", 3), host + ":" + strconv.Itoa(port), "tcp test statistics", strings.Repeat("-", 3))
+	fmt.Println(strings.Repeat("-", 3), host+":"+strconv.Itoa(port), "tcp test statistics", strings.Repeat("-", 3))
 	mtcpclient.ReportConnectionsStatus(connections, 0)
 }
 

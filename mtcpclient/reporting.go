@@ -28,7 +28,7 @@ func ReportConnectionsStatus(connectionDescriptions []tcpclient.Connection, inte
 func StartBackgroundReporting(numberConnections int, rinterval int) (chan tcpclient.Connection, []tcpclient.Connection) {
 	// A connection may report up to 3 messages: Dialing -> Established -> Closed
 	const maxMessagesWeMayGetPerConnection = 3
-	connStatusCh := make(chan tcpclient.Connection, numberConnections * maxMessagesWeMayGetPerConnection)
+	connStatusCh := make(chan tcpclient.Connection, numberConnections*maxMessagesWeMayGetPerConnection)
 	connStatusTracker := make([]tcpclient.Connection, numberConnections)
 
 	go ReportConnectionsStatus(connStatusTracker, rinterval)
