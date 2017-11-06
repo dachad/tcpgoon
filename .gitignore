@@ -28,4 +28,4 @@ _testmain.go
 env/
 
 # GO binary
-tcpMaxConn
+tcpgoon
