@@ -1,6 +1,6 @@
 # TCP concurrent connection tester
 
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/b211244c4a674049864d45020aa8e883)](https://www.codacy.com/app/chadell/check-max-tcp-connections?utm_source=github.com&utm_medium=referral&utm_content=dachad/check-max-tcp-connections&utm_campaign=badger) 
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/b211244c4a674049864d45020aa8e883)](https://www.codacy.com/app/dachad/check-max-tcp-connections?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=dachad/check-max-tcp-connections&amp;utm_campaign=Badge_Grade)
 [![Build Status](https://travis-ci.org/dachad/check-max-tcp-connections.svg?branch=master)](https://travis-ci.org/dachad/check-max-tcp-connections)
 [![Go Report Card](https://goreportcard.com/badge/github.com/dachad/check-max-tcp-connections)](https://goreportcard.com/report/github.com/dachad/check-max-tcp-connections)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/dachad/check-max-tcp-connections/blob/master/LICENSE)
