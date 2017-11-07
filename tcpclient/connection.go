@@ -85,3 +85,26 @@ func PrintGroupOfConnections(c []Connection) string {
 	return fmt.Sprintf("Total: %d, Dialing: %d, Established: %d, Closed: %d, Error: %d, NotInitiated: %d",
 		nTotal, nDialing, nEstablished, nClosed, nError, nNotInitiated)
 }
+
+func PrintFinalMetricsReport(c []Connection) string {
+	var avgToEstablished, minToEstablished, maxToEstablished time.Duration
+	var totalToEstalished time.Duration
+	for i, item := range c {
+		if i == 0 {
+			totalToEstalished = item.timeToEstablished()
+			minToEstablished = item.timeToEstablished()
+			maxToEstablished = item.timeToEstablished()
+		} else {
+			switch {
+			case item.timeToEstablished() < minToEstablished:
+				minToEstablished = item.timeToEstablished()
+			case item.timeToEstablished() > maxToEstablished:
+				maxToEstablished = item.timeToEstablished()
+			}
+			totalToEstalished += item.timeToEstablished()
+		}
+	}
+	avgToEstablished = totalToEstalished / time.Duration(len(c))
+
+	return "TCP Established time min/avg/max = " + minToEstablished.String() + "/" + avgToEstablished.String() + "/" + maxToEstablished.String()
+}

@@ -18,6 +18,7 @@ func ReportConnectionsStatus(connectionDescriptions []tcpclient.Connection, inte
 	for {
 		fmt.Println(tcpclient.PrintGroupOfConnections(connectionDescriptions))
 		if intervalBetweenUpdates == 0 {
+			fmt.Println(tcpclient.PrintFinalMetricsReport(connectionDescriptions))
 			break
 		}
 		time.Sleep(time.Duration(intervalBetweenUpdates) * time.Second)
