@@ -26,8 +26,9 @@ func reportConnectionStatus(debugOut io.Writer, statusChannel chan<- Connection,
 func TCPConnect(id int, host string, port int, wg *sync.WaitGroup, debugOut io.Writer,
 	statusChannel chan<- Connection, closeRequest <-chan bool) error {
 	connectionDescription := Connection{
-		ID:     id,
-		status: connectionDialing,
+		ID:      id,
+		status:  connectionDialing,
+		metrics: connectionMetrics{timeTCPInitiatied: time.Now()},
 	}
 	reportConnectionStatus(debugOut, statusChannel, connectionDescription)
 	conn, err := net.DialTimeout("tcp", host+":"+strconv.Itoa(port),
@@ -43,6 +44,7 @@ func TCPConnect(id int, host string, port int, wg *sync.WaitGroup, debugOut io.W
 
 	defer conn.Close()
 	connectionDescription.status = connectionEstablished
+	connectionDescription.metrics.timeTCPEstablished = time.Now()
 	reportConnectionStatus(debugOut, statusChannel, connectionDescription)
 	connBuf := bufio.NewReader(conn)
 	for {
