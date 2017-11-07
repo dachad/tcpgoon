@@ -54,6 +54,7 @@ Total: 10, Dialing: 1, Established: 9, Closed: 0, Error: 0, NotInitiated: 0
 Total: 10, Dialing: 0, Established: 10, Closed: 0, Error: 0, NotInitiated: 0
 --- myhttpsamplehost.com:80 tcp test statistics ---
 Total: 10, Dialing: 0, Established: 10, Closed: 0, Error: 0, NotInitiated: 0
+TCP Established time min/avg/max = 34.824647ms/36.571555ms/122.704581ms
 % echo $?
 0
 ```
