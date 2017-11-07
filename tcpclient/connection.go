@@ -1,13 +1,23 @@
 package tcpclient
 
-import "fmt"
+import (
+	"fmt"
+	"time"
+)
 
 type Connection struct {
-	ID     int
-	status connectionStatus
+	ID      int
+	status  connectionStatus
+	metrics connectionMetrics
 }
 
 type connectionStatus int
+
+type connectionMetrics struct {
+	timeTCPInitiatied  time.Time
+	timeTCPEstablished time.Time
+	// packets lost, retransmissions and other metrics could come
+}
 
 const (
 	connectionNotInitiated connectionStatus = 0
@@ -16,6 +26,10 @@ const (
 	connectionClosed       connectionStatus = 3
 	connectionError        connectionStatus = 4
 )
+
+func (c Connection) timeToEstablished() time.Duration {
+	return c.metrics.timeTCPEstablished.Sub(c.metrics.timeTCPInitiatied)
+}
 
 func (cs connectionStatus) isIn(connections []Connection) bool {
 	for _, item := range connections {
@@ -34,7 +48,7 @@ func (c Connection) String() string {
 	case connectionDialing:
 		status = "dialing"
 	case connectionEstablished:
-		status = "established"
+		status = "established in " + c.timeToEstablished().String()
 	case connectionClosed:
 		status = "closed"
 	case connectionError:
