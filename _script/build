@@ -4,5 +4,13 @@ set -exuo pipefail
 
 cd $(dirname $0)/..
 
-go build
-docker build .
+# mix of:
+#  traefik build
+#  http://blog.wrouesnel.com/articles/Totally%20static%20Go%20builds/
+#  https://www.osso.nl/blog/golang-statically-linked/
+#  https://github.com/kubernetes/kubernetes/pull/26028/files
+# see also https://gcc.gnu.org/onlinedocs/gcc/Link-Options.html
+CGO_ENABLED=0 GOOS=linux go build \
+    -ldflags '-extldflags "-static"' -a -installsuffix nocgo -tags netgo
+
+docker build -t dachad/tcpgoon .
