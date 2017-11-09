@@ -18,7 +18,6 @@ func ReportConnectionsStatus(connectionDescriptions []tcpclient.Connection, inte
 	for {
 		fmt.Println(tcpclient.PrintGroupOfConnections(connectionDescriptions))
 		if intervalBetweenUpdates == 0 {
-			fmt.Println(tcpclient.PrintFinalMetricsReport(connectionDescriptions))
 			break
 		}
 		time.Sleep(time.Duration(intervalBetweenUpdates) * time.Second)
@@ -37,4 +36,8 @@ func StartBackgroundReporting(numberConnections int, rinterval int) (chan tcpcli
 	go collectConnectionsStatus(connStatusTracker, connStatusCh)
 
 	return connStatusCh, connStatusTracker
+}
+
+func ReportExecutionSummary(connectionDescriptions []tcpclient.Connection) {
+	fmt.Println(tcpclient.PrintFinalMetricsReport(connectionDescriptions))
 }

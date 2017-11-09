@@ -18,6 +18,7 @@ func printClosureReport(host string, port int, connections []tcpclient.Connectio
 	time.Sleep(time.Duration(timeToWaitForClosureReportInMs) * time.Millisecond)
 	fmt.Println(strings.Repeat("-", 3), host+":"+strconv.Itoa(port), "tcp test statistics", strings.Repeat("-", 3))
 	mtcpclient.ReportConnectionsStatus(connections, 0)
+	mtcpclient.ReportExecutionSummary(connections)
 }
 
 func AskForUserConfirmation(host string, port int, connections int) bool {
