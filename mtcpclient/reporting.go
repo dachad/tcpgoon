@@ -39,5 +39,28 @@ func StartBackgroundReporting(numberConnections int, rinterval int) (chan tcpcli
 }
 
 func ReportExecutionSummary(connectionDescriptions []tcpclient.Connection) {
-	fmt.Println(tcpclient.PrintFinalMetricsReport(connectionDescriptions))
+	fmt.Println(printFinalMetricsReport(connectionDescriptions))
+}
+
+func printFinalMetricsReport(c []tcpclient.Connection) string {
+	var avgToEstablished, minToEstablished, maxToEstablished time.Duration
+	var totalToEstalished time.Duration
+	for i, item := range c {
+		if i == 0 {
+			totalToEstalished = tcpclient.TCPProcessingTime(item)
+			minToEstablished = tcpclient.TCPProcessingTime(item)
+			maxToEstablished = tcpclient.TCPProcessingTime(item)
+		} else {
+			switch {
+			case tcpclient.TCPProcessingTime(item) < minToEstablished:
+				minToEstablished = tcpclient.TCPProcessingTime(item)
+			case tcpclient.TCPProcessingTime(item) > maxToEstablished:
+				maxToEstablished = tcpclient.TCPProcessingTime(item)
+			}
+			totalToEstalished += tcpclient.TCPProcessingTime(item)
+		}
+	}
+	avgToEstablished = totalToEstalished / time.Duration(len(c))
+
+	return "Time to establish TCP connections min/avg/max = " + minToEstablished.String() + "/" + avgToEstablished.String() + "/" + maxToEstablished.String()
 }

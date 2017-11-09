@@ -67,6 +67,10 @@ func ConnectionInError(c []Connection) bool {
 	return connectionError.isIn(c)
 }
 
+func TCPProcessingTime(c Connection) time.Duration {
+	return c.metrics.processingTime
+}
+
 func PrintGroupOfConnections(c []Connection) string {
 	var nDialing, nEstablished, nClosed, nNotInitiated, nError, nTotal int = 0, 0, 0, 0, 0, 0
 	for _, item := range c {
@@ -86,27 +90,4 @@ func PrintGroupOfConnections(c []Connection) string {
 	}
 	return fmt.Sprintf("Total: %d, Dialing: %d, Established: %d, Closed: %d, Error: %d, NotInitiated: %d",
 		nTotal, nDialing, nEstablished, nClosed, nError, nNotInitiated)
-}
-
-func PrintFinalMetricsReport(c []Connection) string {
-	var avgToEstablished, minToEstablished, maxToEstablished time.Duration
-	var totalToEstalished time.Duration
-	for i, item := range c {
-		if i == 0 {
-			totalToEstalished = item.metrics.processingTime
-			minToEstablished = item.metrics.processingTime
-			maxToEstablished = item.metrics.processingTime
-		} else {
-			switch {
-			case item.metrics.processingTime < minToEstablished:
-				minToEstablished = item.metrics.processingTime
-			case item.metrics.processingTime > maxToEstablished:
-				maxToEstablished = item.metrics.processingTime
-			}
-			totalToEstalished += item.metrics.processingTime
-		}
-	}
-	avgToEstablished = totalToEstalished / time.Duration(len(c))
-
-	return "TCP Established time min/avg/max = " + minToEstablished.String() + "/" + avgToEstablished.String() + "/" + maxToEstablished.String()
 }
