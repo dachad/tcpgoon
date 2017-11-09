@@ -43,13 +43,20 @@ func (c Connection) String() string {
 	case connectionDialing:
 		status = "dialing"
 	case connectionEstablished:
-		status = "established in " + c.metrics.processingTime.String()
+		status = "established"
 	case connectionClosed:
 		status = "closed"
 	case connectionError:
 		status = "errored"
 	}
-	return fmt.Sprintf("Connection %d is %s", c.ID, status)
+
+	switch c.status {
+	case connectionEstablished:
+		return fmt.Sprintf("Connection %d has become %s after %s", c.ID, status, c.metrics.processingTime)
+	default:
+		return fmt.Sprintf("Connection %d is %s", c.ID, status)
+	}
+
 }
 
 func PendingConnections(c []Connection) bool {
