@@ -39,13 +39,13 @@ func StartBackgroundReporting(numberConnections int, rinterval int) (chan tcpcli
 	return connStatusCh, connStatusTracker
 }
 
-func ReportExecutionSummary(connectionDescriptions []tcpclient.Connection) {
-	fmt.Println(printFinalMetricsReport(connectionDescriptions))
-}
-
-func printFinalMetricsReport(connectionDescriptions []tcpclient.Connection) string {
+func FinalMetricsReport(connectionDescriptions []tcpclient.Connection) string {
 	mr := calculateMetricsReport(connectionDescriptions)
-	return "Time to establish TCP connections min/avg/max/stdDev = " + mr.minToEstablished.String() + "/" + mr.avgToEstablished.String() + "/" + mr.maxToEstablished.String() + "/" + mr.stdDevToEstablished.String()
+	return "Time to establish TCP connections min/avg/max/stdDev = " +
+		mr.minToEstablished.String() + "/" +
+		mr.avgToEstablished.String() + "/" +
+		mr.maxToEstablished.String() + "/" +
+		mr.stdDevToEstablished.String()
 }
 
 type metricsReport struct {
