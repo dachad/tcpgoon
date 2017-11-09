@@ -42,25 +42,37 @@ func ReportExecutionSummary(connectionDescriptions []tcpclient.Connection) {
 	fmt.Println(printFinalMetricsReport(connectionDescriptions))
 }
 
-func printFinalMetricsReport(c []tcpclient.Connection) string {
-	var avgToEstablished, minToEstablished, maxToEstablished time.Duration
-	var totalToEstalished time.Duration
+func printFinalMetricsReport(connectionDescriptions []tcpclient.Connection) string {
+	mr := calculateMetricsReport(connectionDescriptions)
+	return "Time to establish TCP connections min/avg/max = " + mr.minToEstablished.String() + "/" + mr.avgToEstablished.String() + "/" + mr.maxToEstablished.String()
+}
+
+type metricsReport struct {
+	avgToEstablished   time.Duration
+	minToEstablished   time.Duration
+	maxToEstablished   time.Duration
+	totalToEstablished time.Duration
+}
+
+func calculateMetricsReport(c []tcpclient.Connection) metricsReport {
+	var mr metricsReport
+
 	for i, item := range c {
 		if i == 0 {
-			totalToEstalished = tcpclient.TCPProcessingTime(item)
-			minToEstablished = tcpclient.TCPProcessingTime(item)
-			maxToEstablished = tcpclient.TCPProcessingTime(item)
+			mr.totalToEstablished = tcpclient.TCPProcessingTime(item)
+			mr.minToEstablished = tcpclient.TCPProcessingTime(item)
+			mr.maxToEstablished = tcpclient.TCPProcessingTime(item)
 		} else {
 			switch {
-			case tcpclient.TCPProcessingTime(item) < minToEstablished:
-				minToEstablished = tcpclient.TCPProcessingTime(item)
-			case tcpclient.TCPProcessingTime(item) > maxToEstablished:
-				maxToEstablished = tcpclient.TCPProcessingTime(item)
+			case tcpclient.TCPProcessingTime(item) < mr.minToEstablished:
+				mr.minToEstablished = tcpclient.TCPProcessingTime(item)
+			case tcpclient.TCPProcessingTime(item) > mr.maxToEstablished:
+				mr.maxToEstablished = tcpclient.TCPProcessingTime(item)
 			}
-			totalToEstalished += tcpclient.TCPProcessingTime(item)
+			mr.totalToEstablished += tcpclient.TCPProcessingTime(item)
 		}
 	}
-	avgToEstablished = totalToEstalished / time.Duration(len(c))
+	mr.avgToEstablished = mr.totalToEstablished / time.Duration(len(c))
 
-	return "Time to establish TCP connections min/avg/max = " + minToEstablished.String() + "/" + avgToEstablished.String() + "/" + maxToEstablished.String()
+	return mr
 }
