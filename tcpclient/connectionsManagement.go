@@ -28,9 +28,10 @@ func TCPConnect(id int, host string, port int, wg *sync.WaitGroup, debugOut io.W
 	connectionDescription := Connection{
 		ID:      id,
 		status:  connectionDialing,
-		metrics: connectionMetrics{timeTCPInitiatied: time.Now()},
+		metrics: connectionMetrics{},
 	}
 	reportConnectionStatus(debugOut, statusChannel, connectionDescription)
+	timeTCPInitiatied := time.Now()
 	conn, err := net.DialTimeout("tcp", host+":"+strconv.Itoa(port),
 		time.Duration(DefaultDialTimeoutInMs)*time.Millisecond)
 	if err != nil {
@@ -44,7 +45,7 @@ func TCPConnect(id int, host string, port int, wg *sync.WaitGroup, debugOut io.W
 
 	defer conn.Close()
 	connectionDescription.status = connectionEstablished
-	connectionDescription.metrics.timeTCPEstablished = time.Now()
+	connectionDescription.metrics.processingTime = time.Now().Sub(timeTCPInitiatied)
 	reportConnectionStatus(debugOut, statusChannel, connectionDescription)
 	connBuf := bufio.NewReader(conn)
 	for {

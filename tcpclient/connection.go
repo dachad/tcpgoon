@@ -14,8 +14,7 @@ type Connection struct {
 type connectionStatus int
 
 type connectionMetrics struct {
-	timeTCPInitiatied  time.Time
-	timeTCPEstablished time.Time
+	processingTime time.Duration
 	// packets lost, retransmissions and other metrics could come
 }
 
@@ -26,10 +25,6 @@ const (
 	connectionClosed       connectionStatus = 3
 	connectionError        connectionStatus = 4
 )
-
-func (c Connection) timeToEstablished() time.Duration {
-	return c.metrics.timeTCPEstablished.Sub(c.metrics.timeTCPInitiatied)
-}
 
 func (cs connectionStatus) isIn(connections []Connection) bool {
 	for _, item := range connections {
@@ -48,7 +43,7 @@ func (c Connection) String() string {
 	case connectionDialing:
 		status = "dialing"
 	case connectionEstablished:
-		status = "established in " + c.timeToEstablished().String()
+		status = "established in " + c.metrics.processingTime.String()
 	case connectionClosed:
 		status = "closed"
 	case connectionError:
@@ -91,17 +86,17 @@ func PrintFinalMetricsReport(c []Connection) string {
 	var totalToEstalished time.Duration
 	for i, item := range c {
 		if i == 0 {
-			totalToEstalished = item.timeToEstablished()
-			minToEstablished = item.timeToEstablished()
-			maxToEstablished = item.timeToEstablished()
+			totalToEstalished = item.metrics.processingTime
+			minToEstablished = item.metrics.processingTime
+			maxToEstablished = item.metrics.processingTime
 		} else {
 			switch {
-			case item.timeToEstablished() < minToEstablished:
-				minToEstablished = item.timeToEstablished()
-			case item.timeToEstablished() > maxToEstablished:
-				maxToEstablished = item.timeToEstablished()
+			case item.metrics.processingTime < minToEstablished:
+				minToEstablished = item.metrics.processingTime
+			case item.metrics.processingTime > maxToEstablished:
+				maxToEstablished = item.metrics.processingTime
 			}
-			totalToEstalished += item.timeToEstablished()
+			totalToEstalished += item.metrics.processingTime
 		}
 	}
 	avgToEstablished = totalToEstalished / time.Duration(len(c))
