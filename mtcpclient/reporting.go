@@ -2,7 +2,6 @@ package mtcpclient
 
 import (
 	"fmt"
-	"math"
 	"time"
 
 	"github.com/dachad/tcpgoon/tcpclient"
@@ -16,8 +15,10 @@ func collectConnectionsStatus(connectionsStatusRegistry []tcpclient.Connection, 
 }
 
 func ReportConnectionsStatus(connectionDescriptions []tcpclient.Connection, intervalBetweenUpdates int) {
+	var gc groupOfConnections
+	gc.connections = connectionDescriptions
 	for {
-		fmt.Println(tcpclient.PrintGroupOfConnections(connectionDescriptions))
+		fmt.Println(gc)
 		if intervalBetweenUpdates == 0 {
 			break
 		}
@@ -40,43 +41,12 @@ func StartBackgroundReporting(numberConnections int, rinterval int) (chan tcpcli
 }
 
 func FinalMetricsReport(connectionDescriptions []tcpclient.Connection) string {
-	mr := calculateMetricsReport(connectionDescriptions)
+	var gc groupOfConnections
+	gc.connections = connectionDescriptions
+	mr := gc.calculateMetricsReport()
 	return "Time to establish TCP connections min/avg/max/stdDev = " +
 		mr.minToEstablished.String() + "/" +
 		mr.avgToEstablished.String() + "/" +
 		mr.maxToEstablished.String() + "/" +
 		mr.stdDevToEstablished.String()
-}
-
-type metricsCollectionStats struct {
-	avgToEstablished    time.Duration
-	minToEstablished    time.Duration
-	maxToEstablished    time.Duration
-	totalToEstablished  time.Duration
-	stdDevToEstablished time.Duration
-}
-
-func calculateMetricsReport(c []tcpclient.Connection) metricsCollectionStats {
-	var mr metricsCollectionStats
-
-	for i, item := range c {
-		if i == 0 {
-			mr.totalToEstablished = tcpclient.TCPProcessingTime(item)
-			mr.minToEstablished = tcpclient.TCPProcessingTime(item)
-			mr.maxToEstablished = tcpclient.TCPProcessingTime(item)
-		} else {
-			mr.minToEstablished = time.Duration(math.Min(float64(mr.minToEstablished), float64(tcpclient.TCPProcessingTime(item))))
-			mr.maxToEstablished = time.Duration(math.Max(float64(mr.maxToEstablished), float64(tcpclient.TCPProcessingTime(item))))
-			mr.totalToEstablished += tcpclient.TCPProcessingTime(item)
-		}
-	}
-	mr.avgToEstablished = mr.totalToEstablished / time.Duration(len(c))
-
-	var sd float64
-	for _, item := range c {
-		sd += math.Pow(float64(tcpclient.TCPProcessingTime(item))-float64(mr.avgToEstablished), 2)
-	}
-	mr.stdDevToEstablished = time.Duration(math.Sqrt(sd / float64(time.Duration(len(c)))))
-
-	return mr
 }
