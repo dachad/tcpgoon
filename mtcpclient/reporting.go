@@ -48,7 +48,7 @@ func FinalMetricsReport(connectionDescriptions []tcpclient.Connection) string {
 		mr.stdDevToEstablished.String()
 }
 
-type metricsReport struct {
+type metricsCollectionStats struct {
 	avgToEstablished    time.Duration
 	minToEstablished    time.Duration
 	maxToEstablished    time.Duration
@@ -56,8 +56,8 @@ type metricsReport struct {
 	stdDevToEstablished time.Duration
 }
 
-func calculateMetricsReport(c []tcpclient.Connection) metricsReport {
-	var mr metricsReport
+func calculateMetricsReport(c []tcpclient.Connection) metricsCollectionStats {
+	var mr metricsCollectionStats
 
 	for i, item := range c {
 		if i == 0 {
