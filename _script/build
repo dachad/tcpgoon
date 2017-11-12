@@ -1,0 +1,39 @@
+#!/usr/bin/env bash
+
+set -exuo pipefail
+cd $(dirname $0)/..
+
+function go_version_check {
+	go_version=$(go version  | cut -d " " -f 3)
+	supported_go_version="go1.9"
+	if $(test "$go_version" != "$supported_go_version") 
+	then
+		echo "ERROR: Unsupported go environment. You should use: $supported_go_version"
+		exit 1
+	fi
+}
+
+function binary_compilation {
+	# mix of:
+	#  traefik build
+	#  http://blog.wrouesnel.com/articles/Totally%20static%20Go%20builds/
+	#  https://www.osso.nl/blog/golang-statically-linked/
+	#  https://github.com/kubernetes/kubernetes/pull/26028/files
+	# see also https://gcc.gnu.org/onlinedocs/gcc/Link-Options.html
+	CGO_ENABLED=0 GOOS=linux go build \
+		    -ldflags '-extldflags "-static"' -a -installsuffix nocgo -tags netgo
+}
+
+function docker_build {
+	# TODO: this should not be static. We should pick this from somewhere, and reuse in the deploy stage"
+	tag="dachad/tcpgoon"
+	docker build -t $tag .
+}
+
+# main()
+go_version_check
+
+binary_compilation
+
+docker_build
+
