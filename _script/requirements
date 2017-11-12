@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+
+set -xuo pipefail
+cd $(dirname $0)/..
+
+source _script/go_version
+
+if $(test "$PWD" = "/home/travis/project")
+then
+    echo "INFO: looks I'm running inside the box emulating travis"
+    go_version_check
+    if $(test $? -ne 0)
+    then
+        echo "INFO: I will try to upgrade to the one travis should use"
+        # see https://github.com/travis-ci/travis-ci/issues/7859
+        GIMME_OUTPUT=$(gimme $go_version_in_travis_yml) && eval "$GIMME_OUTPUT"
+    fi
+fi

@@ -1,0 +1,70 @@
+#!/usr/bin/env bash
+
+set -exuo pipefail
+cd $(dirname $0)/..
+
+# Usage info
+function show_help() {
+cat << EOF
+Usage: ${0##*/} [-hv] -d
+
+Simulate a travis build against this repository
+
+    -h          display this help and exit
+    -d          Simulate a (build plus) deploy. As a merge to master is doing
+
+EOF
+}
+
+function arguments_mgmt() {
+    sim_deploy="no"
+    OPTIND=1
+    while getopts "hd" opt; do
+        case "$opt" in
+            h)
+                show_help
+                exit 0
+                ;;
+            d)  sim_deploy="yes"
+                ;;
+            '?')
+                show_help >&2
+                exit 1
+                ;;
+        esac
+    done
+    shift "$((OPTIND-1))"
+}
+
+function travis_deploy_flags() {
+    exec_env_vars=""
+    if $(test "$sim_deploy" = "yes")
+    then
+        exec_env_vars='-e TRAVIS_PULL_REQUEST="false" -e TRAVIS_BRANCH="master"'
+    fi
+}
+
+function docker_run_cmdline_generator() {
+    script_name=$(echo $(basename $0) | cut -d "-" -f 1)
+    # https://docs.travis-ci.com/user/common-build-problems/#Troubleshooting-Locally-in-a-Docker-Image
+    test_docker_image="travisci/ci-garnet:packer-1503972846"
+    travis_home="/home/travis"
+    travis_user="travis"
+    travis_go_version=$(cat .travis.yml | grep "^go:" -A1 | grep "^- " | cut -d " " -f 2)
+    docker_mounted_project="${travis_home}/project"
+    cmdline="docker run -t -i -v $PWD:$docker_mounted_project \
+            -w $docker_mounted_project \
+            --user $travis_user
+            -e http_proxy=$http_proxy \
+            $exec_env_vars \
+            --rm $test_docker_image \
+            _script/$script_name"
+}
+
+# main()
+arguments_mgmt
+travis_deploy_flags
+docker_run_cmdline_generator
+
+echo "DEBUG: executing $cmdline"
+eval $cmdline

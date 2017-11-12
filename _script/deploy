@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 set -exuo pipefail
-
 cd $(dirname $0)/..
 
-docker push dachad/tcpgoon
+docker_name=${1:-"dachad/tcpgoon"}
+docker push $docker_name
