@@ -8,44 +8,44 @@ import (
 	"github.com/dachad/tcpgoon/tcpclient"
 )
 
-type groupOfConnections []tcpclient.Connection
+type GroupOfConnections []tcpclient.Connection
 
 type metricsCollectionStats struct {
-	avgToEstablished    time.Duration
-	minToEstablished    time.Duration
-	maxToEstablished    time.Duration
-	totalToEstablished  time.Duration
-	stdDevToEstablished time.Duration
+	avg    time.Duration
+	min    time.Duration
+	max    time.Duration
+	total  time.Duration
+	stdDev time.Duration
 }
 
-func (gc groupOfConnections) calculateMetricsReport() (mr metricsCollectionStats) {
+func (gc GroupOfConnections) calculateMetricsReport(status tcpclient.ConnectionStatus) (mr metricsCollectionStats) {
 	for i, item := range gc {
 		if i == 0 {
-			mr.totalToEstablished = item.GetTCPEstablishedDuration()
-			mr.minToEstablished = item.GetTCPEstablishedDuration()
-			mr.maxToEstablished = item.GetTCPEstablishedDuration()
+			mr.total = item.GetTCPProcessingDuration(status)
+			mr.min = item.GetTCPProcessingDuration(status)
+			mr.max = item.GetTCPProcessingDuration(status)
 		} else {
-			mr.minToEstablished = time.Duration(math.Min(float64(mr.minToEstablished), float64(item.GetTCPEstablishedDuration())))
-			mr.maxToEstablished = time.Duration(math.Max(float64(mr.maxToEstablished), float64(item.GetTCPEstablishedDuration())))
-			mr.totalToEstablished += item.GetTCPEstablishedDuration()
+			mr.min = time.Duration(math.Min(float64(mr.min), float64(item.GetTCPProcessingDuration(status))))
+			mr.max = time.Duration(math.Max(float64(mr.max), float64(item.GetTCPProcessingDuration(status))))
+			mr.total += item.GetTCPProcessingDuration(status)
 		}
 	}
-	mr.avgToEstablished = mr.totalToEstablished / time.Duration(len(gc))
-	mr.stdDevToEstablished = gc.calculateStdDev(mr.avgToEstablished)
+	mr.avg = mr.total / time.Duration(len(gc))
+	mr.stdDev = gc.calculateStdDev(status, mr.avg)
 
 	return mr
 }
 
-func (gc groupOfConnections) calculateStdDev(average time.Duration) time.Duration {
+func (gc GroupOfConnections) calculateStdDev(status tcpclient.ConnectionStatus, average time.Duration) time.Duration {
 	var sd float64
 	for _, item := range gc {
-		sd += math.Pow(float64(item.GetTCPEstablishedDuration())-float64(average), 2)
+		sd += math.Pow(float64(item.GetTCPProcessingDuration(status))-float64(average), 2)
 	}
 	return time.Duration(math.Sqrt(sd / float64(time.Duration(len(gc)))))
 
 }
 
-func (gc groupOfConnections) String() string {
+func (gc GroupOfConnections) String() string {
 	var nDialing, nEstablished, nClosed, nNotInitiated, nError, nTotal int = 0, 0, 0, 0, 0, 0
 	for _, item := range gc {
 		switch item.GetConnectionStatus() {
@@ -64,4 +64,21 @@ func (gc groupOfConnections) String() string {
 	}
 	return fmt.Sprintf("Total: %d, Dialing: %d, Established: %d, Closed: %d, Error: %d, NotInitiated: %d",
 		nTotal, nDialing, nEstablished, nClosed, nError, nNotInitiated)
+}
+
+func (gc GroupOfConnections) isIn(status tcpclient.ConnectionStatus) bool {
+	for _, item := range gc {
+		if item.GetConnectionStatus() == status {
+			return true
+		}
+	}
+	return false
+}
+
+func (gc GroupOfConnections) PendingConnections() bool {
+	return gc.isIn(tcpclient.ConnectionNotInitiated) || gc.isIn(tcpclient.ConnectionDialing)
+}
+
+func (gc GroupOfConnections) ConnectionInError() bool {
+	return gc.isIn(tcpclient.ConnectionError)
 }

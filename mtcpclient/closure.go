@@ -32,7 +32,7 @@ func registerProperSignals(signalsCh chan os.Signal) {
 
 // closureMonitor polls a connections slice, to see if there's connections pending
 //  to be triggered, and a signal channel, in case execution is interrupted
-func closureMonitor(connections []tcpclient.Connection, signalsCh chan os.Signal,
+func closureMonitor(gc GroupOfConnections, signalsCh chan os.Signal,
 	closureCh chan bool, debugOut io.Writer) {
 	const pullingPeriodInMs = 500
 	for {
@@ -42,7 +42,7 @@ func closureMonitor(connections []tcpclient.Connection, signalsCh chan os.Signal
 			close(closureCh)
 			return
 		case <-time.After(pullingPeriodInMs * time.Millisecond):
-			if !tcpclient.PendingConnections(connections) {
+			if !gc.PendingConnections() {
 				close(closureCh)
 				return
 			}

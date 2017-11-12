@@ -14,9 +14,7 @@ func collectConnectionsStatus(connectionsStatusRegistry []tcpclient.Connection, 
 	}
 }
 
-func ReportConnectionsStatus(connectionDescriptions []tcpclient.Connection, intervalBetweenUpdates int) {
-	var gc groupOfConnections
-	gc = connectionDescriptions
+func ReportConnectionsStatus(gc GroupOfConnections, intervalBetweenUpdates int) {
 	for {
 		fmt.Println(gc)
 		if intervalBetweenUpdates == 0 {
@@ -40,13 +38,13 @@ func StartBackgroundReporting(numberConnections int, rinterval int) (chan tcpcli
 	return connStatusCh, connStatusTracker
 }
 
-func FinalMetricsReport(connectionDescriptions []tcpclient.Connection) string {
-	var gc groupOfConnections
-	gc = connectionDescriptions
-	mr := gc.calculateMetricsReport()
-	return "Time to establish TCP connections min/avg/max/stdDev = " +
-		mr.minToEstablished.String() + "/" +
-		mr.avgToEstablished.String() + "/" +
-		mr.maxToEstablished.String() + "/" +
-		mr.stdDevToEstablished.String()
+func FinalMetricsReport(gc GroupOfConnections) (output string) {
+	mr := gc.calculateMetricsReport(tcpclient.ConnectionEstablished)
+	output = "Time to establish TCP successful connections min/avg/max/stdDev = " +
+		mr.min.String() + "/" +
+		mr.avg.String() + "/" +
+		mr.max.String() + "/" +
+		mr.stdDev.String()
+
+	return output
 }

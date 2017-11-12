@@ -15,6 +15,7 @@ type ConnectionStatus int
 
 type connectionMetrics struct {
 	tcpEstablishedDuration time.Duration
+	tcpErroredDuration     time.Duration
 	// packets lost, retransmissions and other metrics could come
 }
 
@@ -28,15 +29,6 @@ const (
 
 func (c Connection) GetConnectionStatus() ConnectionStatus {
 	return c.status
-}
-
-func (cs ConnectionStatus) isIn(connections []Connection) bool {
-	for _, item := range connections {
-		if item.status == cs {
-			return true
-		}
-	}
-	return false
 }
 
 func (c Connection) String() string {
@@ -63,14 +55,13 @@ func (c Connection) String() string {
 
 }
 
-func PendingConnections(c []Connection) bool {
-	return ConnectionNotInitiated.isIn(c) || ConnectionDialing.isIn(c)
-}
-
-func ConnectionInError(c []Connection) bool {
-	return ConnectionError.isIn(c)
-}
-
-func (c Connection) GetTCPEstablishedDuration() time.Duration {
-	return c.metrics.tcpEstablishedDuration
+func (c Connection) GetTCPProcessingDuration(status ConnectionStatus) time.Duration {
+	switch status {
+	case ConnectionEstablished:
+		return c.metrics.tcpEstablishedDuration
+	case ConnectionError:
+		return c.metrics.tcpErroredDuration
+	default:
+		return 0
+	}
 }

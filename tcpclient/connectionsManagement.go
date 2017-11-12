@@ -36,6 +36,7 @@ func TCPConnect(id int, host string, port int, wg *sync.WaitGroup, debugOut io.W
 		time.Duration(DefaultDialTimeoutInMs)*time.Millisecond)
 	if err != nil {
 		connectionDescription.status = ConnectionError
+		connectionDescription.metrics.tcpErroredDuration = time.Now().Sub(timeTCPInitiatied)
 		reportConnectionStatus(debugOut, statusChannel, connectionDescription)
 		fmt.Fprintln(debugOut, "Connection", id, "was unable to open the connection. Error:")
 		fmt.Fprintln(debugOut, err)

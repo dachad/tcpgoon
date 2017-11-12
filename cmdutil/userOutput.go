@@ -9,16 +9,15 @@ import (
 	"time"
 
 	"github.com/dachad/tcpgoon/mtcpclient"
-	"github.com/dachad/tcpgoon/tcpclient"
 )
 
-func printClosureReport(host string, port int, connections []tcpclient.Connection) {
+func printClosureReport(host string, port int, gc mtcpclient.GroupOfConnections) {
 	// workaround to allow last status updates - messages in channels - to be collected properly
 	const timeToWaitForClosureReportInMs = 100
 	time.Sleep(time.Duration(timeToWaitForClosureReportInMs) * time.Millisecond)
 	fmt.Println(strings.Repeat("-", 3), host+":"+strconv.Itoa(port), "tcp test statistics", strings.Repeat("-", 3))
-	mtcpclient.ReportConnectionsStatus(connections, 0)
-	fmt.Println(mtcpclient.FinalMetricsReport(connections))
+	mtcpclient.ReportConnectionsStatus(gc, 0)
+	fmt.Println(mtcpclient.FinalMetricsReport(gc))
 }
 
 func AskForUserConfirmation(host string, port int, connections int) bool {
