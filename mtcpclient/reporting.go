@@ -16,7 +16,7 @@ func collectConnectionsStatus(connectionsStatusRegistry []tcpclient.Connection, 
 
 func ReportConnectionsStatus(connectionDescriptions []tcpclient.Connection, intervalBetweenUpdates int) {
 	var gc groupOfConnections
-	gc.connections = connectionDescriptions
+	gc = connectionDescriptions
 	for {
 		fmt.Println(gc)
 		if intervalBetweenUpdates == 0 {
@@ -42,7 +42,7 @@ func StartBackgroundReporting(numberConnections int, rinterval int) (chan tcpcli
 
 func FinalMetricsReport(connectionDescriptions []tcpclient.Connection) string {
 	var gc groupOfConnections
-	gc.connections = connectionDescriptions
+	gc = connectionDescriptions
 	mr := gc.calculateMetricsReport()
 	return "Time to establish TCP connections min/avg/max/stdDev = " +
 		mr.minToEstablished.String() + "/" +

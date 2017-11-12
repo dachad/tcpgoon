@@ -8,9 +8,7 @@ import (
 	"github.com/dachad/tcpgoon/tcpclient"
 )
 
-type groupOfConnections struct {
-	connections []tcpclient.Connection
-}
+type groupOfConnections []tcpclient.Connection
 
 type metricsCollectionStats struct {
 	avgToEstablished    time.Duration
@@ -21,7 +19,7 @@ type metricsCollectionStats struct {
 }
 
 func (gc groupOfConnections) calculateMetricsReport() (mr metricsCollectionStats) {
-	for i, item := range gc.connections {
+	for i, item := range gc {
 		if i == 0 {
 			mr.totalToEstablished = item.GetTCPEstablishedDuration()
 			mr.minToEstablished = item.GetTCPEstablishedDuration()
@@ -32,7 +30,7 @@ func (gc groupOfConnections) calculateMetricsReport() (mr metricsCollectionStats
 			mr.totalToEstablished += item.GetTCPEstablishedDuration()
 		}
 	}
-	mr.avgToEstablished = mr.totalToEstablished / time.Duration(len(gc.connections))
+	mr.avgToEstablished = mr.totalToEstablished / time.Duration(len(gc))
 	mr.stdDevToEstablished = gc.calculateStdDev(mr.avgToEstablished)
 
 	return mr
@@ -40,16 +38,16 @@ func (gc groupOfConnections) calculateMetricsReport() (mr metricsCollectionStats
 
 func (gc groupOfConnections) calculateStdDev(average time.Duration) time.Duration {
 	var sd float64
-	for _, item := range gc.connections {
+	for _, item := range gc {
 		sd += math.Pow(float64(item.GetTCPEstablishedDuration())-float64(average), 2)
 	}
-	return time.Duration(math.Sqrt(sd / float64(time.Duration(len(gc.connections)))))
+	return time.Duration(math.Sqrt(sd / float64(time.Duration(len(gc)))))
 
 }
 
 func (gc groupOfConnections) String() string {
 	var nDialing, nEstablished, nClosed, nNotInitiated, nError, nTotal int = 0, 0, 0, 0, 0, 0
-	for _, item := range gc.connections {
+	for _, item := range gc {
 		switch item.GetConnectionStatus() {
 		case tcpclient.ConnectionDialing:
 			nDialing++

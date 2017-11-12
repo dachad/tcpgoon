@@ -7,11 +7,11 @@ import (
 
 type Connection struct {
 	ID      int
-	status  connectionStatus
+	status  ConnectionStatus
 	metrics connectionMetrics
 }
 
-type connectionStatus int
+type ConnectionStatus int
 
 type connectionMetrics struct {
 	tcpEstablishedDuration time.Duration
@@ -19,18 +19,18 @@ type connectionMetrics struct {
 }
 
 const (
-	ConnectionNotInitiated connectionStatus = 0
-	ConnectionDialing      connectionStatus = 1
-	ConnectionEstablished  connectionStatus = 2
-	ConnectionClosed       connectionStatus = 3
-	ConnectionError        connectionStatus = 4
+	ConnectionNotInitiated ConnectionStatus = 0
+	ConnectionDialing      ConnectionStatus = 1
+	ConnectionEstablished  ConnectionStatus = 2
+	ConnectionClosed       ConnectionStatus = 3
+	ConnectionError        ConnectionStatus = 4
 )
 
-func (c Connection) GetConnectionStatus() connectionStatus {
+func (c Connection) GetConnectionStatus() ConnectionStatus {
 	return c.status
 }
 
-func (cs connectionStatus) isIn(connections []Connection) bool {
+func (cs ConnectionStatus) isIn(connections []Connection) bool {
 	for _, item := range connections {
 		if item.status == cs {
 			return true
