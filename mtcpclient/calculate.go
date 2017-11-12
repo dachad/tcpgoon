@@ -8,17 +8,20 @@ import (
 )
 
 type metricsCollectionStats struct {
-	avg    time.Duration
-	min    time.Duration
-	max    time.Duration
-	total  time.Duration
-	stdDev time.Duration
+	avg                 time.Duration
+	min                 time.Duration
+	max                 time.Duration
+	total               time.Duration
+	stdDev              time.Duration
+	numberOfConnections int
 }
 
 func (gc GroupOfConnections) calculateMetricsReport(status tcpclient.ConnectionStatus) (mr metricsCollectionStats) {
 	mr.total = 0
+	mr.numberOfConnections = 0
 	for _, item := range gc {
 		if item.GetConnectionStatus() == status {
+			mr.numberOfConnections += 1
 			if mr.total == 0 {
 				mr.total = item.GetTCPProcessingDuration(status)
 				mr.min = item.GetTCPProcessingDuration(status)
@@ -30,17 +33,19 @@ func (gc GroupOfConnections) calculateMetricsReport(status tcpclient.ConnectionS
 			}
 		}
 	}
-	mr.avg = mr.total / time.Duration(len(gc))
-	mr.stdDev = gc.calculateStdDev(status, mr.avg)
-
+	mr.avg = mr.total / time.Duration(mr.numberOfConnections)
+	mr.stdDev = gc.calculateStdDev(status, mr)
 	return mr
 }
 
-func (gc GroupOfConnections) calculateStdDev(status tcpclient.ConnectionStatus, average time.Duration) time.Duration {
+func (gc GroupOfConnections) calculateStdDev(status tcpclient.ConnectionStatus, mr metricsCollectionStats) time.Duration {
 	var sd float64
+
 	for _, item := range gc {
-		sd += math.Pow(float64(item.GetTCPProcessingDuration(status))-float64(average), 2)
+		if item.GetConnectionStatus() == status {
+			sd += math.Pow(float64(item.GetTCPProcessingDuration(status))-float64(mr.avg), 2)
+		}
 	}
-	return time.Duration(math.Sqrt(sd / float64(time.Duration(len(gc)))))
+	return time.Duration(math.Sqrt(sd / float64(time.Duration(mr.numberOfConnections))))
 
 }

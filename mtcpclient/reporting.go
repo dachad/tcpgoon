@@ -2,6 +2,7 @@ package mtcpclient
 
 import (
 	"fmt"
+	"strconv"
 	"time"
 
 	"github.com/dachad/tcpgoon/tcpclient"
@@ -42,22 +43,24 @@ func FinalMetricsReport(gc GroupOfConnections) (output string) {
 	// Report for Estalished connections
 	if gc.AtLeastOneConnectionEstablished() {
 		mr := gc.calculateMetricsReport(tcpclient.ConnectionEstablished)
-		output = "Time to establish TCP successful connections min/avg/max/stdDev = " +
-			mr.min.String() + "/" +
-			mr.avg.String() + "/" +
-			mr.max.String() + "/" +
-			mr.stdDev.String() + "\n"
+		output = "Time spent in " + strconv.Itoa(mr.numberOfConnections) +
+			" established connections min/avg/max/stdDev = " +
+			mr.min.Truncate(time.Microsecond).String() + "/" +
+			mr.avg.Truncate(time.Microsecond).String() + "/" +
+			mr.max.Truncate(time.Microsecond).String() + "/" +
+			mr.stdDev.Truncate(time.Microsecond).String() + "\n"
 
 	}
 
 	// Report for Errored connections
 	if gc.AtLeastOneConnectionInError() {
 		mr := gc.calculateMetricsReport(tcpclient.ConnectionError)
-		output += "Time spent in failed connections min/avg/max/stdDev = " +
-			mr.min.String() + "/" +
-			mr.avg.String() + "/" +
-			mr.max.String() + "/" +
-			mr.stdDev.String() + "\n"
+		output += "Time spent in " + strconv.Itoa(mr.numberOfConnections) +
+			" failed connections min/avg/max/stdDev = " +
+			mr.min.Truncate(time.Microsecond).String() + "/" +
+			mr.avg.Truncate(time.Microsecond).String() + "/" +
+			mr.max.Truncate(time.Microsecond).String() + "/" +
+			mr.stdDev.Truncate(time.Microsecond).String() + "\n"
 	}
 
 	return output
