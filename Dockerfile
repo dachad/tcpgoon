@@ -1,4 +1,4 @@
-FROM alpine
+FROM alpine:3.6
 MAINTAINER devops-training-bcn@googlegroups.com
 
 ENV binary tcpgoon

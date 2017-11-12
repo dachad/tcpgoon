@@ -27,7 +27,7 @@ function binary_compilation {
 function docker_build {
 	# TODO: this should not be static. We should pick this from somewhere, and reuse in the deploy stage"
 	tag="dachad/tcpgoon"
-	docker build -t dachad/tcpgoon .
+	docker build -t $tag .
 }
 
 # main()
