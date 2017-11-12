@@ -1,4 +1,5 @@
 FROM alpine:3.6
+# TODO: maybe we can use scratch again
 MAINTAINER devops-training-bcn@googlegroups.com
 
 ENV binary tcpgoon
