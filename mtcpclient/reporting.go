@@ -39,12 +39,26 @@ func StartBackgroundReporting(numberConnections int, rinterval int) (chan tcpcli
 }
 
 func FinalMetricsReport(gc GroupOfConnections) (output string) {
-	mr := gc.calculateMetricsReport(tcpclient.ConnectionEstablished)
-	output = "Time to establish TCP successful connections min/avg/max/stdDev = " +
-		mr.min.String() + "/" +
-		mr.avg.String() + "/" +
-		mr.max.String() + "/" +
-		mr.stdDev.String()
+	// Report for Estalished connections
+	if gc.AtLeastOneConnectionEstablished() {
+		mr := gc.calculateMetricsReport(tcpclient.ConnectionEstablished)
+		output = "Time to establish TCP successful connections min/avg/max/stdDev = " +
+			mr.min.String() + "/" +
+			mr.avg.String() + "/" +
+			mr.max.String() + "/" +
+			mr.stdDev.String()
+
+	}
+
+	// Report for Errored connections
+	if gc.AtLeastOneConnectionInError() {
+		mr := gc.calculateMetricsReport(tcpclient.ConnectionError)
+		output += "Time spent in failed connections min/avg/max/stdDev = " +
+			mr.min.String() + "/" +
+			mr.avg.String() + "/" +
+			mr.max.String() + "/" +
+			mr.stdDev.String()
+	}
 
 	return output
 }

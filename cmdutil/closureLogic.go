@@ -20,7 +20,7 @@ func CloseNicely(host string, port int, gc mtcpclient.GroupOfConnections, debugO
 		fmt.Fprintln(debugOut, "We detected some connections did not complete")
 		os.Exit(incompleteExecutionExitStatus)
 	}
-	if gc.ConnectionInError() {
+	if gc.AtLeastOneConnectionInError() {
 		fmt.Fprintln(debugOut, "We detected connection errors")
 		os.Exit(completedButConnErrorsExitStatus)
 	}
