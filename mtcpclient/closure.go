@@ -7,17 +7,15 @@ import (
 	"os/signal"
 	"syscall"
 	"time"
-
-	"github.com/dachad/tcpgoon/tcpclient"
 )
 
-func StartBackgroundClosureTrigger(connections []tcpclient.Connection, debugOut io.Writer) <-chan bool {
+func StartBackgroundClosureTrigger(gc GroupOfConnections, debugOut io.Writer) <-chan bool {
 	closureCh := make(chan bool)
 
 	signalsCh := make(chan os.Signal, 1)
 	registerProperSignals(signalsCh)
 
-	go closureMonitor(connections, signalsCh, closureCh, debugOut)
+	go closureMonitor(gc, signalsCh, closureCh, debugOut)
 	return closureCh
 }
 
