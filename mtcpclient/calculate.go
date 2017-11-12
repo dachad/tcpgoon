@@ -16,15 +16,18 @@ type metricsCollectionStats struct {
 }
 
 func (gc GroupOfConnections) calculateMetricsReport(status tcpclient.ConnectionStatus) (mr metricsCollectionStats) {
-	for i, item := range gc {
-		if i == 0 {
-			mr.total = item.GetTCPProcessingDuration(status)
-			mr.min = item.GetTCPProcessingDuration(status)
-			mr.max = item.GetTCPProcessingDuration(status)
-		} else {
-			mr.min = time.Duration(math.Min(float64(mr.min), float64(item.GetTCPProcessingDuration(status))))
-			mr.max = time.Duration(math.Max(float64(mr.max), float64(item.GetTCPProcessingDuration(status))))
-			mr.total += item.GetTCPProcessingDuration(status)
+	mr.total = 0
+	for _, item := range gc {
+		if item.GetConnectionStatus() == status {
+			if mr.total == 0 {
+				mr.total = item.GetTCPProcessingDuration(status)
+				mr.min = item.GetTCPProcessingDuration(status)
+				mr.max = item.GetTCPProcessingDuration(status)
+			} else {
+				mr.min = time.Duration(math.Min(float64(mr.min), float64(item.GetTCPProcessingDuration(status))))
+				mr.max = time.Duration(math.Max(float64(mr.max), float64(item.GetTCPProcessingDuration(status))))
+				mr.total += item.GetTCPProcessingDuration(status)
+			}
 		}
 	}
 	mr.avg = mr.total / time.Duration(len(gc))
