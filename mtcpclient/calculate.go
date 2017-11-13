@@ -21,7 +21,7 @@ func (gc GroupOfConnections) calculateMetricsReport(status tcpclient.ConnectionS
 	mr.numberOfConnections = 0
 	for _, item := range gc {
 		if item.GetConnectionStatus() == status {
-			mr.numberOfConnections += 1
+			mr.numberOfConnections++
 			if mr.total == 0 {
 				mr.total = item.GetTCPProcessingDuration(status)
 				mr.min = item.GetTCPProcessingDuration(status)
