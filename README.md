@@ -54,7 +54,7 @@ Total: 10, Dialing: 1, Established: 9, Closed: 0, Error: 0, NotInitiated: 0
 Total: 10, Dialing: 0, Established: 10, Closed: 0, Error: 0, NotInitiated: 0
 --- myhttpsamplehost.com:80 tcp test statistics ---
 Total: 10, Dialing: 0, Established: 10, Closed: 0, Error: 0, NotInitiated: 0
-Time spent in 10 established connections min/avg/max/stdDev = 17.929ms/19.814ms/29.811ms/3.353ms
+Timing stats for 10 established connections min/avg/max/dev = 17.929ms/19.814ms/29.811ms/3.353ms
 % echo $?
 0
 ```
@@ -63,16 +63,25 @@ Partial unsuccesful execution
 ```bash
 % ./tcpgoon --host myhttpsamplehost.com --port 8080 --connections 10 --sleep 999 -y
 Total: 10, Dialing: 0, Established: 0, Closed: 0, Error: 0, NotInitiated: 10
-Total: 10, Dialing: 9, Established: 1, Closed: 0, Error: 0, NotInitiated: 0
-Total: 10, Dialing: 8, Established: 2, Closed: 0, Error: 0, NotInitiated: 0
-Total: 10, Dialing: 8, Established: 2, Closed: 0, Error: 0, NotInitiated: 0
-Total: 10, Dialing: 8, Established: 2, Closed: 0, Error: 0, NotInitiated: 0
-Total: 10, Dialing: 8, Established: 2, Closed: 0, Error: 0, NotInitiated: 0
+Total: 10, Dialing: 0, Established: 1, Closed: 0, Error: 0, NotInitiated: 9
+Total: 10, Dialing: 0, Established: 2, Closed: 0, Error: 0, NotInitiated: 8
+Total: 10, Dialing: 1, Established: 2, Closed: 0, Error: 0, NotInitiated: 7
+Total: 10, Dialing: 2, Established: 2, Closed: 0, Error: 0, NotInitiated: 6
+Total: 10, Dialing: 3, Established: 2, Closed: 0, Error: 0, NotInitiated: 5
+Total: 10, Dialing: 4, Established: 2, Closed: 0, Error: 0, NotInitiated: 4
+Total: 10, Dialing: 4, Established: 2, Closed: 0, Error: 1, NotInitiated: 3
+Total: 10, Dialing: 5, Established: 2, Closed: 0, Error: 2, NotInitiated: 1
+Total: 10, Dialing: 5, Established: 2, Closed: 0, Error: 3, NotInitiated: 0
+Total: 10, Dialing: 4, Established: 2, Closed: 0, Error: 4, NotInitiated: 0
+Total: 10, Dialing: 3, Established: 2, Closed: 0, Error: 5, NotInitiated: 0
+Total: 10, Dialing: 3, Established: 2, Closed: 0, Error: 5, NotInitiated: 0
+Total: 10, Dialing: 2, Established: 2, Closed: 0, Error: 6, NotInitiated: 0
+Total: 10, Dialing: 1, Established: 2, Closed: 0, Error: 7, NotInitiated: 0
 Total: 10, Dialing: 0, Established: 2, Closed: 0, Error: 8, NotInitiated: 0
---- myhttpsamplehost.com:8080 tcp test statistics ---
+--- myhttpsamplehost.com:88 tcp test statistics ---
 Total: 10, Dialing: 0, Established: 2, Closed: 0, Error: 8, NotInitiated: 0
-Time spent in 2 established connections min/avg/max/stdDev = 212.98ms/720.286ms/1.227592s/507.305ms
-Time spent in 8 failed connections min/avg/max/stdDev = 5.000144s/5.001417s/5.002747s/795µs
+Timing stats for 2 established connections min/avg/max/dev = 1.914ms/2.013ms/2.113ms/99µs
+Timing stats for 8 failed connections min/avg/max/dev = 5.000819s/5.002496s/5.004758s/1.448ms
 ```
 
 Unsuccessful execution (unable to open connections against the destination host:port):
@@ -92,7 +101,7 @@ Total: 10, Dialing: 2, Established: 0, Closed: 0, Error: 8, NotInitiated: 0
 Total: 10, Dialing: 1, Established: 0, Closed: 0, Error: 9, NotInitiated: 0
 --- myhttpsamplehost.com:81 tcp test statistics ---
 Total: 10, Dialing: 0, Established: 0, Closed: 0, Error: 10, NotInitiated: 0
-Time spent in 10 failed connections min/avg/max/stdDev = 5.00025s/5.001741s/5.00317s/908µs
+Timing stats for 10 failed connections min/avg/max/dev = 5.00025s/5.001741s/5.00317s/908µs
 % echo $?
 2
 ```

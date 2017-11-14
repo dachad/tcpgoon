@@ -43,8 +43,8 @@ func FinalMetricsReport(gc GroupOfConnections) (output string) {
 	// Report for Estalished connections
 	if gc.AtLeastOneConnectionEstablished() {
 		mr := gc.calculateMetricsReport(tcpclient.ConnectionEstablished)
-		output = "Time spent in " + strconv.Itoa(mr.numberOfConnections) +
-			" established connections min/avg/max/stdDev = " +
+		output = "Timing stats for " + strconv.Itoa(mr.numberOfConnections) +
+			" established connections min/avg/max/dev = " +
 			mr.min.Truncate(time.Microsecond).String() + "/" +
 			mr.avg.Truncate(time.Microsecond).String() + "/" +
 			mr.max.Truncate(time.Microsecond).String() + "/" +
@@ -55,8 +55,8 @@ func FinalMetricsReport(gc GroupOfConnections) (output string) {
 	// Report for Errored connections
 	if gc.AtLeastOneConnectionInError() {
 		mr := gc.calculateMetricsReport(tcpclient.ConnectionError)
-		output += "Time spent in " + strconv.Itoa(mr.numberOfConnections) +
-			" failed connections min/avg/max/stdDev = " +
+		output += "Timing stats for " + strconv.Itoa(mr.numberOfConnections) +
+			" failed connections min/avg/max/dev = " +
 			mr.min.Truncate(time.Microsecond).String() + "/" +
 			mr.avg.Truncate(time.Microsecond).String() + "/" +
 			mr.max.Truncate(time.Microsecond).String() + "/" +
