@@ -1,18 +1,30 @@
 #!/usr/bin/env bash
+# Note: this version of the requirements script
+# only wants to act inside an specific travis environment.
+# We don't currently want to touch your environment
 
 set -xuo pipefail
 cd $(dirname $0)/..
 
 source _script/go_version
 
-if $(test "$PWD" = "/home/travis/project")
+function upgrade_go_using_gimme() {
+    GIMME_OUTPUT=$(gimme $go_version_in_travis_yml) && eval "$GIMME_OUTPUT"
+}
+
+function install_go_dependencies() {
+    go get ./...
+}
+
+# main()
+if $(test "$PWD" != "/home/travis/gopath/src/github.com/dachad/tcpgoon"); then exit 0; fi
+
+echo "INFO: looks I'm running inside the box emulating travis. I will act"
+go_version_check
+if $(test $? -ne 0)
 then
-    echo "INFO: looks I'm running inside the box emulating travis"
-    go_version_check
-    if $(test $? -ne 0)
-    then
-        echo "INFO: I will try to upgrade to the one travis should use"
-        # see https://github.com/travis-ci/travis-ci/issues/7859
-        GIMME_OUTPUT=$(gimme $go_version_in_travis_yml) && eval "$GIMME_OUTPUT"
-    fi
+    # see https://github.com/travis-ci/travis-ci/issues/7859
+    echo "INFO: I will try to upgrade to the one travis should use"
+    upgrade_go_using_gimme
 fi
+install_go_dependencies
