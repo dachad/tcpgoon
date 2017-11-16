@@ -108,10 +108,5 @@ Timing stats for 10 failed connections min/avg/max/dev = 5.00025s/5.001741s/5.00
 
 ## TO-DO
 
-- Timeout configuration (max-duration?) so this can be reused for CI tests (if you cannot open X concurrent requests in 1 second, thats potentially a problem) 
-- Keepalive connections / reopen closed connections to keep this number of concurrent connections during an specific time (max-duration?)
-- more test coverage
-- "auto-incremental" mode; it opens connections at an specific rate until it fails or it times-out, giving you an idea of the max concurrency your service supports
-- distributed executions; several daemons may be able to collaborate to measure the capacity of an specific target
-- Docker image and OS packages for the most common distros
-- See also the issues in this Github repo!!
+We do use [Github issues](/issues/) to track bugs, improvements and feature requests. Do not hesitate
+to raise new ones ;)
