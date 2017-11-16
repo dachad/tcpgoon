@@ -36,7 +36,7 @@ Usage of ./tcpgoon:
   -s, --sleep int          Time you want to sleep between connections, in ms (default 10)
 ```
 
-## Example
+## Examples
 
 Successful execution (connections were opened as expected):
 ```bash
@@ -59,7 +59,7 @@ Timing stats for 10 established connections min/avg/max/dev = 17.929ms/19.814ms/
 0
 ```
 
-Partial unsuccesful execution
+Partially succeeded execution (mix of successes and errors against the target):
 ```bash
 % ./tcpgoon --host myhttpsamplehost.com --port 8080 --connections 10 --sleep 999 -y
 Total: 10, Dialing: 0, Established: 0, Closed: 0, Error: 0, NotInitiated: 10
@@ -82,6 +82,8 @@ Total: 10, Dialing: 0, Established: 2, Closed: 0, Error: 8, NotInitiated: 0
 Total: 10, Dialing: 0, Established: 2, Closed: 0, Error: 8, NotInitiated: 0
 Timing stats for 2 established connections min/avg/max/dev = 1.914ms/2.013ms/2.113ms/99µs
 Timing stats for 8 failed connections min/avg/max/dev = 5.000819s/5.002496s/5.004758s/1.448ms
+% echo $?
+2
 ```
 
 Unsuccessful execution (unable to open connections against the destination host:port):
