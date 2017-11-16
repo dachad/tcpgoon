@@ -108,6 +108,26 @@ Timing stats for 10 failed connections min/avg/max/dev = 5.00025s/5.001741s/5.00
 2
 ```
 
+## Executing the tests
+
+You can use the standard go test command, or use our scripts we also run as CI.
+
+Main tests execution:
+```bash
+% ./_script/test
+```
+
+Emulation of a travis job execution using docker (of course, it needs docker):
+```bash
+% ./_script/cibuild-docker
+```
+
+And also emulating a travis job deployment (it publishes new binaries
+providing successful tests and the right credentials):
+```bash
+% ./_script/cibuild-docker -d
+```
+
 ## TO-DO
 
 We do use [Github issues](/issues/) to track bugs, improvements and feature requests. Do not hesitate

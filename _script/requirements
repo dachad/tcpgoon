@@ -21,7 +21,15 @@ function install_go_dependencies() {
 function prepare_gopath_dir_permissions() {
     echo "INFO: preparing gopath folder permissions"
     sudo chown travis /home/travis/gopath/src/github.com
+    # TODO: this is outside of the docker image. Makes the env dirty
+    sudo chown travis /home/travis/gopath/src/github.com/dachad/tcpgoon
 }
+
+function prepare_docker_env() {
+    sudo dockerd
+    # TODO: permissions management
+}
+
 # main()
 if $(test "$PWD" != "/home/travis/gopath/src/github.com/dachad/tcpgoon"); then return 0; fi
 
@@ -35,3 +43,4 @@ then
 fi
 prepare_gopath_dir_permissions
 install_go_dependencies
+prepare_docker_env

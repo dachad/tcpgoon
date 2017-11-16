@@ -25,4 +25,5 @@ function docker_build {
 docker_name=${1:-"dachad/tcpgoon"}
 go_version_check
 binary_compilation
+# TODO: if run by a local travis-docker, output generated dirty permissions setup
 docker_build "${docker_name}"
