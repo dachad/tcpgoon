@@ -52,6 +52,7 @@ function docker_run_cmdline_generator() {
     travis_user="travis"
     travis_go_version=$(cat .travis.yml | grep "^go:" -A1 | grep "^- " | cut -d " " -f 2)
     docker_mounted_project="${travis_home}/gopath/src/github.com/dachad/tcpgoon"
+    http_proxy="${http_proxy:-}"
     cmdline="docker run -t -i -v $PWD:$docker_mounted_project \
             -w $docker_mounted_project \
             --user $travis_user

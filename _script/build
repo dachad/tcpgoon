@@ -24,10 +24,5 @@ function docker_build {
 # main()
 docker_name=${1:-"dachad/tcpgoon"}
 go_version_check
-if $(test $? -ne 0)
-then
-	echo "ERROR: Unsupported go environment"
-	exit 1
-fi
 binary_compilation
 docker_build "${docker_name}"

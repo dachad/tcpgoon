@@ -1,9 +1,11 @@
 #!/usr/bin/env bash
+# reused function to check go version is set according to the travis version,
+# that we will consider as our supported one for builds and travis tests
 
 go_version_in_travis_yml=$(cat .travis.yml | grep "^go:" -A1 | grep "^- " | cut -d " " -f 2)
 
 function go_version_check {
-	go_version=$(go version  | cut -d " " -f 3)
+	go_version=$(go version | cut -d " " -f 3)
 	if $(test $? -ne 0)
 	then
 	    echo "INFO: go binary not available? go version failed"
@@ -12,7 +14,7 @@ function go_version_check {
 	supported_go_version="go${go_version_in_travis_yml}"
 	if $(test "$go_version" != "$supported_go_version")
 	then
-		echo "INFO: Unsupported go environment. You should use: $supported_go_version"
+		echo "WARNING: Unsupported go environment. You should use: $supported_go_version"
 		return 1
 	fi
 }
