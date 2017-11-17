@@ -21,13 +21,16 @@ function install_go_dependencies() {
 function prepare_gopath_dir_permissions() {
     echo "INFO: preparing gopath folder permissions"
     sudo chown travis /home/travis/gopath/src/github.com
-    # TODO: this is outside of the docker image. Makes the env dirty
+    # TODO: this affects to outside of the docker image - actual
+    #  user directory. Makes the env dirty
     sudo chown travis /home/travis/gopath/src/github.com/dachad/tcpgoon
 }
 
 function prepare_docker_env() {
+    sudo groupadd docker
+    sudo usermod -aG docker travis
+    newgrp docker
     sudo dockerd
-    # TODO: permissions management
 }
 
 # main()
@@ -41,6 +44,6 @@ then
     echo "INFO: I will try to upgrade to the one travis should use"
     upgrade_go_using_gimme
 fi
-prepare_gopath_dir_permissions
+#prepare_gopath_dir_permissions
 install_go_dependencies
 prepare_docker_env

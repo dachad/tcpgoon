@@ -1,6 +1,12 @@
+sudo: required
+
 language: go
+
 go:
 - 1.9
+
+services:
+- docker
 
 gobuild_args: -ldflags "-X main.VersionString=`date -u +.%Y%m%d.%H%M%S`"
 

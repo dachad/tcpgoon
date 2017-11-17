@@ -49,6 +49,8 @@ function docker_run_cmdline_generator() {
     script_name=$(echo $(basename $0) | cut -d "-" -f 1)
     # https://docs.travis-ci.com/user/common-build-problems/#Troubleshooting-Locally-in-a-Docker-Image
     test_docker_image="travisci/ci-garnet:packer-1503972846"
+    #this looks more outdated, without docker support
+    #test_docker_image="travisci/ci-go:packer-1494864792"
     travis_home="/home/travis"
     travis_user="travis"
     travis_go_version=$(cat .travis.yml | grep "^go:" -A1 | grep "^- " | cut -d " " -f 2)
