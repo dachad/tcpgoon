@@ -18,25 +18,23 @@ function install_go_dependencies() {
     go get ./...
 }
 
-function prepare_gopath_dir_permissions() {
-    echo "INFO: preparing gopath folder permissions"
+function prepare_dir_permissions() {
+    echo "INFO: preparing gopath/output folder permissions"
     sudo chown travis /home/travis/gopath/src/github.com
-    # TODO: this affects to outside of the docker image - actual
-    #  user directory. Makes the env dirty
-    sudo chown travis /home/travis/gopath/src/github.com/dachad/tcpgoon
+    sudo chmod o+w /home/travis/gopath/src/github.com/dachad/tcpgoon/out/
 }
 
 function prepare_docker_env() {
     sudo groupadd docker
     sudo usermod -aG docker travis
-    newgrp docker
-    sudo dockerd
+    #newgrp docker
+    sudo dockerd &
 }
 
 # main()
 if $(test "$PWD" != "/home/travis/gopath/src/github.com/dachad/tcpgoon"); then return 0; fi
 
-echo "INFO: looks I'm running inside the box emulating travis. I will act"
+echo "INFO: looks I'm running inside the box emulating travis. We will actively install dependencies"
 go_version_check
 if $(test $? -ne 0)
 then
@@ -44,6 +42,6 @@ then
     echo "INFO: I will try to upgrade to the one travis should use"
     upgrade_go_using_gimme
 fi
-#prepare_gopath_dir_permissions
+prepare_dir_permissions
 install_go_dependencies
 prepare_docker_env

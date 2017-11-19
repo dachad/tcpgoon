@@ -41,6 +41,7 @@ function travis_deploy_flags() {
     exec_env_vars=""
     if $(test "$sim_deploy" = "yes")
     then
+        echo "INFO: deploy flag enabled. We will enable the env variables to simulate a travis merge to master"
         exec_env_vars='-e TRAVIS_PULL_REQUEST="false" -e TRAVIS_BRANCH="master"'
     fi
 }
@@ -49,8 +50,6 @@ function docker_run_cmdline_generator() {
     script_name=$(echo $(basename $0) | cut -d "-" -f 1)
     # https://docs.travis-ci.com/user/common-build-problems/#Troubleshooting-Locally-in-a-Docker-Image
     test_docker_image="travisci/ci-garnet:packer-1503972846"
-    #this looks more outdated, without docker support
-    #test_docker_image="travisci/ci-go:packer-1494864792"
     travis_home="/home/travis"
     travis_user="travis"
     travis_go_version=$(cat .travis.yml | grep "^go:" -A1 | grep "^- " | cut -d " " -f 2)
@@ -61,6 +60,7 @@ function docker_run_cmdline_generator() {
             --user $travis_user
             -e http_proxy=$http_proxy \
             $exec_env_vars \
+            --privileged \
             --rm $test_docker_image \
             /bin/bash --login -c _script/$script_name"
 }
