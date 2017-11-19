@@ -38,7 +38,7 @@ func main() {
 
 	if !(*assumeyesPtr || cmdutil.AskForUserConfirmation(*hostPtr, *portPtr, *numberConnectionsPtr)) {
 		fmt.Fprintln(debugOut, "Execution not approved by the user")
-		cmdutil.CloseAbruptly()
+		os.Exit(cmdutil.CloseAbruptly())
 	}
 
 	connStatusCh, connStatusTracker := mtcpclient.StartBackgroundReporting(*numberConnectionsPtr, *reportingIntervalPtr)
@@ -46,5 +46,5 @@ func main() {
 	mtcpclient.MultiTCPConnect(*numberConnectionsPtr, *delayPtr, *hostPtr, *portPtr, connStatusCh, closureCh, debugOut)
 	fmt.Fprintln(debugOut, "Tests execution completed")
 
-	cmdutil.CloseNicely(*hostPtr, *portPtr, connStatusTracker, debugOut)
+	os.Exit(cmdutil.CloseNicely(*hostPtr, *portPtr, connStatusTracker, debugOut))
 }
