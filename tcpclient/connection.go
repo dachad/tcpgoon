@@ -31,6 +31,10 @@ func (c Connection) GetConnectionStatus() ConnectionStatus {
 	return c.status
 }
 
+func (c Connection) SetConnectionStatus(cs ConnectionStatus) {
+	c.status = cs
+}
+
 func (c Connection) String() string {
 	var status string
 	switch c.status {
