@@ -3,6 +3,39 @@
 set -exuo pipefail
 cd $(dirname $0)/..
 
+function docker_authenticate() {
+    DOCKER_USERNAME=${DOCKER_USERNAME:-""}
+    DOCKER_PASSWORD=${DOCKER_PASSWORD:-""}
+    if $(test "$DOCKER_USERNAME" != "" ) && $(test "$DOCKER_PASSWORD" != "")
+    then
+        echo "INFO: Docker env variables set. Logging in"
+        docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
+        return $?
+    fi
+    local_docker_config_store="${HOME}/.docker"
+    if $(test -f "${local_docker_config_store}/config.json") && $(test -r "${local_docker_config_store}/config.json")
+    then
+        echo "INFO: Valid docker credentials file found. We will try to use it"
+        return 0
+    fi
+    echo "ERROR: No credentials in environment variables found neither a valid docker config file"
+    exit 1
+}
+
+function docker_tag() {
+    extra_docker_tag="${docker_name}:$(git log -1 --pretty=%h)"
+    sg $execgroup "docker tag $docker_name $extra_docker_tag"
+}
+
+function docker_push() {
+    sg $execgroup "docker push $extra_docker_tag"
+    sg $execgroup "docker push $docker_name"
+}
+
+
+#main()
+docker_authenticate
 docker_name=${1:-"dachad/tcpgoon"}
 execgroup="docker"
-sg $execgroup "docker push $docker_name"
+docker_tag
+docker_push
