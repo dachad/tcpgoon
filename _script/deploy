@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
-set -exuo pipefail
+# We dont add x, as we dont want creds in the output
+set -euo pipefail
 cd $(dirname $0)/..
 
 function docker_authenticate() {
