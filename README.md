@@ -56,7 +56,7 @@ Total: 10, Dialing: 1, Established: 9, Closed: 0, Error: 0, NotInitiated: 0
 Total: 10, Dialing: 0, Established: 10, Closed: 0, Error: 0, NotInitiated: 0
 --- myhttpsamplehost.com:80 tcp test statistics ---
 Total: 10, Dialing: 0, Established: 10, Closed: 0, Error: 0, NotInitiated: 0
-Timing stats for 10 established connections min/avg/max/dev = 17.929ms/19.814ms/29.811ms/3.353ms
+Response time stats for 10 established connections min/avg/max/dev = 17.929ms/19.814ms/29.811ms/3.353ms
 % echo $?
 0
 ```
@@ -82,8 +82,8 @@ Total: 10, Dialing: 1, Established: 2, Closed: 0, Error: 7, NotInitiated: 0
 Total: 10, Dialing: 0, Established: 2, Closed: 0, Error: 8, NotInitiated: 0
 --- myhttpsamplehost.com:8080 tcp test statistics ---
 Total: 10, Dialing: 0, Established: 2, Closed: 0, Error: 8, NotInitiated: 0
-Timing stats for 2 established connections min/avg/max/dev = 1.914ms/2.013ms/2.113ms/99µs
-Timing stats for 8 failed connections min/avg/max/dev = 5.000819s/5.002496s/5.004758s/1.448ms
+Response time stats for 2 established connections min/avg/max/dev = 1.914ms/2.013ms/2.113ms/99µs
+Time to error stats for 8 failed connections min/avg/max/dev = 5.000819s/5.002496s/5.004758s/1.448ms
 % echo $?
 2
 ```
@@ -105,7 +105,7 @@ Total: 10, Dialing: 2, Established: 0, Closed: 0, Error: 8, NotInitiated: 0
 Total: 10, Dialing: 1, Established: 0, Closed: 0, Error: 9, NotInitiated: 0
 --- myhttpsamplehost.com:81 tcp test statistics ---
 Total: 10, Dialing: 0, Established: 0, Closed: 0, Error: 10, NotInitiated: 0
-Timing stats for 10 failed connections min/avg/max/dev = 5.00025s/5.001741s/5.00317s/908µs
+Time to error stats for 10 failed connections min/avg/max/dev = 5.00025s/5.001741s/5.00317s/908µs
 % echo $?
 2
 ```

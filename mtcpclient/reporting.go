@@ -40,10 +40,12 @@ func StartBackgroundReporting(numberConnections int, rinterval int) (chan tcpcli
 }
 
 func FinalMetricsReport(gc GroupOfConnections) (output string) {
-	// Report for Estalished connections
+	// Report for Established connections
+	// TODO: remove duplication - this and the next block are almost equal. The MR structure could have a common
+	//  String() representation
 	if gc.AtLeastOneConnectionEstablished() {
 		mr := gc.calculateMetricsReport(tcpclient.ConnectionEstablished)
-		output = "Timing stats for " + strconv.Itoa(mr.numberOfConnections) +
+		output = "Response time stats for " + strconv.Itoa(mr.numberOfConnections) +
 			" established connections min/avg/max/dev = " +
 			mr.min.Truncate(time.Microsecond).String() + "/" +
 			mr.avg.Truncate(time.Microsecond).String() + "/" +
@@ -55,7 +57,7 @@ func FinalMetricsReport(gc GroupOfConnections) (output string) {
 	// Report for Errored connections
 	if gc.AtLeastOneConnectionInError() {
 		mr := gc.calculateMetricsReport(tcpclient.ConnectionError)
-		output += "Timing stats for " + strconv.Itoa(mr.numberOfConnections) +
+		output += "Time to error stats for " + strconv.Itoa(mr.numberOfConnections) +
 			" failed connections min/avg/max/dev = " +
 			mr.min.Truncate(time.Microsecond).String() + "/" +
 			mr.avg.Truncate(time.Microsecond).String() + "/" +
