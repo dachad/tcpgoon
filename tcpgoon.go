@@ -5,10 +5,10 @@ import (
 	"os"
 
 	"github.com/dachad/tcpgoon/cmdutil"
+	"github.com/dachad/tcpgoon/debugging"
 	"github.com/dachad/tcpgoon/mtcpclient"
 	"github.com/dachad/tcpgoon/tcpclient"
 	"github.com/spf13/pflag"
-	"github.com/dachad/tcpgoon/debugging"
 )
 
 func main() {

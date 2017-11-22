@@ -3,12 +3,12 @@ package tcpclient
 import (
 	"bufio"
 	"fmt"
+	"github.com/dachad/tcpgoon/debugging"
 	"net"
 	"reflect"
 	"strconv"
 	"sync"
 	"time"
-	"github.com/dachad/tcpgoon/debugging"
 )
 
 var DefaultDialTimeoutInMs = 5000

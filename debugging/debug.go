@@ -8,6 +8,6 @@ import (
 
 var DebugOut io.Writer = ioutil.Discard
 
-func EnableDebug()  {
+func EnableDebug() {
 	DebugOut = os.Stderr
 }

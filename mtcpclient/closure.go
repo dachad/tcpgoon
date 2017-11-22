@@ -2,11 +2,11 @@ package mtcpclient
 
 import (
 	"fmt"
+	"github.com/dachad/tcpgoon/debugging"
 	"os"
 	"os/signal"
 	"syscall"
 	"time"
-	"github.com/dachad/tcpgoon/debugging"
 )
 
 func StartBackgroundClosureTrigger(gc GroupOfConnections) <-chan bool {

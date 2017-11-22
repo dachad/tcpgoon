@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/dachad/tcpgoon/mtcpclient"
 	"github.com/dachad/tcpgoon/debugging"
+	"github.com/dachad/tcpgoon/mtcpclient"
 )
 
 const (

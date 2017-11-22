@@ -6,8 +6,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/dachad/tcpgoon/tcpclient"
 	"github.com/dachad/tcpgoon/debugging"
+	"github.com/dachad/tcpgoon/tcpclient"
 )
 
 // MultiTCPConnect tries to open us many TCP connections as numberConnections against
