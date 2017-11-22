@@ -1,7 +1,6 @@
 package tcpclient
 
 import (
-	"io/ioutil"
 	"strconv"
 	"sync"
 	"testing"

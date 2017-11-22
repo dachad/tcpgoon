@@ -3,7 +3,6 @@ package tcpclient
 import (
 	"bufio"
 	"fmt"
-	"io"
 	"net"
 	"reflect"
 	"strconv"

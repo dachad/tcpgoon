@@ -2,7 +2,6 @@ package mtcpclient
 
 import (
 	"fmt"
-	"io"
 	"strconv"
 	"sync"
 	"time"

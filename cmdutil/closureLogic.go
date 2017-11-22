@@ -2,7 +2,6 @@ package cmdutil
 
 import (
 	"fmt"
-	"io"
 	"os"
 
 	"github.com/dachad/tcpgoon/mtcpclient"

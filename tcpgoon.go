@@ -2,8 +2,6 @@ package main
 
 import (
 	"fmt"
-	"io"
-	"io/ioutil"
 	"os"
 
 	"github.com/dachad/tcpgoon/cmdutil"
