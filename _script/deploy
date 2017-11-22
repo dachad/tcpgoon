@@ -14,7 +14,7 @@ function docker_authenticate() {
         return $?
     fi
     local_docker_config_store="${HOME}/.docker"
-    if $(test -f "${local_docker_config_store}/config.json") && $(test -r "${local_docker_config_store}/config.json")
+    if $(test -r "${local_docker_config_store}/config.json")
     then
         echo "INFO: Valid docker credentials file found. We will try to use it"
         return 0

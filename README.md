@@ -110,7 +110,7 @@ Time to error stats for 10 failed connections min/avg/max/dev = 5.00025s/5.00174
 2
 ```
 
-## Executing the tests
+## Testing locally
 
 You can use the standard go test command, or use our scripts we also run as CI.
 

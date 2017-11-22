@@ -41,14 +41,14 @@ function travis_deploy_flags() {
     docker_deploy_flags=""
     if $(test "$sim_deploy" = "yes")
     then
-        echo "INFO: deploy flag enabled. We will activate the env variables, and mount your docker config/credentials,\
-         to simulate a travis merge to master"
+        echo "INFO: deploy flag enabled. We will activate the env variables, and mount your docker config/credentials,"\
+             "to simulate a travis merge to master"
         local_docker_config_store="${HOME}/.docker"
         if ! $(test -f "${local_docker_config_store}/config.json")
         then
-            echo "ERROR: You need a valid docker config credentials file in your ${local_docker_config_store} directory\
-             in order to deploy new images, with read access to the user $travis (uid 2000 in the container). \
-             You can generate it using docker login"
+            echo "ERROR: You need a valid docker config credentials file in your ${local_docker_config_store} directory"\
+                 "in order to deploy new images, with read access to the user ${travis_user} (uid 2000 in the container)."\
+                 "You can generate it using docker login"
             exit 1
         fi
         docker_deploy_flags="-v ${local_docker_config_store}:${travis_home}/.docker -e TRAVIS_PULL_REQUEST=false -e TRAVIS_BRANCH=master"
