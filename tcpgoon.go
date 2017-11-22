@@ -10,6 +10,7 @@ import (
 	"github.com/dachad/tcpgoon/mtcpclient"
 	"github.com/dachad/tcpgoon/tcpclient"
 	"github.com/spf13/pflag"
+	"github.com/dachad/tcpgoon/debugging"
 )
 
 func main() {
@@ -31,20 +32,19 @@ func main() {
 
 	tcpclient.DefaultDialTimeoutInMs = *connDialTimeoutPtr
 
-	var debugOut io.Writer = ioutil.Discard
 	if *debugPtr {
-		debugOut = os.Stderr
+		debugging.EnableDebug()
 	}
 
 	if !(*assumeyesPtr || cmdutil.AskForUserConfirmation(*hostPtr, *portPtr, *numberConnectionsPtr)) {
-		fmt.Fprintln(debugOut, "Execution not approved by the user")
+		fmt.Fprintln(debugging.DebugOut, "Execution not approved by the user")
 		cmdutil.CloseAbruptly()
 	}
 
 	connStatusCh, connStatusTracker := mtcpclient.StartBackgroundReporting(*numberConnectionsPtr, *reportingIntervalPtr)
-	closureCh := mtcpclient.StartBackgroundClosureTrigger(connStatusTracker, debugOut)
-	mtcpclient.MultiTCPConnect(*numberConnectionsPtr, *delayPtr, *hostPtr, *portPtr, connStatusCh, closureCh, debugOut)
-	fmt.Fprintln(debugOut, "Tests execution completed")
+	closureCh := mtcpclient.StartBackgroundClosureTrigger(connStatusTracker)
+	mtcpclient.MultiTCPConnect(*numberConnectionsPtr, *delayPtr, *hostPtr, *portPtr, connStatusCh, closureCh)
+	fmt.Fprintln(debugging.DebugOut, "Tests execution completed")
 
-	cmdutil.CloseNicely(*hostPtr, *portPtr, connStatusTracker, debugOut)
+	cmdutil.CloseNicely(*hostPtr, *portPtr, connStatusTracker)
 }

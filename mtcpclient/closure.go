@@ -7,15 +7,16 @@ import (
 	"os/signal"
 	"syscall"
 	"time"
+	"github.com/dachad/tcpgoon/debugging"
 )
 
-func StartBackgroundClosureTrigger(gc GroupOfConnections, debugOut io.Writer) <-chan bool {
+func StartBackgroundClosureTrigger(gc GroupOfConnections) <-chan bool {
 	closureCh := make(chan bool)
 
 	signalsCh := make(chan os.Signal, 1)
 	registerProperSignals(signalsCh)
 
-	go closureMonitor(gc, signalsCh, closureCh, debugOut)
+	go closureMonitor(gc, signalsCh, closureCh)
 	return closureCh
 }
 
@@ -31,12 +32,12 @@ func registerProperSignals(signalsCh chan os.Signal) {
 // closureMonitor polls a connections slice, to see if there's connections pending
 //  to be triggered, and a signal channel, in case execution is interrupted
 func closureMonitor(gc GroupOfConnections, signalsCh chan os.Signal,
-	closureCh chan bool, debugOut io.Writer) {
+	closureCh chan bool) {
 	const pullingPeriodInMs = 500
 	for {
 		select {
 		case signal := <-signalsCh:
-			fmt.Fprintln(debugOut, "We captured a closure signal:", signal)
+			fmt.Fprintln(debugging.DebugOut, "We captured a closure signal:", signal)
 			close(closureCh)
 			return
 		case <-time.After(pullingPeriodInMs * time.Millisecond):

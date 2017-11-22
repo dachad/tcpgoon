@@ -40,7 +40,7 @@ func StartBackgroundReporting(numberConnections int, rinterval int) (chan tcpcli
 }
 
 func FinalMetricsReport(gc GroupOfConnections) (output string) {
-	// Report for Estalished connections
+	// Report for Established connections
 	if gc.AtLeastOneConnectionEstablished() {
 		mr := gc.calculateMetricsReport(tcpclient.ConnectionEstablished)
 		output = "Timing stats for " + strconv.Itoa(mr.numberOfConnections) +

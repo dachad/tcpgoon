@@ -6,6 +6,7 @@ import (
 	"os"
 
 	"github.com/dachad/tcpgoon/mtcpclient"
+	"github.com/dachad/tcpgoon/debugging"
 )
 
 const (
@@ -14,17 +15,17 @@ const (
 	completedButConnErrorsExitStatus = 2
 )
 
-func CloseNicely(host string, port int, gc mtcpclient.GroupOfConnections, debugOut io.Writer) {
+func CloseNicely(host string, port int, gc mtcpclient.GroupOfConnections) {
 	printClosureReport(host, port, gc)
 	if gc.PendingConnections() {
-		fmt.Fprintln(debugOut, "We detected some connections did not complete")
+		fmt.Fprintln(debugging.DebugOut, "We detected some connections did not complete")
 		os.Exit(incompleteExecutionExitStatus)
 	}
 	if gc.AtLeastOneConnectionInError() {
-		fmt.Fprintln(debugOut, "We detected connection errors")
+		fmt.Fprintln(debugging.DebugOut, "We detected connection errors")
 		os.Exit(completedButConnErrorsExitStatus)
 	}
-	fmt.Fprintln(debugOut, "Metrics point to a clean execution. Successful exit")
+	fmt.Fprintln(debugging.DebugOut, "Metrics point to a clean execution. Successful exit")
 	os.Exit(okExitStatus)
 }
 
