@@ -1,5 +1,7 @@
 <p align="center">
 <img src="http://www.confusedcoders.com/wp-content/uploads/2016/10/golang-1.jpg" alt="tcpgoon" title="tcpgoon" />
+</p>
+<p align="center">
 <img src="https://raw.githubusercontent.com/dachad/tcpgoon/master/_docs/coollogo_com-290231302.png" alt="tcpgoon" title="tcpgoon" />
 </p>
 
