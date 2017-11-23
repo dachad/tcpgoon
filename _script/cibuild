@@ -1,8 +1,18 @@
 #!/usr/bin/env bash
 
-set -exuo pipefail
-
 cd $(dirname $0)/..
+source _script/requirements
+set -exuo pipefail
 
 ./_script/test
 ./_script/formatting_checks
+
+TRAVIS_PULL_REQUEST=${TRAVIS_PULL_REQUEST:-""}
+TRAVIS_BRANCH=${TRAVIS_BRANCH:-""}
+if [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$TRAVIS_BRANCH" = "master" ]
+then
+    echo "INFO: Merging to master... time to build and deploy redistributables"
+    docker_name="dachad/tcpgoon"
+    ./_script/build "$docker_name"
+    ./_script/deploy "$docker_name"
+fi
