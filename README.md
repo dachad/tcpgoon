@@ -113,5 +113,5 @@ Timing stats for 10 failed connections min/avg/max/dev = 5.00025s/5.001741s/5.00
 
 ## TO-DO
 
-We do use [Github issues](/issues/) to track bugs, improvements and feature requests. Do not hesitate
+We do use [Github issues](https://github.com/dachad/tcpgoon/issues) to track bugs, improvements and feature requests. Do not hesitate
 to raise new ones ;)
