@@ -39,6 +39,9 @@ func main() {
 		cmdutil.CloseAbruptly()
 	}
 
+	// TODO: we should decouple the caller from the mtcpclient package (too many structures being moved from
+	//  one side to the other.. everything in a single structure, or applying something like the builder pattern,
+	//  may help
 	connStatusCh, connStatusTracker := mtcpclient.StartBackgroundReporting(*numberConnectionsPtr, *reportingIntervalPtr)
 	closureCh := mtcpclient.StartBackgroundClosureTrigger(connStatusTracker)
 	mtcpclient.MultiTCPConnect(*numberConnectionsPtr, *delayPtr, *hostPtr, *portPtr, connStatusCh, closureCh)

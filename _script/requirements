@@ -1,0 +1,47 @@
+#!/usr/bin/env bash
+# Note: this version of the requirements script
+# only wants to act inside an specific travis environment.
+# We don't currently want to touch your environment
+
+
+cd $(dirname $0)/..
+source _script/go_version
+# We avoid -e as we want to act in case of return codes different from 0
+set -xuo pipefail
+
+function upgrade_go_using_gimme() {
+    GIMME_OUTPUT=$(gimme $go_version_in_travis_yml) && eval "$GIMME_OUTPUT"
+}
+
+function install_go_dependencies() {
+    echo "INFO: Installing go dependencies"
+    go get ./...
+}
+
+function prepare_dir_permissions() {
+    echo "INFO: preparing gopath/output folder permissions"
+    sudo chown travis /home/travis/gopath/src/github.com
+    sudo chmod o+w /home/travis/gopath/src/github.com/dachad/tcpgoon/out/
+}
+
+function prepare_docker_env() {
+    sudo groupadd docker
+    sudo usermod -aG docker travis
+    #newgrp docker
+    sudo dockerd &
+}
+
+# main()
+if $(test "$PWD" != "/home/travis/gopath/src/github.com/dachad/tcpgoon"); then return 0; fi
+
+echo "INFO: looks I'm running inside the box emulating travis. We will actively install dependencies"
+go_version_check
+if $(test $? -ne 0)
+then
+    # see https://github.com/travis-ci/travis-ci/issues/7859
+    echo "INFO: I will try to upgrade to the one travis should use"
+    upgrade_go_using_gimme
+fi
+prepare_dir_permissions
+install_go_dependencies
+prepare_docker_env
