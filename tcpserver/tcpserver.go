@@ -33,7 +33,7 @@ func (h *Handler) listen() {
 	}
 }
 
-// Dispatcher : Struct with all the hanlders
+// Dispatcher : Struct with all the handlers
 type Dispatcher struct {
 	Handlers map[string]*Handler //`type:"map[ip]*Handler"`
 }
@@ -41,6 +41,8 @@ type Dispatcher struct {
 func (d *Dispatcher) addHandler(conn net.Conn) {
 	addr := conn.RemoteAddr().String()
 	handler := &Handler{conn, make(chan bool, 1)}
+	// TODO: this can generate concurrent writes against a map. This is not supported and generates
+	//  random errors
 	d.Handlers[addr] = handler
 
 	go handler.listen()
