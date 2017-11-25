@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"errors"
-	"fmt"
 	"os"
 
 	"github.com/spf13/cobra"
@@ -30,7 +29,7 @@ var rootCmd = &cobra.Command{
 	},
 	PreRun: func(cmd *cobra.Command, args []string) {
 		if err := validateFlags(flags); err != nil {
-			fmt.Println(err)
+			cmd.Println(cmd.UsageString())
 			os.Exit(1)
 		}
 	},
@@ -41,14 +40,13 @@ var rootCmd = &cobra.Command{
 
 func Execute() {
 	if err := rootCmd.Execute(); err != nil {
-		fmt.Println(err)
 		os.Exit(1)
 	}
 }
 
 func init() {
-	rootCmd.Flags().StringVarP(&flags.hostPtr, "target", "t", "", "Target host you want to open tcp connections against (Required)")
-	rootCmd.Flags().IntVarP(&flags.portPtr, "port", "p", 0, "Port you want to open tcp connections against (Required)")
+	rootCmd.Flags().StringVarP(&flags.hostPtr, "target", "t", "", "[Required] Target host you want to open tcp connections against")
+	rootCmd.Flags().IntVarP(&flags.portPtr, "port", "p", 0, "[Required] Port you want to open tcp connections against")
 	rootCmd.Flags().IntVarP(&flags.numberConnectionsPtr, "connections", "c", 100, "Number of connections you want to open")
 	rootCmd.Flags().IntVarP(&flags.delayPtr, "sleep", "s", 10, "Time you want to sleep between connections, in ms")
 	rootCmd.Flags().IntVarP(&flags.connDialTimeoutPtr, "dial-timeout", "d", 5000, "Connection dialing timeout, in ms")
