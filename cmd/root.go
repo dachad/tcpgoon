@@ -2,8 +2,11 @@ package cmd
 
 import (
 	"errors"
+	"fmt"
 	"os"
 
+	"github.com/dachad/tcpgoon/cmdutil"
+	"github.com/dachad/tcpgoon/debugging"
 	"github.com/spf13/cobra"
 )
 
@@ -32,6 +35,8 @@ var rootCmd = &cobra.Command{
 			cmd.Println(cmd.UsageString())
 			os.Exit(1)
 		}
+		enableDebugging(flags)
+		autorunValidation(flags)
 	},
 	Run: func(cmd *cobra.Command, args []string) {
 		run(flags)
@@ -62,4 +67,17 @@ func validateFlags(flags tcpgoonFlags) error {
 		return errors.New("Missing some required parameters")
 	}
 	return nil
+}
+
+func enableDebugging(flags tcpgoonFlags) {
+	if flags.debugPtr {
+		debugging.EnableDebug()
+	}
+}
+
+func autorunValidation(flags tcpgoonFlags) {
+	if !(flags.assumeyesPtr || cmdutil.AskForUserConfirmation(flags.hostPtr, flags.portPtr, flags.numberConnectionsPtr)) {
+		fmt.Fprintln(debugging.DebugOut, "Execution not approved by the user")
+		cmdutil.CloseAbruptly()
+	}
 }

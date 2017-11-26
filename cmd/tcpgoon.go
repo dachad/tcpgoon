@@ -10,17 +10,7 @@ import (
 )
 
 func run(flags tcpgoonFlags) {
-
 	tcpclient.DefaultDialTimeoutInMs = flags.connDialTimeoutPtr
-
-	if flags.debugPtr {
-		debugging.EnableDebug()
-	}
-
-	if !(flags.assumeyesPtr || cmdutil.AskForUserConfirmation(flags.hostPtr, flags.portPtr, flags.numberConnectionsPtr)) {
-		fmt.Fprintln(debugging.DebugOut, "Execution not approved by the user")
-		cmdutil.CloseAbruptly()
-	}
 
 	// TODO: we should decouple the caller from the mtcpclient package (too many structures being moved from
 	//  one side to the other.. everything in a single structure, or applying something like the builder pattern,
