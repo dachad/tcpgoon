@@ -33,7 +33,7 @@ established successfully
 tcpgoon tests concurrent connections towards a server listening on a TCP port
 
 Usage:
-  tcpgoon [flags]
+  tcpgoon <host> <port> [flags]
 
 Flags:
   -y, --assume-yes         Force execution without asking for confirmation
@@ -41,9 +41,7 @@ Flags:
   -d, --dial-timeout int   Connection dialing timeout, in ms (default 5000)
   -h, --help               help for tcpgoon
   -i, --interval int       Interval, in seconds, between stats updates (default 1)
-  -p, --port int           [Required] Port you want to open tcp connections against
   -s, --sleep int          Time you want to sleep between connections, in ms (default 10)
-  -t, --target string      [Required] Target host you want to open tcp connections against
   -v, --verbose            Print debugging information to the standard error
 ```
 
@@ -51,7 +49,7 @@ Flags:
 
 Successful execution (connections were opened as expected):
 ```bash
-% ./tcpgoon --target myhttpsamplehost.com --port 80 --connections 10 --sleep 999 -y 
+% ./tcpgoon myhttpsamplehost.com 80 --connections 10 --sleep 999 -y 
 Total: 10, Dialing: 0, Established: 0, Closed: 0, Error: 0, NotInitiated: 10
 Total: 10, Dialing: 1, Established: 1, Closed: 0, Error: 0, NotInitiated: 8
 Total: 10, Dialing: 1, Established: 2, Closed: 0, Error: 0, NotInitiated: 7
@@ -72,7 +70,7 @@ Response time stats for 10 established connections min/avg/max/dev = 17.929ms/19
 
 Partially succeeded execution (mix of successes and errors against the target):
 ```bash
-% ./tcpgoon --target myhttpsamplehost.com --port 8080 --connections 10 --sleep 999 -y
+% ./tcpgoon myhttpsamplehost.com 8080 --connections 10 --sleep 999 -y
 Total: 10, Dialing: 0, Established: 0, Closed: 0, Error: 0, NotInitiated: 10
 Total: 10, Dialing: 0, Established: 1, Closed: 0, Error: 0, NotInitiated: 9
 Total: 10, Dialing: 0, Established: 2, Closed: 0, Error: 0, NotInitiated: 8
@@ -99,7 +97,7 @@ Time to error stats for 8 failed connections min/avg/max/dev = 5.000819s/5.00249
 
 Unsuccessful execution (unable to open connections against the destination host:port):
 ```bash
-% ./tcpgoon --target myhttpsamplehost.com --port 81 --connections 10 --sleep 999 -y
+% ./tcpgoon myhttpsamplehost.com 81 --connections 10 --sleep 999 -y
 Total: 10, Dialing: 0, Established: 0, Closed: 0, Error: 0, NotInitiated: 10
 Total: 10, Dialing: 2, Established: 0, Closed: 0, Error: 0, NotInitiated: 8
 Total: 10, Dialing: 3, Established: 0, Closed: 0, Error: 0, NotInitiated: 7

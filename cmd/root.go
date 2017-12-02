@@ -4,13 +4,14 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"strconv"
 
 	"github.com/dachad/tcpgoon/cmdutil"
 	"github.com/dachad/tcpgoon/debugging"
 	"github.com/spf13/cobra"
 )
 
-type tcpgoonFlags struct {
+type tcpgoonParams struct {
 	hostPtr              string
 	portPtr              int
 	numberConnectionsPtr int
@@ -21,25 +22,22 @@ type tcpgoonFlags struct {
 	assumeyesPtr         bool
 }
 
-var flags tcpgoonFlags
+var params tcpgoonParams
 
 var rootCmd = &cobra.Command{
-	Use:   "tcpgoon",
+	Use:   "tcpgoon <host> <port>",
 	Short: "tcpgoon tests concurrent connections towards a server listening on a TCP port",
 	Long:  ``,
-	Args: func(cmd *cobra.Command, args []string) error {
-		return cobra.NoArgs(cmd, args)
-	},
 	PreRun: func(cmd *cobra.Command, args []string) {
-		if err := validateFlags(flags); err != nil {
+		if err := validateRequiredArgs(&params, args); err != nil {
 			cmd.Println(cmd.UsageString())
 			os.Exit(1)
 		}
-		enableDebugging(flags)
-		autorunValidation(flags)
+		enableDebugging(params)
+		autorunValidation(params)
 	},
 	Run: func(cmd *cobra.Command, args []string) {
-		run(flags)
+		run(params)
 	},
 }
 
@@ -50,33 +48,35 @@ func Execute() {
 }
 
 func init() {
-	rootCmd.Flags().StringVarP(&flags.hostPtr, "target", "t", "", "[Required] Target host you want to open tcp connections against")
-	rootCmd.Flags().IntVarP(&flags.portPtr, "port", "p", 0, "[Required] Port you want to open tcp connections against")
-	rootCmd.Flags().IntVarP(&flags.numberConnectionsPtr, "connections", "c", 100, "Number of connections you want to open")
-	rootCmd.Flags().IntVarP(&flags.delayPtr, "sleep", "s", 10, "Time you want to sleep between connections, in ms")
-	rootCmd.Flags().IntVarP(&flags.connDialTimeoutPtr, "dial-timeout", "d", 5000, "Connection dialing timeout, in ms")
-	rootCmd.Flags().BoolVarP(&flags.debugPtr, "verbose", "v", false, "Print debugging information to the standard error")
-	rootCmd.Flags().IntVarP(&flags.reportingIntervalPtr, "interval", "i", 1, "Interval, in seconds, between stats updates")
-	rootCmd.Flags().BoolVarP(&flags.assumeyesPtr, "assume-yes", "y", false, "Force execution without asking for confirmation")
-
+	rootCmd.Flags().IntVarP(&params.numberConnectionsPtr, "connections", "c", 100, "Number of connections you want to open")
+	rootCmd.Flags().IntVarP(&params.delayPtr, "sleep", "s", 10, "Time you want to sleep between connections, in ms")
+	rootCmd.Flags().IntVarP(&params.connDialTimeoutPtr, "dial-timeout", "d", 5000, "Connection dialing timeout, in ms")
+	rootCmd.Flags().BoolVarP(&params.debugPtr, "verbose", "v", false, "Print debugging information to the standard error")
+	rootCmd.Flags().IntVarP(&params.reportingIntervalPtr, "interval", "i", 1, "Interval, in seconds, between stats updates")
+	rootCmd.Flags().BoolVarP(&params.assumeyesPtr, "assume-yes", "y", false, "Force execution without asking for confirmation")
 }
 
-func validateFlags(flags tcpgoonFlags) error {
-	// Target host and port are mandatory to run the TCP check
-	if flags.hostPtr == "" || flags.portPtr == 0 {
-		return errors.New("Missing some required parameters")
+func validateRequiredArgs(params *tcpgoonParams, args []string) error {
+	if len(args) != 2 {
+		return errors.New("Number of required parameters doesn't match")
+	}
+	params.hostPtr = args[0]
+	if port, err := strconv.Atoi(args[1]); err != nil && port <= 0 {
+		return errors.New("Port argument is not a valid integer")
+	} else {
+		params.portPtr = port
 	}
 	return nil
 }
 
-func enableDebugging(flags tcpgoonFlags) {
-	if flags.debugPtr {
+func enableDebugging(params tcpgoonParams) {
+	if params.debugPtr {
 		debugging.EnableDebug()
 	}
 }
 
-func autorunValidation(flags tcpgoonFlags) {
-	if !(flags.assumeyesPtr || cmdutil.AskForUserConfirmation(flags.hostPtr, flags.portPtr, flags.numberConnectionsPtr)) {
+func autorunValidation(params tcpgoonParams) {
+	if !(params.assumeyesPtr || cmdutil.AskForUserConfirmation(params.hostPtr, params.portPtr, params.numberConnectionsPtr)) {
 		fmt.Fprintln(debugging.DebugOut, "Execution not approved by the user")
 		cmdutil.CloseAbruptly()
 	}
