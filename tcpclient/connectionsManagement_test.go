@@ -28,6 +28,12 @@ func TestTCPConnectEstablished(t *testing.T) {
 	go runTCPServer()
 	time.Sleep(1 * time.Second)
 
+	defer func() {
+		err := recover()
+		if err != "sync: negative WaitGroup counter" {
+			t.Fatalf("Unexpected panic: %#v", err)
+		}
+	}()
 	var wg sync.WaitGroup
 	wg.Add(1)
 
@@ -36,7 +42,6 @@ func TestTCPConnectEstablished(t *testing.T) {
 
 	t.Log("Initiating TCP Connect")
 	go TCPConnect(1, host, port, &wg, ioutil.Discard, statusChannel, closeRequest)
-	time.Sleep(1 * time.Second)
 	if (<-statusChannel).GetConnectionStatus() == ConnectionDialing {
 		t.Log("Connection Dialing")
 	} else {
@@ -53,12 +58,25 @@ func TestTCPConnectEstablished(t *testing.T) {
 	} else {
 		t.Error("Connection TCP Processing Duration not consistent")
 	}
+
+	// We ask to close the TCP connection
+	closeRequest <- true
+
+	// Validates wg has been decreased to 0, and next one is making it negative
+	wg.Done()
+	t.Fatal("Should panic")
 }
 
 func TestTCPConnectErrored(t *testing.T) {
 	var host = "127.0.0.1"
 	var port = 55556
 
+	defer func() {
+		err := recover()
+		if err != "sync: negative WaitGroup counter" {
+			t.Fatalf("Unexpected panic: %#v", err)
+		}
+	}()
 	var wg sync.WaitGroup
 	wg.Add(1)
 
@@ -66,8 +84,7 @@ func TestTCPConnectErrored(t *testing.T) {
 	var closeRequest = make(chan bool)
 
 	t.Log("Initiating TCP Connect")
-	go TCPConnect(1, host, port, &wg, ioutil.Discard, statusChannel, closeRequest)
-	time.Sleep(1 * time.Second)
+	TCPConnect(1, host, port, &wg, ioutil.Discard, statusChannel, closeRequest)
 	if (<-statusChannel).GetConnectionStatus() == ConnectionDialing {
 		t.Log("Connection Dialing")
 	} else {
@@ -86,6 +103,10 @@ func TestTCPConnectErrored(t *testing.T) {
 	} else {
 		t.Error("Connection TCP Processing Duration not consistent")
 	}
+
+	// Validates wg has been decreased to 0, and next one is making it negative
+	wg.Done()
+	t.Fatal("Should panic")
 }
 
 func TestReportConnectionStatus(t *testing.T) {
