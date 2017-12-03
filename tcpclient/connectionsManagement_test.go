@@ -12,20 +12,20 @@ import (
 // We really need to refactor this test. We should verify connections do become established,
 // rather than just waiting for a second and finish
 // We should also test "failing" connections, and ensure their status is reported properly
-func TestTcpConnectEstablished(t *testing.T) {
+func TestTCPConnectEstablished(t *testing.T) {
 	var host = "127.0.0.1"
 	var port = 55555
 
 	dispatcher := &tcpserver.Dispatcher{make(map[string]*tcpserver.Handler)}
 
-	run := func() {
+	runTCPServer := func() {
 		t.Log("Starting TCP server...")
 		if err := dispatcher.ListenHandlers(port); err != nil {
 			t.Fatal("Could not start the TCP server", err)
 			return
 		}
 	}
-	go run()
+	go runTCPServer()
 	time.Sleep(1 * time.Second)
 
 	var wg sync.WaitGroup
@@ -44,7 +44,7 @@ func TestTcpConnectEstablished(t *testing.T) {
 	}
 	var connectionEstablished = <-statusChannel
 	if connectionEstablished.GetConnectionStatus() == ConnectionEstablished {
-		t.Log("Connection Estalished")
+		t.Log("Connection Established")
 	} else {
 		t.Error("Connection failed to establish")
 	}
@@ -55,7 +55,7 @@ func TestTcpConnectEstablished(t *testing.T) {
 	}
 }
 
-func TestTcpConnectErrored(t *testing.T) {
+func TestTCPConnectErrored(t *testing.T) {
 	var host = "127.0.0.1"
 	var port = 55556
 
@@ -98,7 +98,6 @@ func TestReportConnectionStatus(t *testing.T) {
 	}
 	reportConnectionStatus(debugOut, connStatusCh, connectionDescription)
 	if <-connStatusCh != connectionDescription {
-		t.Log("Not proper Connection reported: ", <-connStatusCh)
-		t.Error()
+		t.Error("Not proper Connection reported: ", <-connStatusCh)
 	}
 }
