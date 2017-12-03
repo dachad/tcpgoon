@@ -33,7 +33,7 @@ established successfully
 tcpgoon tests concurrent connections towards a server listening on a TCP port
 
 Usage:
-  tcpgoon <host> <port> [flags]
+  tcpgoon [flags] <host> <port>
 
 Flags:
   -y, --assume-yes         Force execution without asking for confirmation

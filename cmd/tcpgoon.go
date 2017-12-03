@@ -27,7 +27,7 @@ type tcpgoonParams struct {
 var params tcpgoonParams
 
 var rootCmd = &cobra.Command{
-	Use:   "tcpgoon <host> <port>",
+	Use:   "tcpgoon [flags] <host> <port>",
 	Short: "tcpgoon tests concurrent connections towards a server listening on a TCP port",
 	Long:  ``,
 	PreRun: func(cmd *cobra.Command, args []string) {
