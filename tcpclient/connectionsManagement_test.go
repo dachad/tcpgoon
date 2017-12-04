@@ -40,6 +40,7 @@ func TestTCPConnectEstablished(t *testing.T) {
 	var statusChannel = make(chan Connection, 2)
 	var closeRequest = make(chan bool)
 
+	// We use a different subroutine to be able to reach the closeRequest command
 	t.Log("Initiating TCP Connect")
 	go TCPConnect(1, host, port, &wg, ioutil.Discard, statusChannel, closeRequest)
 	if (<-statusChannel).GetConnectionStatus() == ConnectionDialing {
