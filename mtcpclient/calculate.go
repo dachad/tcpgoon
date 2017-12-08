@@ -17,6 +17,10 @@ type metricsCollectionStats struct {
 }
 
 func (gc GroupOfConnections) calculateMetricsReport(status tcpclient.ConnectionStatus) (mr metricsCollectionStats) {
+	// TODO: There's something i don't like... initiatlizing values in the first loop, and the standard deviation
+	//  requiring an extra pass considering all items... i'd move initialization out of the loop, and maybe iterate
+	//  over a filtered list rather than several loops over the original one, and maybe use specific generic functions...
+	//  requires further thinking in any case
 	mr.total = 0
 	mr.numberOfConnections = 0
 	for _, item := range gc {
@@ -39,13 +43,19 @@ func (gc GroupOfConnections) calculateMetricsReport(status tcpclient.ConnectionS
 }
 
 func (gc GroupOfConnections) calculateStdDev(status tcpclient.ConnectionStatus, mr metricsCollectionStats) time.Duration {
+	// TODO: passing the whole mr struct looks overkilling, given we only want a single value, the average, and maybe
+	//  we can actually use a version of the algorithm that calculates it (and the number of items)
+	var nitems int = 0
 	var sd float64
-
 	for _, item := range gc {
 		if item.GetConnectionStatus() == status {
+			nitems += 1
 			sd += math.Pow(float64(item.GetTCPProcessingDuration(status))-float64(mr.avg), 2)
 		}
 	}
-	return time.Duration(math.Sqrt(sd / float64(time.Duration(mr.numberOfConnections))))
+	if nitems == 0 {
+		return 0
+	}
+	return time.Duration(math.Sqrt(sd / float64(nitems)))
 
 }
