@@ -63,11 +63,12 @@ func validateRequiredArgs(params *tcpgoonParams, args []string) error {
 		return errors.New("Number of required parameters doesn't match")
 	}
 	params.hostPtr = args[0]
-	if port, err := strconv.Atoi(args[1]); err != nil && port <= 0 {
+	port, err := strconv.Atoi(args[1])
+	if err != nil && port <= 0 {
 		return errors.New("Port argument is not a valid integer")
-	} else {
-		params.portPtr = port
 	}
+	params.portPtr = port
+
 	return nil
 }
 
