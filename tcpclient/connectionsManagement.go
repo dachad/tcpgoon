@@ -35,7 +35,7 @@ func TCPConnect(id int, host string, port int, wg *sync.WaitGroup,
 	conn, err := net.DialTimeout("tcp", host+":"+strconv.Itoa(port),
 		time.Duration(DefaultDialTimeoutInMs)*time.Millisecond)
 	if err != nil {
-		connectionDescription.metrics.tcpErroredDuration = time.Now().Sub(timeTCPInitiated)
+		connectionDescription.metrics.tcpErroredDuration = time.Now().Sub(timeTCPInitiatied)
 		connectionDescription.status = ConnectionError
 		connectionDescription.metrics.tcpErroredDuration = time.Now().Sub(timeTCPInitiatied)
 		reportConnectionStatus(statusChannel, connectionDescription)
@@ -44,7 +44,7 @@ func TCPConnect(id int, host string, port int, wg *sync.WaitGroup,
 		wg.Done()
 		return err
 	}
-	connectionDescription.metrics.tcpEstablishedDuration = time.Now().Sub(timeTCPInitiated)
+	connectionDescription.metrics.tcpEstablishedDuration = time.Now().Sub(timeTCPInitiatied)
 	defer conn.Close()
 	connectionDescription.status = ConnectionEstablished
 	connectionDescription.metrics.tcpEstablishedDuration = time.Now().Sub(timeTCPInitiatied)

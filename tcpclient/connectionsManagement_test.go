@@ -1,7 +1,6 @@
 package tcpclient
 
 import (
-	"io/ioutil"
 	"sync"
 	"testing"
 	"time"
@@ -42,7 +41,7 @@ func TestTCPConnectEstablished(t *testing.T) {
 
 	// We use a different subroutine to be able to reach the closeRequest command
 	t.Log("Initiating TCP Connect")
-	go TCPConnect(1, host, port, &wg, ioutil.Discard, statusChannel, closeRequest)
+	go TCPConnect(1, host, port, &wg, statusChannel, closeRequest)
 	if (<-statusChannel).GetConnectionStatus() == ConnectionDialing {
 		t.Log("Connection Dialing")
 	} else {
@@ -85,7 +84,7 @@ func TestTCPConnectErrored(t *testing.T) {
 	var closeRequest = make(chan bool)
 
 	t.Log("Initiating TCP Connect")
-	TCPConnect(1, host, port, &wg, ioutil.Discard, statusChannel, closeRequest)
+	TCPConnect(1, host, port, &wg, statusChannel, closeRequest)
 	if (<-statusChannel).GetConnectionStatus() == ConnectionDialing {
 		t.Log("Connection Dialing")
 	} else {
@@ -111,14 +110,13 @@ func TestTCPConnectErrored(t *testing.T) {
 }
 
 func TestReportConnectionStatus(t *testing.T) {
-	var debugOut = ioutil.Discard
 	connStatusCh := make(chan Connection, 1)
 	connectionDescription := Connection{
 		ID:      0,
 		status:  ConnectionDialing,
 		metrics: connectionMetrics{},
 	}
-	reportConnectionStatus(debugOut, connStatusCh, connectionDescription)
+	reportConnectionStatus(connStatusCh, connectionDescription)
 	if <-connStatusCh != connectionDescription {
 		t.Error("Not proper Connection reported: ", <-connStatusCh)
 	}
