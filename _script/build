@@ -13,7 +13,7 @@ function binary_compilation {
 	#  https://github.com/kubernetes/kubernetes/pull/26028/files
 	# see also https://gcc.gnu.org/onlinedocs/gcc/Link-Options.html
 	CGO_ENABLED=0 GOOS=linux go build -o out/tcpgoon \
-		    -ldflags '-extldflags "-static"' -a -installsuffix nocgo -tags netgo
+		    -ldflags "-X 'main.version=$(date -u '+0.%Y%m%d%H%M%S')' -extldflags '-static'" -a -installsuffix nocgo -tags netgo
 }
 
 function docker_build {
