@@ -25,7 +25,7 @@ func TestTCPConnectEstablished(t *testing.T) {
 		}
 	}
 	go runTCPServer()
-	time.Sleep(1 * time.Second)
+	time.Sleep(500 * time.Millisecond)
 
 	defer func() {
 		err := recover()
@@ -61,6 +61,7 @@ func TestTCPConnectEstablished(t *testing.T) {
 
 	// We ask to close the TCP connection
 	closeRequest <- true
+	time.Sleep(100 * time.Millisecond)
 
 	// Validates wg has been decreased to 0, and next one is making it negative
 	wg.Done()
