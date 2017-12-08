@@ -24,7 +24,7 @@ func printClosureReport(host string, port int, gc mtcpclient.GroupOfConnections)
 func AskForUserConfirmation(host string, port int, connections int) bool {
 	fmt.Println("****************************** WARNING ******************************")
 	fmt.Println("* You are going to run a TCP stress check with these arguments:")
-	fmt.Println("*	- Target: " + host)
+	fmt.Println("*	- Host: " + host)
 	fmt.Println("*	- TCP Port: " + strconv.Itoa(port))
 	fmt.Println("*	- # of concurrent connections: " + strconv.Itoa(connections))
 	fmt.Println("*********************************************************************")
