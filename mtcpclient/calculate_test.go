@@ -1,56 +1,59 @@
 package mtcpclient
 
 import (
-	"testing"
 	"github.com/dachad/tcpgoon/tcpclient"
+	"testing"
 	"time"
 )
 
-func TestCalculateStdDevOfEmptyGroup(t *testing.T) {
-	var gc GroupOfConnections
-	gc = []tcpclient.Connection{
+func TestCalculateStdDev(t *testing.T) {
+	var stdDevScenariosChecks = []struct {
+		scenarioDescription string
+		durationsInSecs     []int
+		expectedStdDev      int
+	}{
+		{
+			scenarioDescription: "Empty group of connections should report 0 as stats values",
+			durationsInSecs:     []int{},
+			expectedStdDev:      0,
+		},
+		{
+			scenarioDescription: "Single connection should report a std dev of 0",
+			durationsInSecs:     []int{1},
+			expectedStdDev:      0,
+		},
+		{
+			scenarioDescription: "Several connections with same durations should report a std dev of 0",
+			durationsInSecs:     []int{1, 1, 1, 1, 1},
+			expectedStdDev:      0,
+		},
+		{
+			scenarioDescription: "A known set of durations should report a known std dev",
+			durationsInSecs:     []int{1, 2, 3},
+			expectedStdDev:      1,
+		},
 	}
-	stddev := gc.calculateStdDev(tcpclient.ConnectionClosed, metricsCollectionStats{})
-	if stddev != time.Duration(0) {
-		t.Error("Empty group of connections should report 0 stats, and its", stddev)
+	for _, test := range stdDevScenariosChecks {
+		var gc GroupOfConnections = []tcpclient.Connection{}
+
+		var sum int
+		for i, connectionDuration := range test.durationsInSecs {
+			gc = append(gc, tcpclient.NewConnection(i, tcpclient.ConnectionEstablished,
+				time.Duration(connectionDuration)*time.Second))
+			sum += connectionDuration
+		}
+
+		mr := metricsCollectionStats{}
+		if len(test.durationsInSecs) != 0 {
+			mr = metricsCollectionStats{
+				avg: time.Duration(sum/len(test.durationsInSecs)) * time.Second,
+			}
+		}
+
+		stddev := gc.calculateStdDev(tcpclient.ConnectionEstablished, mr)
+
+		if stddev != time.Duration(test.expectedStdDev)*time.Second {
+			t.Error(test.scenarioDescription+", and its", stddev)
+		}
 	}
 }
-
-func TestCalculateStdDevOfSingleItem(t *testing.T) {
-	var gc GroupOfConnections
-	gc = []tcpclient.Connection{
-		//tcpclient.NewConnection(0, tcpclient.ConnectionClosed, time.Second), -> this should also work, but it doesnt
-		// given a bug in how durations are fetched depending on the status
-		tcpclient.NewConnection(0, tcpclient.ConnectionEstablished, time.Second),
-	}
-	stddev := gc.calculateStdDev(tcpclient.ConnectionEstablished, metricsCollectionStats{
-		avg: time.Second,
-		min: time.Second,
-		max: time.Second,
-		total: time.Second,
-		numberOfConnections: 1,
-	})
-	if stddev != time.Duration(0) {
-		t.Error("Single connection should report a std dev of 0, and its", stddev)
-	}
-}
-
-//func TestCalculateStdDev(t *testing.T) {
-//	var stdDevScenariosChecks = []struct {
-//		scenarioDescription string
-//		durations           []float64
-//		expectedStdDev      float64
-//	}{
-//		{
-//			scenarioDescription: "Single connection should report a std dev of 0",
-//			durations: {1.0},
-//			expectedStdDev: 0.0,
-//		},
-//	}
-//	for _, test := range stdDevScenariosChecks {
-//		for i,connectionDuration := range test.durations {
-//
-//		}
-//	}
-//}
-

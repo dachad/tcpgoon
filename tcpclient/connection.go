@@ -31,11 +31,11 @@ const (
 // as the first (dirty) approach for tests
 func NewConnection(id int, status ConnectionStatus, procTime time.Duration) Connection {
 	return Connection{
-		ID: id,
+		ID:     id,
 		status: status,
 		metrics: connectionMetrics{
 			tcpEstablishedDuration: procTime,
-			tcpErroredDuration: procTime,
+			tcpErroredDuration:     procTime,
 		},
 	}
 

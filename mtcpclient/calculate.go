@@ -5,7 +5,6 @@ import (
 	"time"
 
 	"github.com/dachad/tcpgoon/tcpclient"
-	"fmt"
 )
 
 type metricsCollectionStats struct {
@@ -57,7 +56,6 @@ func (gc GroupOfConnections) calculateStdDev(status tcpclient.ConnectionStatus, 
 	if nitems == 0 {
 		return 0
 	}
-	fmt.Println("sd:", sd, "nitems:", nitems)
 	return time.Duration(math.Sqrt(sd / float64(nitems)))
 
 }
