@@ -30,8 +30,8 @@ func TestCalculateStdDev(t *testing.T) {
 		{
 			scenarioDescription: "A known set of durations should report a known std dev",
 			// https://en.wikipedia.org/wiki/Standard_deviation#Population_standard_deviation_of_grades_of_eight_students
-			durationsInSecs:     []int{2, 4, 4, 4, 5, 5, 7, 9},
-			expectedStdDev:      2,
+			durationsInSecs: []int{2, 4, 4, 4, 5, 5, 7, 9},
+			expectedStdDev:  2,
 		},
 	}
 	for _, test := range stdDevScenariosChecks {
