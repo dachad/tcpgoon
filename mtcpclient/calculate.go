@@ -47,17 +47,17 @@ func (gc GroupOfConnections) calculateMetricsReport(status tcpclient.ConnectionS
 func (gc GroupOfConnections) calculateStdDev(status tcpclient.ConnectionStatus, mr metricsCollectionStats) time.Duration {
 	// TODO: passing the whole mr struct looks overkilling, given we only want a single value, the average, and maybe
 	//  we can actually use a version of the algorithm that calculates it (and the number of items)
-	var nitems int = 0
+	var nItems int
 	var sd float64
 	for _, item := range gc {
 		if item.GetConnectionStatus() == status {
-			nitems += 1
+			nItems++
 			sd += math.Pow(float64(item.GetTCPProcessingDuration(status))-float64(mr.avg), 2)
 		}
 	}
-	if nitems == 0 {
+	if nItems == 0 {
 		return 0
 	}
-	return time.Duration(math.Sqrt(sd / float64(nitems)))
+	return time.Duration(math.Sqrt(sd / float64(nItems)))
 
 }
