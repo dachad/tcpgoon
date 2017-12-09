@@ -21,6 +21,8 @@ func (gc GroupOfConnections) calculateMetricsReport(status tcpclient.ConnectionS
 	//  requiring an extra pass considering all items... i'd move initialization out of the loop, and maybe iterate
 	//  over a filtered list rather than several loops over the original one, and maybe use specific generic functions...
 	//  requires further thinking in any case
+	// TODO: (2) rather than calculate a metrics report with a filter on the connection status, lets just promote splitting
+	// group of connections and running these functions over the subsets...
 	mr.total = 0
 	mr.numberOfConnections = 0
 	for _, item := range gc {
