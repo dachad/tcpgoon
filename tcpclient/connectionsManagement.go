@@ -37,7 +37,6 @@ func TCPConnect(id int, host string, port int, wg *sync.WaitGroup,
 	if err != nil {
 		connectionDescription.metrics.tcpErroredDuration = time.Now().Sub(timeTCPInitiatied)
 		connectionDescription.status = ConnectionError
-		connectionDescription.metrics.tcpErroredDuration = time.Now().Sub(timeTCPInitiatied)
 		reportConnectionStatus(statusChannel, connectionDescription)
 		fmt.Fprintln(debugging.DebugOut, "Connection", id, "was unable to open the connection. Error:")
 		fmt.Fprintln(debugging.DebugOut, err)
@@ -47,7 +46,6 @@ func TCPConnect(id int, host string, port int, wg *sync.WaitGroup,
 	connectionDescription.metrics.tcpEstablishedDuration = time.Now().Sub(timeTCPInitiatied)
 	defer conn.Close()
 	connectionDescription.status = ConnectionEstablished
-	connectionDescription.metrics.tcpEstablishedDuration = time.Now().Sub(timeTCPInitiatied)
 	reportConnectionStatus(statusChannel, connectionDescription)
 	connBuf := bufio.NewReader(conn)
 	for {
