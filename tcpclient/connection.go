@@ -27,6 +27,20 @@ const (
 	ConnectionError        ConnectionStatus = 4
 )
 
+// NewConnection initializes a connection given all values that are actually stored internally. This is just being used
+// as the first (dirty) approach for tests
+func NewConnection(id int, status ConnectionStatus, procTime time.Duration) Connection {
+	return Connection{
+		ID:     id,
+		status: status,
+		metrics: connectionMetrics{
+			tcpEstablishedDuration: procTime,
+			tcpErroredDuration:     procTime,
+		},
+	}
+
+}
+
 func (c Connection) GetConnectionStatus() ConnectionStatus {
 	return c.status
 }
