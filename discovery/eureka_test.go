@@ -24,8 +24,10 @@ func TestMain(m *testing.M) {
 	resource, err := pool.RunWithOptions(&dockertest.RunOptions{
 		Repository:   "netflixoss/eureka",
 		Tag:          "1.3.1",
-		PortBindings: map[dc.Port][]dc.PortBinding{
-			dc.Port(strconv.Itoa(eurekaTestPort) + "/tcp"): {{HostIP: "", HostPort: strconv.Itoa(eurekaTestPort)}},
+		//Repository:         "containers.schibsted.io/spt-infrastructure/eureka-docker",
+		//Tag:                "latest",
+		PortBindings:        map[dc.Port][]dc.PortBinding{
+		dc.Port(strconv.Itoa(eurekaTestPort) + "/tcp"): {{HostIP: "", HostPort: strconv.Itoa(eurekaTestPort)}},
 		},
 	})
 	if err != nil {
@@ -99,7 +101,7 @@ func TestEurekaClientValidApp(t *testing.T) {
 		t.Fatal("Eureka returned an error when requesting the IPs:", err)
 	}
 	if len(ipsFromEureka) != 1 || ipsFromEureka[0] != ipAddr {
-		t.Fatal("Eureka returned a set of IPs we did not expect for our service:", ipsFromEureka )
+		t.Fatal("Eureka returned a set of IPs we did not expect for our service:", ipsFromEureka)
 	}
 
 }

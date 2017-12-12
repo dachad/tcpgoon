@@ -39,11 +39,17 @@ func NewEurekaClient(eurekaUrl string) (ec EurekaClient, err error) {
 
 var errNoIpsFound = errors.New("No IPs associated to the requested App name")
 
+// TODO: Probably we should break this function
 func (ec EurekaClient) GetIPs(appName string) ([]string, error) {
 	eurekaAppUrl := ec.eurekaUrl + "/v2/apps/" + appName
-	//resp, err := http.Get(eurekaAppUrl, "application/json; charset=utf-8")
+	// can we reuse the client but starting from 0 in terms of timeout? to review
 	httpclient := http.Client{Timeout: time.Second * eurekaClientTimeoutInSeconds}
-	resp, err := httpclient.Get(eurekaAppUrl)
+	req, err := http.NewRequest("GET", eurekaAppUrl, nil)
+	if err != nil {
+		return nil, err
+	}
+	req.Header.Set("Content-Type", "application/json")
+	resp, err := httpclient.Do(req)
 	if serr, ok := err.(net.Error); ok && serr.Timeout()  {
 		return []string{},errEurekaTimesOut
 	} else if err != nil {
@@ -56,6 +62,7 @@ func (ec EurekaClient) GetIPs(appName string) ([]string, error) {
 		return []string{},errEurekaUnexpectedHttpResponseCode
 	}
 	body, err := ioutil.ReadAll(resp.Body)
-	fmt.Println(string(body))
+	fmt.Println("Response from eureka:", string(body))
+	// parsing to get the right data will be done like this: https://stackoverflow.com/a/35665161
 	return nil, nil
 }
