@@ -53,7 +53,14 @@ func TestMain(m *testing.M) {
 func TestEurekaClientNoEureka(t *testing.T) {
 	_, err := NewEurekaClient("http://localhost:9999/thisshouldntwork")
 	if err != errNoEurekaConnection {
-		t.Fatal("We shouldnt reach eureka if Eureka hostname/port is completely wrong")
+		t.Fatal("We shouldnt reach eureka if Eureka hostname/port is completely wrong. Actual err:", err)
+	}
+}
+
+func TestEurekaClientEurekaDoesNotReply(t *testing.T) {
+	_, err := NewEurekaClient("http://192.0.2.1:9999/thisshouldtimeout")
+	if err != errEurekaTimesOut {
+		t.Fatal("Pointing to a destination that drops packages should fail because of timeout. Actual err:", err)
 	}
 }
 
