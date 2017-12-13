@@ -52,8 +52,8 @@ func Execute() {
 func init() {
 	rootCmd.Flags().IntVarP(&params.numberConnectionsPtr, "connections", "c", 100, "Number of connections you want to open")
 	rootCmd.Flags().IntVarP(&params.delayPtr, "sleep", "s", 10, "Time you want to sleep between connections, in ms")
-	rootCmd.Flags().IntVarP(&params.connDialTimeoutPtr, "dial-timeout", "d", 5000, "Connection dialing timeout, in ms")
-	rootCmd.Flags().BoolVarP(&params.debugPtr, "verbose", "v", false, "Print debugging information to the standard error")
+	rootCmd.Flags().IntVarP(&params.connDialTimeoutPtr, "dial-timeout", "t", 5000, "Connection dialing timeout, in ms")
+	rootCmd.Flags().BoolVarP(&params.debugPtr, "debug", "d", false, "Print debugging information to the standard error")
 	rootCmd.Flags().IntVarP(&params.reportingIntervalPtr, "interval", "i", 1, "Interval, in seconds, between stats updates")
 	rootCmd.Flags().BoolVarP(&params.assumeyesPtr, "assume-yes", "y", false, "Force execution without asking for confirmation")
 }
