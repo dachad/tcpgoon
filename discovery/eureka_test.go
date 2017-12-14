@@ -11,8 +11,8 @@ import (
 	"github.com/op/go-logging"
 )
 
-var eurekaTestPort int = 8080
-var eurekaTestUrl string = "http://127.0.0.1:" + strconv.Itoa(eurekaTestPort) + "/eureka"
+var eurekaTestPort = 8080
+var eurekaTestURL string = "http://127.0.0.1:" + strconv.Itoa(eurekaTestPort) + "/eureka"
 
 func TestMain(m *testing.M) {
 	// uses a sensible default on windows (tcp/http) and linux/osx (socket)
@@ -21,7 +21,7 @@ func TestMain(m *testing.M) {
 		log.Fatalf("Could not connect to docker: %s", err)
 	}
 	// pulls an image, creates a container based on it and runs it
-	resource, err := pool.RunWithOptions(&dockertest.RunOptions{
+	eurekaContainer, err := pool.RunWithOptions(&dockertest.RunOptions{
 		Repository:   "netflixoss/eureka",
 		Tag:          "1.3.1",
 		//Repository:         "containers.schibsted.io/spt-infrastructure/eureka-docker",
@@ -36,7 +36,7 @@ func TestMain(m *testing.M) {
 
 	// exponential backoff-retry, because the application in the container might not be ready to accept connections yet
 	if err := pool.Retry(func() error {
-		_, err := NewEurekaClient(eurekaTestUrl)
+		_, err := NewEurekaClient(eurekaTestURL)
 		return err
 	}); err != nil {
 		log.Fatalf("Could not connect to the docker resource: %s", err)
@@ -45,7 +45,7 @@ func TestMain(m *testing.M) {
 	code := m.Run()
 
 	// You can't defer this because os.Exit doesn't care for defer
-	if err := pool.Purge(resource); err != nil {
+	if err := pool.Purge(eurekaContainer); err != nil {
 		log.Fatalf("Could not purge resource: %s", err)
 	}
 
@@ -67,15 +67,15 @@ func TestEurekaClientEurekaDoesNotReply(t *testing.T) {
 }
 
 func TestEurekaClientWrongEurekaContext(t *testing.T) {
-	_, err := NewEurekaClient(eurekaTestUrl + "badsuffix")
-	if err != errEurekaUnexpectedHttpResponseCode {
+	_, err := NewEurekaClient(eurekaTestURL + "badsuffix")
+	if err != errEurekaUnexpectedHTTPResponseCode {
 		t.Fatal("Eureka should be reachable but, when asking a wrong URL, it should return a non 200 response code")
 	}
 }
 
 func TestEurekaClientUnknownApp(t *testing.T) {
 	appName := "unknown"
-	eurekaClient, err := NewEurekaClient(eurekaTestUrl)
+	eurekaClient, err := NewEurekaClient(eurekaTestURL)
 	if err != nil {
 		t.Fatal("We cannot connect to the specified eureka server:", err)
 	}
@@ -91,7 +91,7 @@ func TestEurekaClientValidApp(t *testing.T) {
 	ipAddr := "192.0.2.1"
 	port := 10080
 	registerDummyAppInTestEureka(appName, ipAddr, port)
-	eurekaClient, err := NewEurekaClient(eurekaTestUrl)
+	eurekaClient, err := NewEurekaClient(eurekaTestURL)
 	if err != nil {
 		t.Fatal("We cannot connect to the specified eureka server:", err)
 	}
@@ -107,7 +107,7 @@ func TestEurekaClientValidApp(t *testing.T) {
 }
 func registerDummyAppInTestEureka(appName string, ipAddr string, port int) {
 	logging.SetLevel(logging.ERROR, "fargo")
-	fargoclient := fargo.NewConn(eurekaTestUrl + "/v2")
+	fargoclient := fargo.NewConn(eurekaTestURL + "/v2")
 	appInstance := &fargo.Instance{
 		HostName:         "dummyhost",
 		Port:             port,
