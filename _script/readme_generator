@@ -4,9 +4,15 @@ set -exuo pipefail
 cd $(dirname $0)/..
 
 function generate_toc() {
-    echo "test toc"
+    cat ${readme_src} | grep "^#" | tr -d "#\;" | while read section
+    do
+        echo -n "**[${section}](#$(echo ${section}|tr "[:upper:]" "[:lower:]"| tr " " "-" | tr -d ".?"))** . "
+    done
 }
 
 #main()
-cp README.src.md README.md
-sed "s/{toc}/$(generate_toc)/g"
+readme_src="README.src.md"
+readme_dst="README.md"
+
+cp ${readme_src} ${readme_dst}
+sed -i "s/{toc}/$(generate_toc)/g" ${readme_dst}
