@@ -1,14 +1,14 @@
 package discovery
 
 import (
-	"gopkg.in/ory-am/dockertest.v3"
 	dc "github.com/fsouza/go-dockerclient"
 	"github.com/jaume-pinyol/fargo"
+	"github.com/op/go-logging"
+	"gopkg.in/ory-am/dockertest.v3"
 	"log"
 	"os"
-	"testing"
 	"strconv"
-	"github.com/op/go-logging"
+	"testing"
 )
 
 var eurekaTestPort = 8080
@@ -22,12 +22,12 @@ func TestMain(m *testing.M) {
 	}
 	// pulls an image, creates a container based on it and runs it
 	eurekaContainer, err := pool.RunWithOptions(&dockertest.RunOptions{
-		Repository:   "netflixoss/eureka",
-		Tag:          "1.3.1",
+		Repository: "netflixoss/eureka",
+		Tag:        "1.3.1",
 		//Repository:         "containers.schibsted.io/spt-infrastructure/eureka-docker",
 		//Tag:                "latest",
-		PortBindings:        map[dc.Port][]dc.PortBinding{
-		dc.Port(strconv.Itoa(eurekaTestPort) + "/tcp"): {{HostIP: "", HostPort: strconv.Itoa(eurekaTestPort)}},
+		PortBindings: map[dc.Port][]dc.PortBinding{
+			dc.Port(strconv.Itoa(eurekaTestPort) + "/tcp"): {{HostIP: "", HostPort: strconv.Itoa(eurekaTestPort)}},
 		},
 	})
 	if err != nil {

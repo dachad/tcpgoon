@@ -2,11 +2,11 @@ package discovery
 
 import (
 	"errors"
-	"net/http"
-	"io/ioutil"
 	"fmt"
-	"time"
+	"io/ioutil"
 	"net"
+	"net/http"
+	"time"
 )
 
 //TODO: This should become a discovery interface. And Eureka just the first implementation
@@ -19,14 +19,15 @@ type EurekaClient struct {
 var errEurekaTimesOut = errors.New("Eureka server timed out")
 var errNoEurekaConnection = errors.New("Unable to reach Eureka server")
 var errEurekaUnexpectedHTTPResponseCode = errors.New("Eureka returned a non 200 http response code")
-const eurekaClientTimeoutInSeconds  = 10
+
+const eurekaClientTimeoutInSeconds = 10
 
 func NewEurekaClient(eurekaURL string) (ec EurekaClient, err error) {
 	ec.eurekaURL = eurekaURL
 	httpclient := http.Client{Timeout: time.Second * eurekaClientTimeoutInSeconds}
 	resp, err := httpclient.Get(eurekaURL)
-	if serr, ok := err.(net.Error); ok && serr.Timeout()  {
-		return ec,errEurekaTimesOut
+	if serr, ok := err.(net.Error); ok && serr.Timeout() {
+		return ec, errEurekaTimesOut
 	} else if err != nil {
 		return ec, errNoEurekaConnection
 	}
@@ -50,14 +51,14 @@ func (ec EurekaClient) GetIPs(appName string) ([]string, error) {
 	}
 	req.Header.Set("Content-Type", "application/json")
 	resp, err := httpclient.Do(req)
-	if serr, ok := err.(net.Error); ok && serr.Timeout()  {
-		return []string{},errEurekaTimesOut
+	if serr, ok := err.(net.Error); ok && serr.Timeout() {
+		return []string{}, errEurekaTimesOut
 	} else if err != nil {
 		return []string{}, errNoEurekaConnection
 	}
 	defer resp.Body.Close()
 	if resp.StatusCode == 404 {
-		return []string{},errNoIpsFound
+		return []string{}, errNoIpsFound
 	} else if resp.StatusCode != 200 {
 		return []string{}, errEurekaUnexpectedHTTPResponseCode
 	}
