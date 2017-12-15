@@ -1,8 +1,8 @@
 <p align="center">
-<img src="http://www.confusedcoders.com/wp-content/uploads/2016/10/golang-1.jpg" alt="tcpgoon" title="tcpgoon" />
+<img src="https://raw.githubusercontent.com/dachad/tcpgoon/master/_imgs/tcpgoontransparent.png" alt="tcpgoon" title="tcpgoon" width="400"/>
 </p>
 <p align="center">
-<img src="https://raw.githubusercontent.com/dachad/tcpgoon/master/_docs/coollogo_com-290231302.png" alt="tcpgoon" title="tcpgoon" />
+<img src="https://raw.githubusercontent.com/dachad/tcpgoon/master/_imgs/coollogo_com-290231302.png" alt="tcpgoon" title="tcpgoon" width="438"/>
 </p>
 
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/b211244c4a674049864d45020aa8e883)](https://www.codacy.com/app/dachad/tcpgoon?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=dachad/tcpgoon&amp;utm_campaign=Badge_Grade)
@@ -12,21 +12,39 @@
 [![](https://images.microbadger.com/badges/version/dachad/tcpgoon.svg)](https://microbadger.com/images/dachad/tcpgoon "Get your own version badge on microbadger.com")
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/dachad/tcpgoon/blob/master/LICENSE)
 
+{toc}
+**[Overview](#overview)** .
+**[Features](#features)** .
+**[Supported backends](#supported-backends)** .
+**[Quickstart](#quickstart)** .
+**[Web UI](#web-ui)** .
+**[Test it](#test-it)** .
+**[Documentation](#documentation)** .
+
+**[Support](#support)** .
+**[Release cycle](#release-cycle)** .
+**[Contributing](#contributing)** .
+**[Maintainers](#maintainers)** .
+**[Plumbing](#plumbing)** .
+**[Credits](#credits)** .
+
 ## TL;DR
 
 Tool to test concurrent connections towards a server listening to a TCP port
 
 ## Description
 
-- Given a hostname, port, the number of connections (100 by default), 
+* Given a hostname, port, the number of connections (100 by default), 
 a delay between connections (10ms by default) and an interval between stats
 updates to the standard output...
-- It will use goroutines to open a tcp connection and try to read from it
-- The tool will exit once all connections have been dialed (successfully or not)
-- Exit status different from 0 represent executions where all connections were not 
-established successfully
+* It will use goroutines to open a tcp connection and try to read from it
+* The tool will exit once all connections have been dialed (successfully or not)
+* Exit status different from 0 represent executions where all connections were not 
+established successfully, facilitating the integration with test suites.
 
 ## Usage
+
+### Help
 
 ```bash
 % ./tcpgoon --help
@@ -45,7 +63,7 @@ Flags:
   -v, --verbose            Print debugging information to the standard error
 ```
 
-## Examples
+### Examples
 
 Successful execution (connections were opened as expected):
 ```bash
@@ -53,11 +71,7 @@ Successful execution (connections were opened as expected):
 Total: 10, Dialing: 0, Established: 0, Closed: 0, Error: 0, NotInitiated: 10
 Total: 10, Dialing: 1, Established: 1, Closed: 0, Error: 0, NotInitiated: 8
 Total: 10, Dialing: 1, Established: 2, Closed: 0, Error: 0, NotInitiated: 7
-Total: 10, Dialing: 1, Established: 3, Closed: 0, Error: 0, NotInitiated: 6
-Total: 10, Dialing: 1, Established: 4, Closed: 0, Error: 0, NotInitiated: 5
-Total: 10, Dialing: 1, Established: 5, Closed: 0, Error: 0, NotInitiated: 4
-Total: 10, Dialing: 1, Established: 6, Closed: 0, Error: 0, NotInitiated: 3
-Total: 10, Dialing: 1, Established: 7, Closed: 0, Error: 0, NotInitiated: 2
+...
 Total: 10, Dialing: 1, Established: 8, Closed: 0, Error: 0, NotInitiated: 1
 Total: 10, Dialing: 1, Established: 9, Closed: 0, Error: 0, NotInitiated: 0
 Total: 10, Dialing: 0, Established: 10, Closed: 0, Error: 0, NotInitiated: 0
@@ -75,15 +89,7 @@ Total: 10, Dialing: 0, Established: 0, Closed: 0, Error: 0, NotInitiated: 10
 Total: 10, Dialing: 0, Established: 1, Closed: 0, Error: 0, NotInitiated: 9
 Total: 10, Dialing: 0, Established: 2, Closed: 0, Error: 0, NotInitiated: 8
 Total: 10, Dialing: 1, Established: 2, Closed: 0, Error: 0, NotInitiated: 7
-Total: 10, Dialing: 2, Established: 2, Closed: 0, Error: 0, NotInitiated: 6
-Total: 10, Dialing: 3, Established: 2, Closed: 0, Error: 0, NotInitiated: 5
-Total: 10, Dialing: 4, Established: 2, Closed: 0, Error: 0, NotInitiated: 4
-Total: 10, Dialing: 4, Established: 2, Closed: 0, Error: 1, NotInitiated: 3
-Total: 10, Dialing: 5, Established: 2, Closed: 0, Error: 2, NotInitiated: 1
-Total: 10, Dialing: 5, Established: 2, Closed: 0, Error: 3, NotInitiated: 0
-Total: 10, Dialing: 4, Established: 2, Closed: 0, Error: 4, NotInitiated: 0
-Total: 10, Dialing: 3, Established: 2, Closed: 0, Error: 5, NotInitiated: 0
-Total: 10, Dialing: 3, Established: 2, Closed: 0, Error: 5, NotInitiated: 0
+...
 Total: 10, Dialing: 2, Established: 2, Closed: 0, Error: 6, NotInitiated: 0
 Total: 10, Dialing: 1, Established: 2, Closed: 0, Error: 7, NotInitiated: 0
 Total: 10, Dialing: 0, Established: 2, Closed: 0, Error: 8, NotInitiated: 0
@@ -101,11 +107,7 @@ Unsuccessful execution (unable to open connections against the destination host:
 Total: 10, Dialing: 0, Established: 0, Closed: 0, Error: 0, NotInitiated: 10
 Total: 10, Dialing: 2, Established: 0, Closed: 0, Error: 0, NotInitiated: 8
 Total: 10, Dialing: 3, Established: 0, Closed: 0, Error: 0, NotInitiated: 7
-Total: 10, Dialing: 3, Established: 0, Closed: 0, Error: 1, NotInitiated: 6
-Total: 10, Dialing: 3, Established: 0, Closed: 0, Error: 2, NotInitiated: 5
-Total: 10, Dialing: 3, Established: 0, Closed: 0, Error: 3, NotInitiated: 4
-Total: 10, Dialing: 3, Established: 0, Closed: 0, Error: 4, NotInitiated: 3
-Total: 10, Dialing: 3, Established: 0, Closed: 0, Error: 5, NotInitiated: 2
+...
 Total: 10, Dialing: 3, Established: 0, Closed: 0, Error: 6, NotInitiated: 1
 Total: 10, Dialing: 3, Established: 0, Closed: 0, Error: 7, NotInitiated: 0
 Total: 10, Dialing: 2, Established: 0, Closed: 0, Error: 8, NotInitiated: 0
@@ -117,7 +119,66 @@ Time to error stats for 10 failed connections min/avg/max/dev = 5.00025s/5.00174
 2
 ```
 
-## Testing locally
+### Execution using Docker
+
+See our [public docker image and its documentation](https://hub.docker.com/r/dachad/tcpgoon/). The image
+is being updated continuously; you can bind to specific versions, or to the "latest" tag.
+
+
+## Extra project information
+
+### Why do I want to test tcp connections?
+ 
+Stressing TCP connections against a server/application facilitates the detection of
+bottlenecks/issues limiting the capacity of this server/application to accept/keep an specific
+(and potentially) large number of parallel connections. Some examples of typical (configuration) 
+issues:
+
+* OS configuration (tcp backlog, network drivers buffers),
+* number of file descriptors/processes the server can use,
+* application listener properties...
+
+These limitations may pass unnoticed in actual application-l7 stress tests, given 
+other bottlenecks can arise earlier than these limitations, or degradation scenarios and/or special
+conditions may not be reproduced during the stress tests execution, but real life (lots of connections
+queued because of a dependency taking longer to reply than it usually does?)
+ 
+hping is not an actual option for this use case given it won't complete a 3-way handshake,
+so the connection will not reach the accept() syscall of your server/application or fill up your
+tcp backlog.
+
+### Where does the project name come from?
+```
+Goon: /ɡuːn/ noun informal; noun: goon; plural noun: goons ;
+...
+2.
+NORTH AMERICAN
+a bully or thug, especially a member of an armed or security force.
+...
+```
+<p align="center">
+<img src="https://raw.githubusercontent.com/dachad/tcpgoon/master/_imgs/thegoon.jpg" alt="thegoon" title="thegoon" width="250"/>
+</p>
+
+
+### Authors
+
+* [Christian Adell](https://github.com/chadell)
+* [Daniel Caballero](https://github.com/dcaba)
+
+### Especial thanks to...
+
+* [Linafm design](https://www.facebook.com/linafmdisegni/), for our custom and nice Goon Gopher
+
+
+## Development information
+
+### TO-DO
+
+We do use [Github issues](https://github.com/dachad/tcpgoon/issues) to track bugs, improvements and feature requests. Do not hesitate
+to raise new ones, or solve them for us by raising PRs ;)
+
+### Testing locally
 
 You can use the standard go test command, or use our scripts we also run as CI.
 
@@ -137,7 +198,4 @@ providing successful tests and the right credentials):
 % ./_script/cibuild-docker -d
 ```
 
-## TO-DO
 
-We do use [Github issues](https://github.com/dachad/tcpgoon/issues) to track bugs, improvements and feature requests. Do not hesitate
-to raise new ones ;)

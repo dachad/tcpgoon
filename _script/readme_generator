@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+
+set -exuo pipefail
+cd $(dirname $0)/..
+
+function generate_toc() {
+    echo "test toc"
+}
+
+#main()
+cp README.src.md README.md
+sed "s/{toc}/$(generate_toc)/g"
