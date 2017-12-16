@@ -38,11 +38,11 @@ Usage:
 Flags:
   -y, --assume-yes         Force execution without asking for confirmation
   -c, --connections int    Number of connections you want to open (default 100)
-  -d, --dial-timeout int   Connection dialing timeout, in ms (default 5000)
+  -t, --dial-timeout int   Connection dialing timeout, in ms (default 5000)
   -h, --help               help for tcpgoon
   -i, --interval int       Interval, in seconds, between stats updates (default 1)
   -s, --sleep int          Time you want to sleep between connections, in ms (default 10)
-  -v, --verbose            Print debugging information to the standard error
+  -d, --debug              Print debugging information to the standard error
 ```
 
 ## Examples
