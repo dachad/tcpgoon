@@ -1,14 +1,12 @@
 package main
 
 import (
-	"fmt"
-
 	"github.com/dachad/tcpgoon/cmd"
 )
 
-var version string
+var buildstamp = "No build time provided"
+var githash = "No git hash provided"
 
 func main() {
-	fmt.Println("Running tcpgoon version " + version)
-	cmd.Execute()
+	cmd.Execute(buildstamp, githash)
 }

@@ -24,7 +24,14 @@ type tcpgoonParams struct {
 	assumeyesPtr         bool
 }
 
+type releaseParams struct {
+	buildstamp string
+	githash    string
+}
+
 var params tcpgoonParams
+
+var releaseInfo releaseParams
 
 var rootCmd = &cobra.Command{
 	Use:   "tcpgoon [flags] <host> <port>",
@@ -43,10 +50,19 @@ var rootCmd = &cobra.Command{
 	},
 }
 
-func Execute() {
+func Execute(buildstamp string, githash string) {
+	releaseInfo.buildstamp = buildstamp
+	releaseInfo.githash = githash
+
+	AddCommands()
+
 	if err := rootCmd.Execute(); err != nil {
 		os.Exit(1)
 	}
+}
+
+func AddCommands() {
+	rootCmd.AddCommand(versionCmd)
 }
 
 func init() {
