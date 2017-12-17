@@ -53,8 +53,8 @@ func TestTCPConnectEstablished(t *testing.T) {
 	} else {
 		t.Error("Connection failed to establish")
 	}
-	if connectionEstablished.GetTCPProcessingDuration(ConnectionEstablished) != 0 {
-		t.Log("Connection Estalished in ", connectionEstablished.GetTCPProcessingDuration(ConnectionEstablished))
+	if connectionEstablished.GetTCPProcessingDuration() != 0 {
+		t.Log("Connection Estalished in ", connectionEstablished.GetTCPProcessingDuration())
 	} else {
 		t.Error("Connection TCP Processing Duration not consistent")
 	}
@@ -99,8 +99,8 @@ func TestTCPConnectErrored(t *testing.T) {
 	} else {
 		t.Error("Connection not errored")
 	}
-	if connectionErrored.GetTCPProcessingDuration(ConnectionError) != 0 {
-		t.Log("Connection Errored in ", connectionErrored.GetTCPProcessingDuration(ConnectionError))
+	if connectionErrored.GetTCPProcessingDuration() != 0 {
+		t.Log("Connection Errored in ", connectionErrored.GetTCPProcessingDuration())
 	} else {
 		t.Error("Connection TCP Processing Duration not consistent")
 	}
