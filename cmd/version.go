@@ -6,6 +6,13 @@ import (
 	"github.com/spf13/cobra"
 )
 
+type releaseParams struct {
+	buildstamp string
+	githash    string
+}
+
+var releaseInfo releaseParams
+
 var versionCmd = &cobra.Command{
 	Use:   "version",
 	Short: "Show tcpgoon version",

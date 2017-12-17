@@ -24,18 +24,11 @@ type tcpgoonParams struct {
 	assumeyesPtr         bool
 }
 
-type releaseParams struct {
-	buildstamp string
-	githash    string
-}
-
 var params tcpgoonParams
 
-var releaseInfo releaseParams
-
-var rootCmd = &cobra.Command{
-	Use:   "tcpgoon [flags] <host> <port>",
-	Short: "tcpgoon tests concurrent connections towards a server listening on a TCP port",
+var runCmd = &cobra.Command{
+	Use:   "run [flags] <host> <port>",
+	Short: "Run tcpgoon test",
 	Long:  ``,
 	PreRun: func(cmd *cobra.Command, args []string) {
 		if err := validateRequiredArgs(&params, args); err != nil {
@@ -46,32 +39,17 @@ var rootCmd = &cobra.Command{
 		autorunValidation(params)
 	},
 	Run: func(cmd *cobra.Command, args []string) {
-		runroot(params)
+		run(params)
 	},
 }
 
-func Execute(buildstamp string, githash string) {
-	releaseInfo.buildstamp = buildstamp
-	releaseInfo.githash = githash
-
-	AddCommands()
-
-	if err := rootCmd.Execute(); err != nil {
-		os.Exit(1)
-	}
-}
-
-func AddCommands() {
-	rootCmd.AddCommand(versionCmd)
-}
-
 func init() {
-	rootCmd.Flags().IntVarP(&params.numberConnectionsPtr, "connections", "c", 100, "Number of connections you want to open")
-	rootCmd.Flags().IntVarP(&params.delayPtr, "sleep", "s", 10, "Time you want to sleep between connections, in ms")
-	rootCmd.Flags().IntVarP(&params.connDialTimeoutPtr, "dial-timeout", "t", 5000, "Connection dialing timeout, in ms")
-	rootCmd.Flags().BoolVarP(&params.debugPtr, "debug", "d", false, "Print debugging information to the standard error")
-	rootCmd.Flags().IntVarP(&params.reportingIntervalPtr, "interval", "i", 1, "Interval, in seconds, between stats updates")
-	rootCmd.Flags().BoolVarP(&params.assumeyesPtr, "assume-yes", "y", false, "Force execution without asking for confirmation")
+	runCmd.Flags().IntVarP(&params.numberConnectionsPtr, "connections", "c", 100, "Number of connections you want to open")
+	runCmd.Flags().IntVarP(&params.delayPtr, "sleep", "s", 10, "Time you want to sleep between connections, in ms")
+	runCmd.Flags().IntVarP(&params.connDialTimeoutPtr, "dial-timeout", "t", 5000, "Connection dialing timeout, in ms")
+	runCmd.Flags().BoolVarP(&params.debugPtr, "debug", "d", false, "Print debugging information to the standard error")
+	runCmd.Flags().IntVarP(&params.reportingIntervalPtr, "interval", "i", 1, "Interval, in seconds, between stats updates")
+	runCmd.Flags().BoolVarP(&params.assumeyesPtr, "assume-yes", "y", false, "Force execution without asking for confirmation")
 }
 
 func validateRequiredArgs(params *tcpgoonParams, args []string) error {
@@ -101,7 +79,7 @@ func autorunValidation(params tcpgoonParams) {
 	}
 }
 
-func runroot(params tcpgoonParams) {
+func run(params tcpgoonParams) {
 	tcpclient.DefaultDialTimeoutInMs = params.connDialTimeoutPtr
 
 	// TODO: we should decouple the caller from the mtcpclient package (too many structures being moved from
