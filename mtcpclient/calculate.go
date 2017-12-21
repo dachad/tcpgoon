@@ -29,13 +29,13 @@ func (gc GroupOfConnections) calculateMetricsReport(status tcpclient.ConnectionS
 		if item.GetConnectionStatus() == status {
 			mr.numberOfConnections++
 			if mr.total == 0 {
-				mr.total = item.GetTCPProcessingDuration(status)
-				mr.min = item.GetTCPProcessingDuration(status)
-				mr.max = item.GetTCPProcessingDuration(status)
+				mr.total = item.GetTCPProcessingDuration()
+				mr.min = item.GetTCPProcessingDuration()
+				mr.max = item.GetTCPProcessingDuration()
 			} else {
-				mr.min = time.Duration(math.Min(float64(mr.min), float64(item.GetTCPProcessingDuration(status))))
-				mr.max = time.Duration(math.Max(float64(mr.max), float64(item.GetTCPProcessingDuration(status))))
-				mr.total += item.GetTCPProcessingDuration(status)
+				mr.min = time.Duration(math.Min(float64(mr.min), float64(item.GetTCPProcessingDuration())))
+				mr.max = time.Duration(math.Max(float64(mr.max), float64(item.GetTCPProcessingDuration())))
+				mr.total += item.GetTCPProcessingDuration()
 			}
 		}
 	}
@@ -52,7 +52,7 @@ func (gc GroupOfConnections) calculateStdDev(status tcpclient.ConnectionStatus, 
 	for _, item := range gc {
 		if item.GetConnectionStatus() == status {
 			nItems++
-			sd += math.Pow(float64(item.GetTCPProcessingDuration(status))-float64(mr.avg), 2)
+			sd += math.Pow(float64(item.GetTCPProcessingDuration())-float64(mr.avg), 2)
 		}
 	}
 	if nItems == 0 {

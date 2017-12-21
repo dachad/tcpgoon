@@ -69,8 +69,8 @@ func (c Connection) String() string {
 
 }
 
-func (c Connection) GetTCPProcessingDuration(status ConnectionStatus) time.Duration {
-	switch status {
+func (c Connection) GetTCPProcessingDuration() time.Duration {
+	switch c.status {
 	case ConnectionEstablished:
 		return c.metrics.tcpEstablishedDuration
 	case ConnectionError:
