@@ -13,6 +13,6 @@ if [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$TRAVIS_BRANCH" = "master" ]
 then
     echo "INFO: Merging to master... time to build and deploy redistributables"
     docker_name="dachad/tcpgoon"
-    ./_script/build "$docker_name"
+    source ./_script/build "$docker_name"
     ./_script/deploy "$docker_name"
 fi

@@ -24,7 +24,7 @@ function docker_authenticate() {
 }
 
 function docker_tag() {
-    extra_docker_tag="${docker_name}:$(git log -1 --pretty=%h)"
+    extra_docker_tag="${docker_name}:${COMMIT_HASH}"
     sg $execgroup "docker tag $docker_name $extra_docker_tag"
 }
 
