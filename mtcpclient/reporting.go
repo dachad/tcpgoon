@@ -2,8 +2,8 @@ package mtcpclient
 
 import (
 	"fmt"
-	"time"
 	"strconv"
+	"time"
 
 	"github.com/dachad/tcpgoon/tcpclient"
 )
@@ -43,11 +43,11 @@ func FinalMetricsReport(gc GroupOfConnections) (output string) {
 	// TODO: Max concurrent connections
 	// Report Established Connections
 	output += "--- Summary of Established connections --- \n" +
-	"Total established connections: " +
-	strconv.Itoa(len(gc.getFilteredListByStatus([]tcpclient.ConnectionStatus{tcpclient.ConnectionEstablished, tcpclient.ConnectionClosed}))) + "\n" +
-	"Max concurrent established connections: " + "\n" +
-	"Last number of established connections: " +
-	strconv.Itoa(len(gc.getFilteredListByStatus([]tcpclient.ConnectionStatus{tcpclient.ConnectionEstablished}))) +  "\n" 
+		"Total established connections: " +
+		strconv.Itoa(len(gc.getFilteredListByStatus([]tcpclient.ConnectionStatus{tcpclient.ConnectionEstablished, tcpclient.ConnectionClosed}))) + "\n" +
+		"Max concurrent established connections: " + "\n" +
+		"Last number of established connections: " +
+		strconv.Itoa(len(gc.getFilteredListByStatus([]tcpclient.ConnectionStatus{tcpclient.ConnectionEstablished}))) + "\n"
 
 	// Report for Established connections and also Closed ones
 	if gc.AtLeastOneConnectionOK() {
