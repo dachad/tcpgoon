@@ -9,7 +9,7 @@ import (
 	"time"
 )
 
-func StartBackgroundClosureTrigger(gc GroupOfConnections) <-chan bool {
+func StartBackgroundClosureTrigger(gc *GroupOfConnections) <-chan bool {
 	closureCh := make(chan bool)
 
 	signalsCh := make(chan os.Signal, 1)
@@ -30,7 +30,7 @@ func registerProperSignals(signalsCh chan os.Signal) {
 
 // closureMonitor polls a connections slice, to see if there's connections pending
 //  to be triggered, and a signal channel, in case execution is interrupted
-func closureMonitor(gc GroupOfConnections, signalsCh chan os.Signal,
+func closureMonitor(gc *GroupOfConnections, signalsCh chan os.Signal,
 	closureCh chan bool) {
 	const pullingPeriodInMs = 500
 	for {

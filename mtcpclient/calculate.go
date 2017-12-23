@@ -22,8 +22,8 @@ func (gc GroupOfConnections) calculateMetricsReport() (mr metricsCollectionStats
 	// TODO: (2) rather than calculate a metrics report with a filter on the connection status, lets just promote splitting
 	// group of connections and running these functions over the subsets...
 	mr.total = 0
-	if mr.numberOfConnections = len(gc); mr.numberOfConnections > 0 {
-		for _, item := range gc {
+	if mr.numberOfConnections = len(gc.connections); mr.numberOfConnections > 0 {
+		for _, item := range gc.connections {
 			if mr.total == 0 {
 				mr.total = item.GetTCPProcessingDuration()
 				mr.min = item.GetTCPProcessingDuration()
@@ -51,7 +51,7 @@ func (gc GroupOfConnections) calculateStdDev(mr metricsCollectionStats) time.Dur
 	// TODO: passing the whole mr struct looks overkilling, given we only want a single value, the average, and maybe
 	//  we can actually use a version of the algorithm that calculates it (and the number of items)
 	var sd float64
-	for _, item := range gc {
+	for _, item := range gc.connections {
 		sd += math.Pow(float64(item.GetTCPProcessingDuration())-float64(mr.avg), 2)
 	}
 	if mr.numberOfConnections == 0 {

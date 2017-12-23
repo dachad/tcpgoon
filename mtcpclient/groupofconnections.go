@@ -8,11 +8,18 @@ import (
 	"github.com/dachad/tcpgoon/tcpclient"
 )
 
-type GroupOfConnections []tcpclient.Connection
+type GroupOfConnections struct {
+	connections []tcpclient.Connection
+	metrics gcMetrics
+}
+
+type gcMetrics struct {
+	maxConcurrentEstalished int
+}
 
 func (gc GroupOfConnections) String() string {
 	var nDialing, nEstablished, nClosed, nNotInitiated, nError, nTotal int = 0, 0, 0, 0, 0, 0
-	for _, item := range gc {
+	for _, item := range gc.connections {
 		switch item.GetConnectionStatus() {
 		case tcpclient.ConnectionDialing:
 			nDialing++
@@ -32,7 +39,7 @@ func (gc GroupOfConnections) String() string {
 }
 
 func (gc GroupOfConnections) isIn(status tcpclient.ConnectionStatus) bool {
-	for _, item := range gc {
+	for _, item := range gc.connections {
 		if item.GetConnectionStatus() == status {
 			return true
 		}
@@ -52,23 +59,23 @@ func (gc GroupOfConnections) AtLeastOneConnectionOK() bool {
 	return gc.isIn(tcpclient.ConnectionEstablished) || gc.isIn(tcpclient.ConnectionClosed)
 }
 
-func appendConnections(gc GroupOfConnections, connections ...tcpclient.Connection) GroupOfConnections {
+func appendConnections(previous_connections []tcpclient.Connection, new_connections ...tcpclient.Connection) []tcpclient.Connection {
 	// TODO implement as a method using as a reference
-	m := len(gc)
-	n := m + len(connections)
-	if n > cap(gc) { // if necessary, reallocate
+	m := len(previous_connections)
+	n := m + len(new_connections)
+	if n > cap(previous_connections) { // if necessary, reallocate
 		// allocate double what's needed, for future growth.
 		newSlice := make([]tcpclient.Connection, (n+1)*2)
-		copy(newSlice, gc)
-		gc = newSlice
+		copy(newSlice, previous_connections)
+		previous_connections = newSlice
 	}
-	gc = gc[0:n]
-	copy(gc[m:n], connections)
-	return gc
+	previous_connections = previous_connections[0:n]
+	copy(previous_connections[m:n], new_connections)
+	return previous_connections
 }
 
-func (gc GroupOfConnections) getFilteredListByStatus(status []tcpclient.ConnectionStatus) (filteredConnections GroupOfConnections) {
-	for _, connection := range gc {
+func (gc GroupOfConnections) getFilteredListByStatus(status []tcpclient.ConnectionStatus) (filteredConnections []tcpclient.Connection) {
+	for _, connection := range gc.connections {
 		for _, s := range status {
 			if connection.GetConnectionStatus() == s {
 				filteredConnections = appendConnections(filteredConnections, connection)
@@ -85,13 +92,13 @@ func (gc GroupOfConnections) pingStyleReport(status tcpclient.ConnectionStatus) 
 
 	switch status {
 	case tcpclient.ConnectionEstablished:
-		filteredConnections = gc.getFilteredListByStatus([]tcpclient.ConnectionStatus{tcpclient.ConnectionEstablished, tcpclient.ConnectionClosed})
+		filteredConnections.connections = gc.getFilteredListByStatus([]tcpclient.ConnectionStatus{tcpclient.ConnectionEstablished, tcpclient.ConnectionClosed})
 		mr = filteredConnections.calculateMetricsReport()
 		introduction = "Response time stats for " + strconv.Itoa(mr.numberOfConnections) +
 			" successful connections min/avg/max/dev = "
 
 	case tcpclient.ConnectionError:
-		filteredConnections = gc.getFilteredListByStatus([]tcpclient.ConnectionStatus{tcpclient.ConnectionError})
+		filteredConnections.connections = gc.getFilteredListByStatus([]tcpclient.ConnectionStatus{tcpclient.ConnectionError})
 		mr = filteredConnections.calculateMetricsReport()
 		introduction = "Time to error stats for " + strconv.Itoa(mr.numberOfConnections) +
 			" failed connections min/avg/max/dev = "
