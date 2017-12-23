@@ -110,10 +110,11 @@ func TestCalculateStdDev(t *testing.T) {
 		if len(test.durationsInSecs) != 0 {
 			mr = metricsCollectionStats{
 				avg: time.Duration(sum/len(test.durationsInSecs)) * time.Second,
+				numberOfConnections: len(gc),
 			}
 		}
 
-		stddev := gc.calculateStdDev(tcpclient.ConnectionEstablished, mr)
+		stddev := gc.calculateStdDev(mr)
 
 		if stddev != time.Duration(test.expectedStdDev)*time.Second {
 			t.Error(test.scenarioDescription+", and its", stddev)
