@@ -97,11 +97,18 @@ func TestCalculateStdDev(t *testing.T) {
 	}
 
 	for _, test := range stdDevScenariosChecks {
-		var gc GroupOfConnections = []tcpclient.Connection{}
+
+		gc := GroupOfConnections{
+			connections: []tcpclient.Connection{},
+			metrics: gcMetrics{
+				maxConcurrentEstalished: 0,
+			},
+		}
 
 		var sum int
 		for i, connectionDuration := range test.durationsInSecs {
-			gc = append(gc, tcpclient.NewConnection(i, tcpclient.ConnectionEstablished,
+
+			gc.connections = appendConnections(gc.connections, tcpclient.NewConnection(i, tcpclient.ConnectionEstablished,
 				time.Duration(connectionDuration)*time.Second))
 			sum += connectionDuration
 		}
@@ -110,7 +117,7 @@ func TestCalculateStdDev(t *testing.T) {
 		if len(test.durationsInSecs) != 0 {
 			mr = metricsCollectionStats{
 				avg:                 time.Duration(sum/len(test.durationsInSecs)) * time.Second,
-				numberOfConnections: len(gc),
+				numberOfConnections: len(gc.connections),
 			}
 		}
 
