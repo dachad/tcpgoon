@@ -109,7 +109,7 @@ func TestCalculateStdDev(t *testing.T) {
 		mr := metricsCollectionStats{}
 		if len(test.durationsInSecs) != 0 {
 			mr = metricsCollectionStats{
-				avg: time.Duration(sum/len(test.durationsInSecs)) * time.Second,
+				avg:                 time.Duration(sum/len(test.durationsInSecs)) * time.Second,
 				numberOfConnections: len(gc),
 			}
 		}
