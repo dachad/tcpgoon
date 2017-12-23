@@ -71,7 +71,7 @@ func (c Connection) String() string {
 
 func (c Connection) GetTCPProcessingDuration() time.Duration {
 	switch c.status {
-	case ConnectionEstablished:
+	case ConnectionEstablished, ConnectionClosed:
 		return c.metrics.tcpEstablishedDuration
 	case ConnectionError:
 		return c.metrics.tcpErroredDuration
