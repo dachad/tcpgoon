@@ -10,7 +10,7 @@ import (
 
 type GroupOfConnections struct {
 	connections []tcpclient.Connection
-	metrics gcMetrics
+	metrics     gcMetrics
 }
 
 type gcMetrics struct {

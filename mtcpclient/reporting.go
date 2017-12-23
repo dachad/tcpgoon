@@ -12,7 +12,7 @@ func collectConnectionsStatus(connectionsStatusRegistry *GroupOfConnections, sta
 	for {
 		newConnectionStatusReported := <-statusChannel
 		connectionsStatusRegistry.connections[newConnectionStatusReported.ID] = newConnectionStatusReported
-		if len(connectionsStatusRegistry.getFilteredListByStatus([]tcpclient.ConnectionStatus{tcpclient.ConnectionEstablished})) > connectionsStatusRegistry.metrics.maxConcurrentEstalished{
+		if len(connectionsStatusRegistry.getFilteredListByStatus([]tcpclient.ConnectionStatus{tcpclient.ConnectionEstablished})) > connectionsStatusRegistry.metrics.maxConcurrentEstalished {
 			connectionsStatusRegistry.metrics.maxConcurrentEstalished = len(connectionsStatusRegistry.getFilteredListByStatus([]tcpclient.ConnectionStatus{tcpclient.ConnectionEstablished}))
 		}
 	}
@@ -48,7 +48,7 @@ func StartBackgroundReporting(numberConnections int, rinterval int) (chan tcpcli
 }
 
 func FinalMetricsReport(gc GroupOfConnections) (output string) {
-	// Report Established Connections	
+	// Report Established Connections
 	output += "--- Summary of Established connections --- \n" +
 		"Total established connections: " +
 		strconv.Itoa(len(gc.getFilteredListByStatus([]tcpclient.ConnectionStatus{tcpclient.ConnectionEstablished, tcpclient.ConnectionClosed}))) + "\n" +
