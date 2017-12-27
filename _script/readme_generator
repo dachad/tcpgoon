@@ -1,7 +1,10 @@
 #!/usr/bin/env bash
 
-set -exuo pipefail
+set -euo pipefail
 cd $(dirname $0)/..
+
+readme_src="README.src.md"
+readme_dst="README.md"
 
 function generate_toc() {
     cat ${readme_src} | grep "^#" | tr -d "#\;" | while read section
@@ -10,9 +13,29 @@ function generate_toc() {
     done
 }
 
-#main()
-readme_src="README.src.md"
-readme_dst="README.md"
+function execute_command_in_line_tagged_with_sample() {
+    line="$1"
+    command=$(echo $line | cut -d " " -f 2-)
+    "${command}"
+}
 
-cp ${readme_src} ${readme_dst}
-sed -i "s/{toc}/$(generate_toc)/g" ${readme_dst}
+function parse_src_template() {
+    while IFS='' read -r line || [[ -n "$line" ]]
+    do
+        if [ $(echo $line | grep "{toc}" | wc -l) -eq 1 ]
+        then
+            generate_toc >> "${readme_dst}"
+        elif [ $(echo $line | grep "{sample}" | wc -l) -eq 1 ]
+        then
+             execute_command_in_line_tagged_with_sample "${line}" >> "${readme_dst}"
+        else
+            echo "${line}" >> "${readme_dst}"
+        fi
+    done < "${readme_src}"
+}
+
+#main()
+./_script/build
+echo -n > ${readme_dst}
+parse_src_template
+

@@ -13,7 +13,6 @@
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/dachad/tcpgoon/blob/master/LICENSE)
 
 **[TLDR](#tldr)** . **[Description](#description)** . **[Usage](#usage)** . **[Help](#help)** . **[Examples](#examples)** . **[Execution using Docker](#execution-using-docker)** . **[Extra project information](#extra-project-information)** . **[Why do I want to test tcp connections?](#why-do-i-want-to-test-tcp-connections)** . **[Where does the project name come from?](#where-does-the-project-name-come-from)** . **[Authors](#authors)** . **[Especial thanks to...](#especial-thanks-to)** . **[Development information](#development-information)** . **[TO-DO](#to-do)** . **[README maintenance](#readme-maintenance)** . **[Testing locally](#testing-locally)** . 
-
 ## TL;DR
 
 Tool to test concurrent connections towards a server listening to a TCP port
@@ -42,65 +41,43 @@ Usage:
 Flags:
   -y, --assume-yes         Force execution without asking for confirmation
   -c, --connections int    Number of connections you want to open (default 100)
+  -d, --debug              Print debugging information to the standard error
   -t, --dial-timeout int   Connection dialing timeout, in ms (default 5000)
   -h, --help               help for tcpgoon
   -i, --interval int       Interval, in seconds, between stats updates (default 1)
   -s, --sleep int          Time you want to sleep between connections, in ms (default 10)
-  -d, --debug              Print debugging information to the standard error
 ```
 
 ### Examples
 
 Successful execution (connections were opened as expected):
 ```bash
-% ./tcpgoon myhttpsamplehost.com 80 --connections 10 --sleep 999 -y 
-Total: 10, Dialing: 0, Established: 0, Closed: 0, Error: 0, NotInitiated: 10
-Total: 10, Dialing: 1, Established: 1, Closed: 0, Error: 0, NotInitiated: 8
-Total: 10, Dialing: 1, Established: 2, Closed: 0, Error: 0, NotInitiated: 7
-...
-Total: 10, Dialing: 1, Established: 8, Closed: 0, Error: 0, NotInitiated: 1
-Total: 10, Dialing: 1, Established: 9, Closed: 0, Error: 0, NotInitiated: 0
-Total: 10, Dialing: 0, Established: 10, Closed: 0, Error: 0, NotInitiated: 0
+% ./tcpgoon myhttpsamplehost.com 80 --connections 4 --sleep 999 -y
+Total: 4, Dialing: 0, Established: 0, Closed: 0, Error: 0, NotInitiated: 4
+Total: 4, Dialing: 1, Established: 1, Closed: 0, Error: 0, NotInitiated: 2
+Total: 4, Dialing: 1, Established: 2, Closed: 0, Error: 0, NotInitiated: 1
+Total: 4, Dialing: 1, Established: 3, Closed: 0, Error: 0, NotInitiated: 0
+Total: 4, Dialing: 0, Established: 4, Closed: 0, Error: 0, NotInitiated: 0
 --- myhttpsamplehost.com:80 tcp test statistics ---
-Total: 10, Dialing: 0, Established: 10, Closed: 0, Error: 0, NotInitiated: 0
-Response time stats for 10 established connections min/avg/max/dev = 17.929ms/19.814ms/29.811ms/3.353ms
+Total: 4, Dialing: 0, Established: 4, Closed: 0, Error: 0, NotInitiated: 0
+Response time stats for 4 established connections min/avg/max/dev = 22.547ms/22.816ms/23.301ms/294µs
+
 % echo $?
 0
 ```
 
-Partially succeeded execution (mix of successes and errors against the target):
-```bash
-% ./tcpgoon myhttpsamplehost.com 8080 --connections 10 --sleep 999 -y
-Total: 10, Dialing: 0, Established: 0, Closed: 0, Error: 0, NotInitiated: 10
-Total: 10, Dialing: 0, Established: 1, Closed: 0, Error: 0, NotInitiated: 9
-Total: 10, Dialing: 0, Established: 2, Closed: 0, Error: 0, NotInitiated: 8
-Total: 10, Dialing: 1, Established: 2, Closed: 0, Error: 0, NotInitiated: 7
-...
-Total: 10, Dialing: 2, Established: 2, Closed: 0, Error: 6, NotInitiated: 0
-Total: 10, Dialing: 1, Established: 2, Closed: 0, Error: 7, NotInitiated: 0
-Total: 10, Dialing: 0, Established: 2, Closed: 0, Error: 8, NotInitiated: 0
---- myhttpsamplehost.com:8080 tcp test statistics ---
-Total: 10, Dialing: 0, Established: 2, Closed: 0, Error: 8, NotInitiated: 0
-Response time stats for 2 established connections min/avg/max/dev = 1.914ms/2.013ms/2.113ms/99µs
-Time to error stats for 8 failed connections min/avg/max/dev = 5.000819s/5.002496s/5.004758s/1.448ms
-% echo $?
-2
-```
-
 Unsuccessful execution (unable to open connections against the destination host:port):
 ```bash
-% ./tcpgoon myhttpsamplehost.com 81 --connections 10 --sleep 999 -y
-Total: 10, Dialing: 0, Established: 0, Closed: 0, Error: 0, NotInitiated: 10
-Total: 10, Dialing: 2, Established: 0, Closed: 0, Error: 0, NotInitiated: 8
-Total: 10, Dialing: 3, Established: 0, Closed: 0, Error: 0, NotInitiated: 7
-...
-Total: 10, Dialing: 3, Established: 0, Closed: 0, Error: 6, NotInitiated: 1
-Total: 10, Dialing: 3, Established: 0, Closed: 0, Error: 7, NotInitiated: 0
-Total: 10, Dialing: 2, Established: 0, Closed: 0, Error: 8, NotInitiated: 0
-Total: 10, Dialing: 1, Established: 0, Closed: 0, Error: 9, NotInitiated: 0
+% ./tcpgoon myhttpsamplehost.com 81 --connections 4 --sleep 999 -t 1 -y
+Total: 4, Dialing: 0, Established: 0, Closed: 0, Error: 0, NotInitiated: 4
+Total: 4, Dialing: 1, Established: 0, Closed: 0, Error: 1, NotInitiated: 2
+Total: 4, Dialing: 0, Established: 0, Closed: 0, Error: 3, NotInitiated: 1
+Total: 4, Dialing: 0, Established: 0, Closed: 0, Error: 4, NotInitiated: 0
+Total: 4, Dialing: 0, Established: 0, Closed: 0, Error: 4, NotInitiated: 0
 --- myhttpsamplehost.com:81 tcp test statistics ---
-Total: 10, Dialing: 0, Established: 0, Closed: 0, Error: 10, NotInitiated: 0
-Time to error stats for 10 failed connections min/avg/max/dev = 5.00025s/5.001741s/5.00317s/908µs
+Total: 4, Dialing: 0, Established: 0, Closed: 0, Error: 4, NotInitiated: 0
+Time to error stats for 4 failed connections min/avg/max/dev = 1.06ms/1.159ms/1.349ms/113µs
+
 % echo $?
 2
 ```
@@ -116,7 +93,7 @@ is being updated continuously; you can bind to specific versions, or to the "lat
 ### Why do I want to test tcp connections?
  
 Stressing TCP connections against a server/application facilitates the detection of
-bottlenecks/issues limiting the capacity of this server/application to accept/keep an specific
+bottlenecks/issues limiting the capacity of this server/application to accept/keep a specific
 (and potentially) large number of parallel connections. Some examples of typical (configuration) 
 issues:
 
@@ -126,7 +103,7 @@ issues:
 
 These limitations may pass unnoticed in actual application-l7 stress tests, given 
 other bottlenecks can arise earlier than these limitations, or degradation scenarios and/or special
-conditions may not be reproduced during the stress tests execution, but real life (lots of connections
+conditions may not be reproduced during the stress tests execution, but in real life (lots of connections
 queued because of a dependency taking longer to reply than it usually does?)
  
 hping is not an actual option for this use case given it won't complete a 3-way handshake,
@@ -166,8 +143,9 @@ to raise new ones, or solve them for us by raising PRs ;)
 
 ### README maintenance
 
-Do not edit README.md, as its autogenerated and your changes will be lost. Consider README.src.md. Dockerhub README requires manual
-maintenance, bringing relevant aspects from here and adapting cmdusage (by docker run...)
+Do not edit README.md, as its autogenerated and your changes will be lost. Consider README.src.md.  
+
+Dockerhub README requires manual maintenance, bringing relevant aspects from here and adapting cmdusage (by docker run...)
 
 ### Testing locally
 

@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+cd $(dirname $0)/../..
+
+cd out/
+cmdline="./tcpgoon --help"
+
+echo "% "${cmdline}
+eval "${cmdline}"
