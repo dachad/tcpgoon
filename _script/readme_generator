@@ -19,6 +19,12 @@ function execute_command_in_line_tagged_with_sample() {
     "${command}"
 }
 
+function generate_godepgraph() {
+    godepgraph -s . | dot -Tpng -o _imgs/godepgraph.png
+    echo '<p align="center">
+<img src="https://raw.githubusercontent.com/dachad/tcpgoon/master/_imgs/godepgraph.png" />
+</p>'
+}
 function parse_src_template() {
     while IFS='' read -r line || [[ -n "$line" ]]
     do
@@ -28,6 +34,9 @@ function parse_src_template() {
         elif [ $(echo $line | grep "{sample}" | wc -l) -eq 1 ]
         then
              execute_command_in_line_tagged_with_sample "${line}" >> "${readme_dst}"
+        elif [ $(echo $line | grep "{godepgraph}" | wc -l) -eq 1 ]
+        then
+             generate_godepgraph >> "${readme_dst}"
         else
             echo "${line}" >> "${readme_dst}"
         fi

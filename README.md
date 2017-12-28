@@ -1,8 +1,8 @@
 <p align="center">
-<img src="https://raw.githubusercontent.com/dachad/tcpgoon/master/_imgs/tcpgoontransparent.png" alt="tcpgoon" title="tcpgoon" width="400"/>
+<img src="https://raw.githubusercontent.com/dachad/tcpgoon/Issue39_READMEupdates/_imgs/tcpgoontransparent.png" alt="tcpgoon" title="tcpgoon" width="400"/>
 </p>
 <p align="center">
-<img src="https://raw.githubusercontent.com/dachad/tcpgoon/master/_imgs/coollogo_com-290231302.png" alt="tcpgoon" title="tcpgoon" width="438"/>
+<img src="https://raw.githubusercontent.com/dachad/tcpgoon/Issue39_READMEupdates/_imgs/coollogo_com-290231302.png" alt="tcpgoon" title="tcpgoon" width="438"/>
 </p>
 
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/b211244c4a674049864d45020aa8e883)](https://www.codacy.com/app/dachad/tcpgoon?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=dachad/tcpgoon&amp;utm_campaign=Badge_Grade)
@@ -12,7 +12,7 @@
 [![](https://images.microbadger.com/badges/version/dachad/tcpgoon.svg)](https://microbadger.com/images/dachad/tcpgoon "Get your own version badge on microbadger.com")
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/dachad/tcpgoon/blob/master/LICENSE)
 
-**[TLDR](#tldr)** . **[Description](#description)** . **[Usage](#usage)** . **[Help](#help)** . **[Examples](#examples)** . **[Execution using Docker](#execution-using-docker)** . **[Extra project information](#extra-project-information)** . **[Why do I want to test tcp connections?](#why-do-i-want-to-test-tcp-connections)** . **[Where does the project name come from?](#where-does-the-project-name-come-from)** . **[Authors](#authors)** . **[Especial thanks to...](#especial-thanks-to)** . **[Development information](#development-information)** . **[TO-DO](#to-do)** . **[README maintenance](#readme-maintenance)** . **[Testing locally](#testing-locally)** . 
+**[TLDR](#tldr)** . **[Description](#description)** . **[Usage](#usage)** . **[Help](#help)** . **[Examples](#examples)** . **[Execution using Docker](#execution-using-docker)** . **[Extra project information](#extra-project-information)** . **[Why do I want to test tcp connections?](#why-do-i-want-to-test-tcp-connections)** . **[Where does the project name come from?](#where-does-the-project-name-come-from)** . **[Authors](#authors)** . **[Especial thanks to...](#especial-thanks-to)** . **[Development information](#development-information)** . **[TO-DO](#to-do)** . **[Project structure](#project-structure)** . **[README maintenance](#readme-maintenance)** . **[Testing locally](#testing-locally)** . 
 ## TL;DR
 
 Tool to test concurrent connections towards a server listening to a TCP port
@@ -25,7 +25,7 @@ updates to the standard output...
 * It will use goroutines to open a tcp connection and try to read from it
 * The tool will exit once all connections have been dialed (successfully or not)
 * Exit status different from 0 represent executions where all connections were not 
-established successfully, facilitating the integration with test suites.
+established successfully, facilitating the integration in test suites.
 
 ## Usage
 
@@ -60,7 +60,7 @@ Total: 4, Dialing: 1, Established: 3, Closed: 0, Error: 0, NotInitiated: 0
 Total: 4, Dialing: 0, Established: 4, Closed: 0, Error: 0, NotInitiated: 0
 --- myhttpsamplehost.com:80 tcp test statistics ---
 Total: 4, Dialing: 0, Established: 4, Closed: 0, Error: 0, NotInitiated: 0
-Response time stats for 4 established connections min/avg/max/dev = 22.547ms/22.816ms/23.301ms/294µs
+Response time stats for 4 established connections min/avg/max/dev = 17.506ms/19.586ms/21.946ms/1.58ms
 
 % echo $?
 0
@@ -76,7 +76,7 @@ Total: 4, Dialing: 0, Established: 0, Closed: 0, Error: 4, NotInitiated: 0
 Total: 4, Dialing: 0, Established: 0, Closed: 0, Error: 4, NotInitiated: 0
 --- myhttpsamplehost.com:81 tcp test statistics ---
 Total: 4, Dialing: 0, Established: 0, Closed: 0, Error: 4, NotInitiated: 0
-Time to error stats for 4 failed connections min/avg/max/dev = 1.06ms/1.159ms/1.349ms/113µs
+Time to error stats for 4 failed connections min/avg/max/dev = 1.093ms/1.119ms/1.179ms/35µs
 
 % echo $?
 2
@@ -120,9 +120,8 @@ a bully or thug, especially a member of an armed or security force.
 ...
 ```
 <p align="center">
-<img src="https://raw.githubusercontent.com/dachad/tcpgoon/master/_imgs/thegoon.jpg" alt="thegoon" title="thegoon" width="250"/>
+<img src="https://raw.githubusercontent.com/dachad/tcpgoon/Issue39_READMEupdates/_imgs/thegoon.jpg" alt="thegoon" title="thegoon" width="250"/>
 </p>
-
 
 ### Authors
 
@@ -133,7 +132,6 @@ a bully or thug, especially a member of an armed or security force.
 
 * [Linafm design](https://www.facebook.com/linafmdisegni/), for our custom and nice Goon Gopher
 
-
 ## Development information
 
 ### TO-DO
@@ -141,9 +139,27 @@ a bully or thug, especially a member of an armed or security force.
 We do use [Github issues](https://github.com/dachad/tcpgoon/issues) to track bugs, improvements and feature requests. Do not hesitate
 to raise new ones, or solve them for us by raising PRs ;)
 
+### Project structure
+
+This project uses a layered topology, where cmd (supported by cmdutil) takes care of commands/flags/arguments and uses
+mtcpclient, which owns and knows everything about "multiple tcp connections" (including reporting), while tcpclient
+only cares about managing single tcp connections. tcpserver is just there as a dependency for the other packages' tests.
+
+<p align="center">
+<img src="https://raw.githubusercontent.com/dachad/tcpgoon/Issue39_READMEupdates/_imgs/godepgraph.png" />
+</p>
+
+A shared package (debugging) is also supplied just as a basic mechanism to control debug output.
+
 ### README maintenance
 
-Do not edit README.md, as its autogenerated and your changes will be lost. Consider README.src.md.  
+Do not edit README.md, as its autogenerated and your changes will be lost. Consider README.src.md and 
+the execution (requires [godepgraph](https://github.com/kisielk/godepgraph)) of:
+```bash
+% ./_script/readme_generator
+```
+
+Samples injected in the readme can be found in the `_script/readme_generator_samples/` directory.
 
 Dockerhub README requires manual maintenance, bringing relevant aspects from here and adapting cmdusage (by docker run...)
 
