@@ -1,8 +1,8 @@
 <p align="center">
-<img src="https://raw.githubusercontent.com/dachad/tcpgoon/master/_imgs/tcpgoontransparent.png" alt="tcpgoon" title="tcpgoon" width="400"/>
+<img src="https://raw.githubusercontent.com/dachad/tcpgoon/master/_imgs/tcpgoontransparent.png" alt="tcpgoon" title="tcpgoon" width="380"/>
 </p>
 <p align="center">
-<img src="https://raw.githubusercontent.com/dachad/tcpgoon/master/_imgs/coollogo_com-290231302.png" alt="tcpgoon" title="tcpgoon" width="438"/>
+<img src="https://raw.githubusercontent.com/dachad/tcpgoon/master/_imgs/coollogo_com-290231302.png" alt="tcpgoon" title="tcpgoon" width="420"/>
 </p>
 
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/b211244c4a674049864d45020aa8e883)](https://www.codacy.com/app/dachad/tcpgoon?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=dachad/tcpgoon&amp;utm_campaign=Badge_Grade)
@@ -107,13 +107,13 @@ to raise new ones, or solve them for us by raising PRs ;)
 
 ### Project structure
 
-This project uses a layered topology, where cmd (supported by cmdutil) takes care of commands/flags/arguments and uses
-mtcpclient, which owns and knows everything about "multiple tcp connections" (including reporting), while tcpclient
-only cares about managing single tcp connections. tcpserver is just there as a dependency for the other packages' tests.
+This project uses a layered topology, where *cmd* (complemented by *cmdutil*) takes care of commands/flags/arguments and uses
+*mtcpclient*, which owns and knows everything about "multiple tcp connections" (including reporting), while *tcpclient*
+only cares about managing single tcp connections. *tcpserver* is just there as a dependency for the other packages' tests.
 
 {godepgraph}
 
-A shared package (debugging) is also supplied just as a basic mechanism to control debug output.
+A shared package (*debugging*) is also supplied just as a basic mechanism to control debug output.
 
 ### README maintenance
 

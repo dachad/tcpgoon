@@ -22,7 +22,7 @@ function execute_command_in_line_tagged_with_sample() {
 function generate_godepgraph() {
     godepgraph -s . | dot -Tpng -o _imgs/godepgraph.png
     echo '<p align="center">
-<img src="https://raw.githubusercontent.com/dachad/tcpgoon/master/_imgs/godepgraph.png" />
+<img src="https://raw.githubusercontent.com/dachad/tcpgoon/master/_imgs/godepgraph.png" width="450"/>
 </p>'
 }
 function parse_src_template() {
