@@ -3,6 +3,7 @@ package cmd
 import (
 	"errors"
 	"fmt"
+	"net"
 	"os"
 	"strconv"
 
@@ -32,6 +33,7 @@ var runCmd = &cobra.Command{
 	Long:  ``,
 	PreRun: func(cmd *cobra.Command, args []string) {
 		if err := validateRequiredArgs(&params, args); err != nil {
+			cmd.Println(err)
 			cmd.Println(cmd.UsageString())
 			os.Exit(1)
 		}
@@ -57,6 +59,13 @@ func validateRequiredArgs(params *tcpgoonParams, args []string) error {
 		return errors.New("Number of required parameters doesn't match")
 	}
 	params.hostPtr = args[0]
+
+	addrs, err := net.LookupIP(params.hostPtr)
+	if err != nil {
+		return errors.New("Domain name not resolvable")
+	}
+	params.hostPtr = addrs[0].String()
+
 	port, err := strconv.Atoi(args[1])
 	if err != nil && port <= 0 {
 		return errors.New("Port argument is not a valid integer")
