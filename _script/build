@@ -12,8 +12,6 @@ function binary_compilation {
 	#  https://www.osso.nl/blog/golang-statically-linked/
 	#  https://github.com/kubernetes/kubernetes/pull/26028/files
 	# see also https://gcc.gnu.org/onlinedocs/gcc/Link-Options.html
-	COMMIT_HASH=$(git rev-parse --short HEAD)
-	export COMMIT_HASH
 	CGO_ENABLED=0 GOOS=linux go build -o out/tcpgoon \
 		    -ldflags "-X 'main.buildstamp=$(date -u '+%Y-%m-%d_%I:%M:%S%p')' -X 'main.githash=${COMMIT_HASH}' -extldflags '-static'" -a -installsuffix nocgo -tags netgo
 }
