@@ -13,6 +13,7 @@
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/dachad/tcpgoon/blob/master/LICENSE)
 
 **[TLDR](#tldr)** . **[Description](#description)** . **[Usage](#usage)** . **[Help](#help)** . **[Examples](#examples)** . **[Execution using Docker](#execution-using-docker)** . **[Extra project information](#extra-project-information)** . **[Why do I want to test TCP connections?](#why-do-i-want-to-test-tcp-connections)** . **[Where does the project name come from?](#where-does-the-project-name-come-from)** . **[Authors](#authors)** . **[Especial thanks to...](#especial-thanks-to)** . **[Development information](#development-information)** . **[TO-DO](#to-do)** . **[Project structure](#project-structure)** . **[README maintenance](#readme-maintenance)** . **[Testing locally](#testing-locally)** . 
+
 ## TL;DR
 
 Tool to test concurrent connections towards a server listening to a TCP port
@@ -60,7 +61,7 @@ Total: 4, Dialing: 1, Established: 3, Closed: 0, Error: 0, NotInitiated: 0
 Total: 4, Dialing: 0, Established: 4, Closed: 0, Error: 0, NotInitiated: 0
 --- myhttpsamplehost.com:80 tcp test statistics ---
 Total: 4, Dialing: 0, Established: 4, Closed: 0, Error: 0, NotInitiated: 0
-Response time stats for 4 established connections min/avg/max/dev = 18.05ms/20.372ms/24.676ms/2.549ms
+Response time stats for 4 established connections min/avg/max/dev = 20.021ms/24.944ms/31.186ms/4.847ms
 
 % echo $?
 0
@@ -76,7 +77,7 @@ Total: 4, Dialing: 0, Established: 0, Closed: 0, Error: 4, NotInitiated: 0
 Total: 4, Dialing: 0, Established: 0, Closed: 0, Error: 4, NotInitiated: 0
 --- myhttpsamplehost.com:81 tcp test statistics ---
 Total: 4, Dialing: 0, Established: 0, Closed: 0, Error: 4, NotInitiated: 0
-Time to error stats for 4 failed connections min/avg/max/dev = 1.406ms/1.528ms/1.692ms/104µs
+Time to error stats for 4 failed connections min/avg/max/dev = 1.102ms/1.147ms/1.206ms/39µs
 
 % echo $?
 2
