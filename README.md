@@ -33,23 +33,37 @@ established successfully
 tcpgoon tests concurrent connections towards a server listening on a TCP port
 
 Usage:
-  tcpgoon [flags] <host> <port>
+  tcpgoon [command]
+
+Available Commands:
+  help        Help about any command
+  run         Run tcpgoon test
+  version     Show tcpgoon version
+
+Flags:
+  -h, --help   help for tcpgoon
+
+Use "tcpgoon [command] --help" for more information about a command.
+
+%./tcpgoon run
+Usage:
+  tcpgoon run [flags] <host> <port>
 
 Flags:
   -y, --assume-yes         Force execution without asking for confirmation
   -c, --connections int    Number of connections you want to open (default 100)
+  -d, --debug              Print debugging information to the standard error
   -t, --dial-timeout int   Connection dialing timeout, in ms (default 5000)
-  -h, --help               help for tcpgoon
+  -h, --help               help for run
   -i, --interval int       Interval, in seconds, between stats updates (default 1)
   -s, --sleep int          Time you want to sleep between connections, in ms (default 10)
-  -d, --debug              Print debugging information to the standard error
 ```
 
 ## Examples
 
 Successful execution (connections were opened as expected):
 ```bash
-% ./tcpgoon myhttpsamplehost.com 80 --connections 10 --sleep 999 -y 
+% ./tcpgoon run myhttpsamplehost.com 80 --connections 10 --sleep 999 -y 
 Total: 10, Dialing: 0, Established: 0, Closed: 0, Error: 0, NotInitiated: 10
 Total: 10, Dialing: 1, Established: 1, Closed: 0, Error: 0, NotInitiated: 8
 Total: 10, Dialing: 1, Established: 2, Closed: 0, Error: 0, NotInitiated: 7
@@ -70,7 +84,7 @@ Response time stats for 10 established connections min/avg/max/dev = 17.929ms/19
 
 Partially succeeded execution (mix of successes and errors against the target):
 ```bash
-% ./tcpgoon myhttpsamplehost.com 8080 --connections 10 --sleep 999 -y
+% ./tcpgoon run myhttpsamplehost.com 8080 --connections 10 --sleep 999 -y
 Total: 10, Dialing: 0, Established: 0, Closed: 0, Error: 0, NotInitiated: 10
 Total: 10, Dialing: 0, Established: 1, Closed: 0, Error: 0, NotInitiated: 9
 Total: 10, Dialing: 0, Established: 2, Closed: 0, Error: 0, NotInitiated: 8
@@ -97,7 +111,7 @@ Time to error stats for 8 failed connections min/avg/max/dev = 5.000819s/5.00249
 
 Unsuccessful execution (unable to open connections against the destination host:port):
 ```bash
-% ./tcpgoon myhttpsamplehost.com 81 --connections 10 --sleep 999 -y
+% ./tcpgoon run myhttpsamplehost.com 81 --connections 10 --sleep 999 -y
 Total: 10, Dialing: 0, Established: 0, Closed: 0, Error: 0, NotInitiated: 10
 Total: 10, Dialing: 2, Established: 0, Closed: 0, Error: 0, NotInitiated: 8
 Total: 10, Dialing: 3, Established: 0, Closed: 0, Error: 0, NotInitiated: 7
