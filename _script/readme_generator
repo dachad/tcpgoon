@@ -7,10 +7,20 @@ readme_src="README.src.md"
 readme_dst="README.md"
 
 function generate_toc() {
-    cat ${readme_src} | grep "^#" | tr -d "#\;" | while read header_in_readme
+    get_headers_without_markup_from_readme | while read header_in_readme
     do
-        echo -n "**[${header_in_readme}](#$(echo ${header_in_readme}|tr "[:upper:]" "[:lower:]"| tr " " "-" | tr -d ".?"))** . "
+        echo -n "**[${header_in_readme}]($(format_string_as_html_anchor "${header_in_readme}"))** . "
     done
+}
+
+function get_headers_without_markup_from_readme() {
+    cat ${readme_src} | grep "^#" | tr -d "#\;"
+}
+
+function format_string_as_html_anchor() {
+    # That means downcase and without special characters
+    text_to_format="${1}"
+    echo "#${text_to_format}" |tr "[:upper:]" "[:lower:]"| tr " " "-" | tr -d ".?"
 }
 
 function execute_command_in_line_tagged_with_sample() {

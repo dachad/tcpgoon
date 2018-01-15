@@ -12,7 +12,7 @@
 [![](https://images.microbadger.com/badges/version/dachad/tcpgoon.svg)](https://microbadger.com/images/dachad/tcpgoon "Get your own version badge on microbadger.com")
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/dachad/tcpgoon/blob/master/LICENSE)
 
-**[TLDR](#tldr)** . **[Description](#description)** . **[Usage](#usage)** . **[Help](#help)** . **[Examples](#examples)** . **[Execution using Docker](#execution-using-docker)** . **[Extra project information](#extra-project-information)** . **[Why do I want to test tcp connections?](#why-do-i-want-to-test-tcp-connections)** . **[Where does the project name come from?](#where-does-the-project-name-come-from)** . **[Authors](#authors)** . **[Especial thanks to...](#especial-thanks-to)** . **[Development information](#development-information)** . **[TO-DO](#to-do)** . **[Project structure](#project-structure)** . **[README maintenance](#readme-maintenance)** . **[Testing locally](#testing-locally)** . 
+**[TLDR](#tldr)** . **[Description](#description)** . **[Usage](#usage)** . **[Help](#help)** . **[Examples](#examples)** . **[Execution using Docker](#execution-using-docker)** . **[Extra project information](#extra-project-information)** . **[Why do I want to test TCP connections?](#why-do-i-want-to-test-tcp-connections)** . **[Where does the project name come from?](#where-does-the-project-name-come-from)** . **[Authors](#authors)** . **[Especial thanks to...](#especial-thanks-to)** . **[Development information](#development-information)** . **[TO-DO](#to-do)** . **[Project structure](#project-structure)** . **[README maintenance](#readme-maintenance)** . **[Testing locally](#testing-locally)** . 
 ## TL;DR
 
 Tool to test concurrent connections towards a server listening to a TCP port
@@ -22,7 +22,7 @@ Tool to test concurrent connections towards a server listening to a TCP port
 * Given a hostname, port, the number of connections (100 by default), 
 a delay between connections (10ms by default) and an interval between stats
 updates to the standard output...
-* It will use goroutines to open a tcp connection and try to read from it
+* It will use goroutines to open TCP connections and try to read from them
 * The tool will exit once all connections have been dialed (successfully or not)
 * Exit status different from 0 represent executions where all connections were not 
 established successfully, facilitating the integration in test suites.
@@ -60,7 +60,7 @@ Total: 4, Dialing: 1, Established: 3, Closed: 0, Error: 0, NotInitiated: 0
 Total: 4, Dialing: 0, Established: 4, Closed: 0, Error: 0, NotInitiated: 0
 --- myhttpsamplehost.com:80 tcp test statistics ---
 Total: 4, Dialing: 0, Established: 4, Closed: 0, Error: 0, NotInitiated: 0
-Response time stats for 4 established connections min/avg/max/dev = 20.443ms/21.857ms/23.597ms/1.163ms
+Response time stats for 4 established connections min/avg/max/dev = 18.05ms/20.372ms/24.676ms/2.549ms
 
 % echo $?
 0
@@ -76,7 +76,7 @@ Total: 4, Dialing: 0, Established: 0, Closed: 0, Error: 4, NotInitiated: 0
 Total: 4, Dialing: 0, Established: 0, Closed: 0, Error: 4, NotInitiated: 0
 --- myhttpsamplehost.com:81 tcp test statistics ---
 Total: 4, Dialing: 0, Established: 0, Closed: 0, Error: 4, NotInitiated: 0
-Time to error stats for 4 failed connections min/avg/max/dev = 1.1ms/1.129ms/1.185ms/33µs
+Time to error stats for 4 failed connections min/avg/max/dev = 1.406ms/1.528ms/1.692ms/104µs
 
 % echo $?
 2
@@ -90,14 +90,14 @@ is being updated continuously; you can bind to specific versions, or to the "lat
 
 ## Extra project information
 
-### Why do I want to test tcp connections?
+### Why do I want to test TCP connections?
  
 Stressing TCP connections against a server/application facilitates the detection of
 bottlenecks/issues limiting the capacity of this server/application to accept/keep a specific
 (and potentially) large number of parallel connections. Some examples of typical (configuration) 
 issues:
 
-* OS configuration (tcp backlog, network drivers buffers),
+* OS configuration (TCP backlog, network drivers buffers),
 * number of file descriptors/processes the server can use,
 * application listener properties...
 
@@ -108,7 +108,7 @@ queued because of a dependency taking longer to reply than it usually does?)
  
 hping is not an actual option for this use case given it won't complete a 3-way handshake,
 so the connection will not reach the accept() syscall of your server/application or fill up your
-tcp backlog.
+TCP backlog.
 
 ### Where does the project name come from?
 ```
@@ -142,8 +142,8 @@ to raise new ones, or solve them for us by raising PRs ;)
 ### Project structure
 
 This project uses a layered topology, where *cmd* (complemented by *cmdutil*) takes care of commands/flags/arguments and uses
-*mtcpclient*, which owns and knows everything about "multiple tcp connections" (including reporting), while *tcpclient*
-only cares about managing single tcp connections. *tcpserver* is just there as a dependency for the other packages' tests.
+*mtcpclient*, which owns and knows everything about "multiple TCP connections" (including reporting), while *tcpclient*
+only cares about managing single TCP connections. *tcpserver* is just there as a dependency for the other packages' tests.
 
 <p align="center">
 <img src="https://raw.githubusercontent.com/dachad/tcpgoon/master/_imgs/godepgraph.png" width="450"/>
@@ -153,7 +153,7 @@ A shared package (*debugging*) is also supplied just as a basic mechanism to con
 
 ### README maintenance
 
-Do not edit README.md, as its autogenerated and your changes will be lost. Consider README.src.md and 
+Do not edit README.md directly, as your changes will be lost. Consider README.src.md and 
 the execution (requires [godepgraph](https://github.com/kisielk/godepgraph)) of:
 ```bash
 % ./_script/readme_generator
