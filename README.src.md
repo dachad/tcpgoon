@@ -12,7 +12,7 @@
 [![](https://images.microbadger.com/badges/version/dachad/tcpgoon.svg)](https://microbadger.com/images/dachad/tcpgoon "Get your own version badge on microbadger.com")
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/dachad/tcpgoon/blob/master/LICENSE)
 
-**[TLDR](#tldr)** . **[Description](#description)** . **[Usage](#usage)** . **[Help](#help)** . **[Examples](#examples)** . **[Execution using Docker](#execution-using-docker)** . **[Extra project information](#extra-project-information)** . **[Why do I want to test TCP connections?](#why-do-i-want-to-test-tcp-connections)** . **[Where does the project name come from?](#where-does-the-project-name-come-from)** . **[Authors](#authors)** . **[Especial thanks to...](#especial-thanks-to)** . **[Development information](#development-information)** . **[TO-DO](#to-do)** . **[Project structure](#project-structure)** . **[README maintenance](#readme-maintenance)** . **[Testing locally](#testing-locally)** . 
+{toc}
 
 ## TL;DR
 
@@ -33,69 +33,19 @@ established successfully, facilitating the integration in test suites.
 ### Help
 
 ```bash
-% ./tcpgoon --help
-tcpgoon tests concurrent connections towards a server listening on a TCP port
-
-Usage:
-  tcpgoon [command]
-
-Available Commands:
-  help        Help about any command
-  run         Run tcpgoon test
-  version     Show tcpgoon version
-
-Flags:
-  -h, --help   help for tcpgoon
-
-Use "tcpgoon [command] --help" for more information about a command.
-% ./tcpgoon run --help
-Run tcpgoon test
-
-Usage:
-  tcpgoon run [flags] <host> <port>
-
-Flags:
-  -y, --assume-yes         Force execution without asking for confirmation
-  -c, --connections int    Number of connections you want to open (default 100)
-  -d, --debug              Print debugging information to the standard error
-  -t, --dial-timeout int   Connection dialing timeout, in ms (default 5000)
-  -h, --help               help for run
-  -i, --interval int       Interval, in seconds, between stats updates (default 1)
-  -s, --sleep int          Time you want to sleep between connections, in ms (default 10)
+{sample} ./_script/readme_generator_samples/help
 ```
 
 ### Examples
 
 Successful execution (connections were opened as expected):
 ```bash
-% ./tcpgoon run myhttpsamplehost.com 80 --connections 4 --sleep 999 -y
-Total: 4, Dialing: 0, Established: 0, Closed: 0, Error: 0, NotInitiated: 4
-Total: 4, Dialing: 1, Established: 1, Closed: 0, Error: 0, NotInitiated: 2
-Total: 4, Dialing: 1, Established: 2, Closed: 0, Error: 0, NotInitiated: 1
-Total: 4, Dialing: 1, Established: 3, Closed: 0, Error: 0, NotInitiated: 0
-Total: 4, Dialing: 0, Established: 4, Closed: 0, Error: 0, NotInitiated: 0
---- myhttpsamplehost.com:80 tcp test statistics ---
-Total: 4, Dialing: 0, Established: 4, Closed: 0, Error: 0, NotInitiated: 0
-Response time stats for 4 established connections min/avg/max/dev = 21.384ms/22.284ms/23.431ms/877µs
-
-% echo $?
-0
+{sample} ./_script/readme_generator_samples/execution_ok
 ```
 
 Unsuccessful execution (unable to open connections against the destination host:port):
 ```bash
-% ./tcpgoon run myhttpsamplehost.com 81 --connections 4 --sleep 999 -t 1 -y
-Total: 4, Dialing: 0, Established: 0, Closed: 0, Error: 0, NotInitiated: 4
-Total: 4, Dialing: 1, Established: 0, Closed: 0, Error: 1, NotInitiated: 2
-Total: 4, Dialing: 0, Established: 0, Closed: 0, Error: 3, NotInitiated: 1
-Total: 4, Dialing: 0, Established: 0, Closed: 0, Error: 4, NotInitiated: 0
-Total: 4, Dialing: 0, Established: 0, Closed: 0, Error: 4, NotInitiated: 0
---- myhttpsamplehost.com:81 tcp test statistics ---
-Total: 4, Dialing: 0, Established: 0, Closed: 0, Error: 4, NotInitiated: 0
-Time to error stats for 4 failed connections min/avg/max/dev = 1.092ms/1.136ms/1.182ms/35µs
-
-% echo $?
-2
+{sample} ./_script/readme_generator_samples/execution_ko
 ```
 
 ### Execution using Docker
@@ -161,9 +111,7 @@ This project uses a layered topology, where *cmd* (complemented by *cmdutil*) ta
 *mtcpclient*, which owns and knows everything about "multiple TCP connections" (including reporting), while *tcpclient*
 only cares about managing single TCP connections. *tcpserver* is just there as a dependency for the other packages' tests.
 
-<p align="center">
-<img src="https://raw.githubusercontent.com/dachad/tcpgoon/master/_imgs/godepgraph.png" width="450"/>
-</p>
+{godepgraph}
 
 A shared package (*debugging*) is also supplied just as a basic mechanism to control debug output.
 

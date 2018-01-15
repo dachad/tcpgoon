@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+
+set -uo pipefail
+cd $(dirname $0)/../..
+
+cd out/
+cmdline="./tcpgoon run myhttpsamplehost.com 80 --connections 4 --sleep 999 -y"
+
+echo "% "${cmdline}
+eval "${cmdline}"
+echo "% echo \$?
+${?}"
