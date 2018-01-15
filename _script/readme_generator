@@ -7,9 +7,9 @@ readme_src="README.src.md"
 readme_dst="README.md"
 
 function generate_toc() {
-    cat ${readme_src} | grep "^#" | tr -d "#\;" | while read section
+    cat ${readme_src} | grep "^#" | tr -d "#\;" | while read header_in_readme
     do
-        echo -n "**[${section}](#$(echo ${section}|tr "[:upper:]" "[:lower:]"| tr " " "-" | tr -d ".?"))** . "
+        echo -n "**[${header_in_readme}](#$(echo ${header_in_readme}|tr "[:upper:]" "[:lower:]"| tr " " "-" | tr -d ".?"))** . "
     done
 }
 
