@@ -13,7 +13,7 @@ if [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$TRAVIS_BRANCH" = "master" ]
 then
     echo "INFO: Merging to master... time to build and deploy redistributables"
     docker_name="dachad/tcpgoon"
-    export COMMIT_HASH=$(git rev-parse --short HEAD)
-    ./_script/build "$docker_name"
+    commit_hash=$(git rev-parse --short HEAD)
+    ./_script/build "$docker_name" "$commit_hash"
     ./_script/deploy "$docker_name"
 fi
