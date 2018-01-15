@@ -24,7 +24,7 @@ function docker_authenticate() {
 }
 
 function docker_tag() {
-    extra_docker_tag="${docker_name}:$(git log -1 --pretty=%h)"
+    extra_docker_tag="${docker_name}:${commit_hash}"
     sg $execgroup "docker tag $docker_name $extra_docker_tag"
 }
 
@@ -37,6 +37,7 @@ function docker_push() {
 #main()
 docker_authenticate
 docker_name=${1:-"dachad/tcpgoon"}
+commit_hash=${2:-"no_commit"}
 execgroup="docker"
 docker_tag
 docker_push

@@ -37,14 +37,29 @@ established successfully, facilitating the integration in test suites.
 tcpgoon tests concurrent connections towards a server listening on a TCP port
 
 Usage:
-  tcpgoon [flags] <host> <port>
+  tcpgoon [command]
+
+Available Commands:
+  help        Help about any command
+  run         Run tcpgoon test
+  version     Show tcpgoon version
+
+Flags:
+  -h, --help   help for tcpgoon
+
+Use "tcpgoon [command] --help" for more information about a command.
+% ./tcpgoon run --help
+Run tcpgoon test
+
+Usage:
+  tcpgoon run [flags] <host> <port>
 
 Flags:
   -y, --assume-yes         Force execution without asking for confirmation
   -c, --connections int    Number of connections you want to open (default 100)
   -d, --debug              Print debugging information to the standard error
   -t, --dial-timeout int   Connection dialing timeout, in ms (default 5000)
-  -h, --help               help for tcpgoon
+  -h, --help               help for run
   -i, --interval int       Interval, in seconds, between stats updates (default 1)
   -s, --sleep int          Time you want to sleep between connections, in ms (default 10)
 ```
@@ -53,7 +68,7 @@ Flags:
 
 Successful execution (connections were opened as expected):
 ```bash
-% ./tcpgoon myhttpsamplehost.com 80 --connections 4 --sleep 999 -y
+% ./tcpgoon run myhttpsamplehost.com 80 --connections 4 --sleep 999 -y
 Total: 4, Dialing: 0, Established: 0, Closed: 0, Error: 0, NotInitiated: 4
 Total: 4, Dialing: 1, Established: 1, Closed: 0, Error: 0, NotInitiated: 2
 Total: 4, Dialing: 1, Established: 2, Closed: 0, Error: 0, NotInitiated: 1
@@ -61,7 +76,7 @@ Total: 4, Dialing: 1, Established: 3, Closed: 0, Error: 0, NotInitiated: 0
 Total: 4, Dialing: 0, Established: 4, Closed: 0, Error: 0, NotInitiated: 0
 --- myhttpsamplehost.com:80 tcp test statistics ---
 Total: 4, Dialing: 0, Established: 4, Closed: 0, Error: 0, NotInitiated: 0
-Response time stats for 4 established connections min/avg/max/dev = 20.021ms/24.944ms/31.186ms/4.847ms
+Response time stats for 4 established connections min/avg/max/dev = 21.384ms/22.284ms/23.431ms/877µs
 
 % echo $?
 0
@@ -69,7 +84,7 @@ Response time stats for 4 established connections min/avg/max/dev = 20.021ms/24.
 
 Unsuccessful execution (unable to open connections against the destination host:port):
 ```bash
-% ./tcpgoon myhttpsamplehost.com 81 --connections 4 --sleep 999 -t 1 -y
+% ./tcpgoon run myhttpsamplehost.com 81 --connections 4 --sleep 999 -t 1 -y
 Total: 4, Dialing: 0, Established: 0, Closed: 0, Error: 0, NotInitiated: 4
 Total: 4, Dialing: 1, Established: 0, Closed: 0, Error: 1, NotInitiated: 2
 Total: 4, Dialing: 0, Established: 0, Closed: 0, Error: 3, NotInitiated: 1
@@ -77,7 +92,7 @@ Total: 4, Dialing: 0, Established: 0, Closed: 0, Error: 4, NotInitiated: 0
 Total: 4, Dialing: 0, Established: 0, Closed: 0, Error: 4, NotInitiated: 0
 --- myhttpsamplehost.com:81 tcp test statistics ---
 Total: 4, Dialing: 0, Established: 0, Closed: 0, Error: 4, NotInitiated: 0
-Time to error stats for 4 failed connections min/avg/max/dev = 1.102ms/1.147ms/1.206ms/39µs
+Time to error stats for 4 failed connections min/avg/max/dev = 1.092ms/1.136ms/1.182ms/35µs
 
 % echo $?
 2
