@@ -12,7 +12,7 @@
 [![](https://images.microbadger.com/badges/version/dachad/tcpgoon.svg)](https://microbadger.com/images/dachad/tcpgoon "Get your own version badge on microbadger.com")
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/dachad/tcpgoon/blob/master/LICENSE)
 
-**[TLDR](#tldr)** . **[Description](#description)** . **[Usage](#usage)** . **[Help](#help)** . **[Examples](#examples)** . **[Execution using Docker](#execution-using-docker)** . **[Extra project information](#extra-project-information)** . **[Why do I want to test TCP connections?](#why-do-i-want-to-test-tcp-connections)** . **[Where does the project name come from?](#where-does-the-project-name-come-from)** . **[Authors](#authors)** . **[Especial thanks to...](#especial-thanks-to)** . **[Development information](#development-information)** . **[TO-DO](#to-do)** . **[Project structure](#project-structure)** . **[README maintenance](#readme-maintenance)** . **[Testing locally](#testing-locally)** . 
+**[TLDR](#tldr)** . **[Description](#description)** . **[Usage](#usage)** . **[Execution using Docker](#execution-using-docker)** . **[Installation](#installation)** . **[Help](#help)** . **[Examples](#examples)** . **[Extra project information](#extra-project-information)** . **[Why do I want to test TCP connections?](#why-do-i-want-to-test-tcp-connections)** . **[Where does the project name come from?](#where-does-the-project-name-come-from)** . **[Authors](#authors)** . **[Especial thanks to...](#especial-thanks-to)** . **[Development information](#development-information)** . **[TO-DO](#to-do)** . **[Project structure](#project-structure)** . **[README maintenance](#readme-maintenance)** . **[Testing locally](#testing-locally)** . 
 
 ## TL;DR
 
@@ -29,6 +29,17 @@ updates to the standard output...
 established successfully, facilitating the integration in test suites.
 
 ## Usage
+
+### Execution using Docker
+
+See our [public docker image and its documentation](https://hub.docker.com/r/dachad/tcpgoon/). The image
+is being updated continuously; you can bind to specific versions, or to the "latest" tag.
+
+### Installation
+
+```bash
+% go get github.com/dachad/tcpgoon
+```
 
 ### Help
 
@@ -66,6 +77,9 @@ Flags:
 
 ### Examples
 
+> *Note: depending on the number of connections you want to open, 
+you may need to increase the number of file descriptors your user supports*
+
 Successful execution (connections were opened as expected):
 ```bash
 % ./tcpgoon run myhttpsamplehost.com 80 --connections 4 --sleep 999 -y
@@ -76,7 +90,7 @@ Total: 4, Dialing: 1, Established: 3, Closed: 0, Error: 0, NotInitiated: 0
 Total: 4, Dialing: 0, Established: 4, Closed: 0, Error: 0, NotInitiated: 0
 --- myhttpsamplehost.com:80 tcp test statistics ---
 Total: 4, Dialing: 0, Established: 4, Closed: 0, Error: 0, NotInitiated: 0
-Response time stats for 4 established connections min/avg/max/dev = 21.384ms/22.284ms/23.431ms/877µs
+Response time stats for 4 established connections min/avg/max/dev = 11.041ms/11.831ms/12.733ms/655µs
 
 % echo $?
 0
@@ -92,17 +106,11 @@ Total: 4, Dialing: 0, Established: 0, Closed: 0, Error: 4, NotInitiated: 0
 Total: 4, Dialing: 0, Established: 0, Closed: 0, Error: 4, NotInitiated: 0
 --- myhttpsamplehost.com:81 tcp test statistics ---
 Total: 4, Dialing: 0, Established: 0, Closed: 0, Error: 4, NotInitiated: 0
-Time to error stats for 4 failed connections min/avg/max/dev = 1.092ms/1.136ms/1.182ms/35µs
+Time to error stats for 4 failed connections min/avg/max/dev = 1.088ms/1.104ms/1.117ms/11µs
 
 % echo $?
 2
 ```
-
-### Execution using Docker
-
-See our [public docker image and its documentation](https://hub.docker.com/r/dachad/tcpgoon/). The image
-is being updated continuously; you can bind to specific versions, or to the "latest" tag.
-
 
 ## Extra project information
 
@@ -170,7 +178,7 @@ A shared package (*debugging*) is also supplied just as a basic mechanism to con
 ### README maintenance
 
 Do not edit README.md directly, as your changes will be lost. Consider README.src.md and 
-the execution (requires [godepgraph](https://github.com/kisielk/godepgraph)) of:
+the execution (requires [godepgraph](https://github.com/kisielk/godepgraph) and [Graphviz](http://graphviz.org/)) of:
 ```bash
 % ./_script/readme_generator
 ```

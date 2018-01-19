@@ -30,6 +30,17 @@ established successfully, facilitating the integration in test suites.
 
 ## Usage
 
+### Execution using Docker
+
+See our [public docker image and its documentation](https://hub.docker.com/r/dachad/tcpgoon/). The image
+is being updated continuously; you can bind to specific versions, or to the "latest" tag.
+
+### Installation
+
+```bash
+% go get github.com/dachad/tcpgoon
+```
+
 ### Help
 
 ```bash
@@ -37,6 +48,9 @@ established successfully, facilitating the integration in test suites.
 ```
 
 ### Examples
+
+> *Note: depending on the number of connections you want to open, 
+you may need to increase the number of file descriptors your user supports*
 
 Successful execution (connections were opened as expected):
 ```bash
@@ -47,12 +61,6 @@ Unsuccessful execution (unable to open connections against the destination host:
 ```bash
 {sample} ./_script/readme_generator_samples/execution_ko
 ```
-
-### Execution using Docker
-
-See our [public docker image and its documentation](https://hub.docker.com/r/dachad/tcpgoon/). The image
-is being updated continuously; you can bind to specific versions, or to the "latest" tag.
-
 
 ## Extra project information
 
@@ -118,7 +126,7 @@ A shared package (*debugging*) is also supplied just as a basic mechanism to con
 ### README maintenance
 
 Do not edit README.md directly, as your changes will be lost. Consider README.src.md and 
-the execution (requires [godepgraph](https://github.com/kisielk/godepgraph)) of:
+the execution (requires [godepgraph](https://github.com/kisielk/godepgraph) and [Graphviz](http://graphviz.org/)) of:
 ```bash
 % ./_script/readme_generator
 ```
