@@ -11,12 +11,18 @@ import (
 	"github.com/dachad/tcpgoon/mtcpclient"
 )
 
-func printClosureReport(host string, port int, gc mtcpclient.GroupOfConnections) {
+func printClosureReport(ip string, host string, port int, gc mtcpclient.GroupOfConnections) {
 	// workaround to allow last status updates - messages in channels - to be collected properly
 	// TODO: This can be fixed with an extra channel
 	const timeToWaitForClosureReportInMs = 100
 	time.Sleep(time.Duration(timeToWaitForClosureReportInMs) * time.Millisecond)
-	fmt.Println(strings.Repeat("-", 3), host+":"+strconv.Itoa(port), "tcp test statistics", strings.Repeat("-", 3))
+
+	target := host
+	if host != ip {
+		target = host + "(" + ip + ")"
+	}
+
+	fmt.Println(strings.Repeat("-", 3), target+":"+strconv.Itoa(port), "tcp test statistics", strings.Repeat("-", 3))
 	mtcpclient.ReportConnectionsStatus(gc, 0)
 	fmt.Println(mtcpclient.FinalMetricsReport(gc))
 }

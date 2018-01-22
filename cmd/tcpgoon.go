@@ -16,6 +16,7 @@ import (
 
 type tcpgoonParams struct {
 	hostPtr              string
+	hostName             string
 	portPtr              int
 	numberConnectionsPtr int
 	delayPtr             int
@@ -58,13 +59,14 @@ func validateRequiredArgs(params *tcpgoonParams, args []string) error {
 	if len(args) != 2 {
 		return errors.New("Number of required parameters doesn't match")
 	}
-	params.hostPtr = args[0]
-
-	addrs, err := net.LookupIP(params.hostPtr)
-	if err != nil {
+	params.hostName = args[0]
+	addrs, err := net.LookupIP(params.hostName)
+	if err != nil || len(addrs) == 0 {
 		return errors.New("Domain name not resolvable")
 	}
+
 	params.hostPtr = addrs[0].String()
+	fmt.Fprintln(debugging.DebugOut, "TCPGOON target: Hostname(", params.hostName, "), IP (", params.hostPtr, ")")
 
 	port, err := strconv.Atoi(args[1])
 	if err != nil && port <= 0 {
@@ -82,7 +84,7 @@ func enableDebuggingIfFlagSet(params tcpgoonParams) {
 }
 
 func autorunValidation(params tcpgoonParams) {
-	if !(params.assumeyesPtr || cmdutil.AskForUserConfirmation(params.hostPtr, params.portPtr, params.numberConnectionsPtr)) {
+	if !(params.assumeyesPtr || cmdutil.AskForUserConfirmation(params.hostName, params.portPtr, params.numberConnectionsPtr)) {
 		fmt.Fprintln(debugging.DebugOut, "Execution not approved by the user")
 		cmdutil.CloseAbruptly()
 	}
@@ -99,5 +101,5 @@ func run(params tcpgoonParams) {
 	mtcpclient.MultiTCPConnect(params.numberConnectionsPtr, params.delayPtr, params.hostPtr, params.portPtr, connStatusCh, closureCh)
 	fmt.Fprintln(debugging.DebugOut, "Tests execution completed")
 
-	cmdutil.CloseNicely(params.hostPtr, params.portPtr, connStatusTracker)
+	cmdutil.CloseNicely(params.hostPtr, params.hostName, params.portPtr, connStatusTracker)
 }

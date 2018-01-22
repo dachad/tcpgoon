@@ -14,8 +14,8 @@ const (
 	completedButConnErrorsExitStatus = 2
 )
 
-func CloseNicely(host string, port int, gc mtcpclient.GroupOfConnections) {
-	printClosureReport(host, port, gc)
+func CloseNicely(ip, host string, port int, gc mtcpclient.GroupOfConnections) {
+	printClosureReport(ip, host, port, gc)
 	if gc.PendingConnections() {
 		fmt.Fprintln(debugging.DebugOut, "We detected some connections did not complete")
 		os.Exit(incompleteExecutionExitStatus)
