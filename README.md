@@ -88,9 +88,9 @@ Total: 4, Dialing: 1, Established: 1, Closed: 0, Error: 0, NotInitiated: 2
 Total: 4, Dialing: 1, Established: 2, Closed: 0, Error: 0, NotInitiated: 1
 Total: 4, Dialing: 1, Established: 3, Closed: 0, Error: 0, NotInitiated: 0
 Total: 4, Dialing: 0, Established: 4, Closed: 0, Error: 0, NotInitiated: 0
---- myhttpsamplehost.com:80 tcp test statistics ---
+--- myhttpsamplehost.com(216.58.211.196):80 tcp test statistics ---
 Total: 4, Dialing: 0, Established: 4, Closed: 0, Error: 0, NotInitiated: 0
-Response time stats for 4 established connections min/avg/max/dev = 11.041ms/11.831ms/12.733ms/655µs
+Response time stats for 4 established connections min/avg/max/dev = 11.858ms/12.59ms/13.143ms/468µs
 
 % echo $?
 0
@@ -100,13 +100,13 @@ Unsuccessful execution (unable to open connections against the destination host:
 ```bash
 % ./tcpgoon run myhttpsamplehost.com 81 --connections 4 --sleep 999 -t 1 -y
 Total: 4, Dialing: 0, Established: 0, Closed: 0, Error: 0, NotInitiated: 4
-Total: 4, Dialing: 1, Established: 0, Closed: 0, Error: 1, NotInitiated: 2
-Total: 4, Dialing: 0, Established: 0, Closed: 0, Error: 3, NotInitiated: 1
+Total: 4, Dialing: 0, Established: 0, Closed: 0, Error: 1, NotInitiated: 3
+Total: 4, Dialing: 1, Established: 0, Closed: 0, Error: 2, NotInitiated: 1
+Total: 4, Dialing: 1, Established: 0, Closed: 0, Error: 3, NotInitiated: 0
 Total: 4, Dialing: 0, Established: 0, Closed: 0, Error: 4, NotInitiated: 0
+--- myhttpsamplehost.com(216.58.211.196):81 tcp test statistics ---
 Total: 4, Dialing: 0, Established: 0, Closed: 0, Error: 4, NotInitiated: 0
---- myhttpsamplehost.com:81 tcp test statistics ---
-Total: 4, Dialing: 0, Established: 0, Closed: 0, Error: 4, NotInitiated: 0
-Time to error stats for 4 failed connections min/avg/max/dev = 1.088ms/1.104ms/1.117ms/11µs
+Time to error stats for 4 failed connections min/avg/max/dev = 1.228ms/1.416ms/1.539ms/122µs
 
 % echo $?
 2
