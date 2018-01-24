@@ -9,11 +9,15 @@ set -exuo pipefail
 
 TRAVIS_PULL_REQUEST=${TRAVIS_PULL_REQUEST:-""}
 TRAVIS_BRANCH=${TRAVIS_BRANCH:-""}
+dry_run=${1:-""}
 if [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$TRAVIS_BRANCH" = "master" ]
 then
     echo "INFO: Merging to master... time to build and deploy redistributables"
-    docker_name="dachad/tcpgoon"
+    docker_image_name="dachad/tcpgoon"
     commit_hash=$(git rev-parse --short HEAD)
-    ./_script/build "$docker_name" "$commit_hash"
-    ./_script/deploy "$docker_name" "$commit_hash"
+    run_as_group="docker"
+    newgrp $run_as_group <<- END
+		./_script/build "$docker_image_name" "$commit_hash"
+		./_script/deploy "$docker_image_name" "$commit_hash" "$dry_run"
+	END
 fi
