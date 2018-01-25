@@ -12,19 +12,20 @@ function binary_compilation {
 	#  https://www.osso.nl/blog/golang-statically-linked/
 	#  https://github.com/kubernetes/kubernetes/pull/26028/files
 	# see also https://gcc.gnu.org/onlinedocs/gcc/Link-Options.html
-	CGO_ENABLED=0 GOOS=linux go build -o out/tcpgoon \
-		    -ldflags "-X 'main.buildstamp=$(date -u '+%Y-%m-%d_%I:%M:%S%p')' -X 'main.githash=${commit_hash}' -extldflags '-static'" -a -installsuffix nocgo -tags netgo
+	CGO_ENABLED=0 go build -o out/tcpgoon \
+		    -ldflags "-X 'main.buildstamp=$(date -u '+%Y-%m-%d_%I:%M:%S%p')' -X 'main.githash=${commit_hash}' \
+		    -extldflags '-static'" -a -installsuffix nocgo -tags netgo
 }
 
 function docker_build {
 	tag=$1
-	execgroup="docker"
-    sg $execgroup "docker build -t $tag ."
+	docker build -t $tag .
 }
 
 # main()
 docker_name=${1:-"dachad/tcpgoon"}
 commit_hash=${2:-"no_commit"}
 go_version_check
+echo "INFO: Building binaries/images"
 binary_compilation
 docker_build "${docker_name}"

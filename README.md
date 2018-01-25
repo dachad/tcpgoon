@@ -88,9 +88,9 @@ Total: 4, Dialing: 1, Established: 1, Closed: 0, Error: 0, NotInitiated: 2
 Total: 4, Dialing: 1, Established: 2, Closed: 0, Error: 0, NotInitiated: 1
 Total: 4, Dialing: 1, Established: 3, Closed: 0, Error: 0, NotInitiated: 0
 Total: 4, Dialing: 0, Established: 4, Closed: 0, Error: 0, NotInitiated: 0
---- myhttpsamplehost.com:80 tcp test statistics ---
+--- myhttpsamplehost.com(216.58.201.131):80 tcp test statistics ---
 Total: 4, Dialing: 0, Established: 4, Closed: 0, Error: 0, NotInitiated: 0
-Response time stats for 4 established connections min/avg/max/dev = 11.041ms/11.831ms/12.733ms/655µs
+Response time stats for 4 established connections min/avg/max/dev = 17.692ms/20.593ms/22.391ms/1.844ms
 
 % echo $?
 0
@@ -104,9 +104,9 @@ Total: 4, Dialing: 1, Established: 0, Closed: 0, Error: 1, NotInitiated: 2
 Total: 4, Dialing: 0, Established: 0, Closed: 0, Error: 3, NotInitiated: 1
 Total: 4, Dialing: 0, Established: 0, Closed: 0, Error: 4, NotInitiated: 0
 Total: 4, Dialing: 0, Established: 0, Closed: 0, Error: 4, NotInitiated: 0
---- myhttpsamplehost.com:81 tcp test statistics ---
+--- myhttpsamplehost.com(216.58.201.131):81 tcp test statistics ---
 Total: 4, Dialing: 0, Established: 0, Closed: 0, Error: 4, NotInitiated: 0
-Time to error stats for 4 failed connections min/avg/max/dev = 1.088ms/1.104ms/1.117ms/11µs
+Time to error stats for 4 failed connections min/avg/max/dev = 1.096ms/1.171ms/1.261ms/61µs
 
 % echo $?
 2
@@ -202,7 +202,7 @@ Emulation of a travis job execution using docker (of course, it needs docker):
 ```
 
 And also emulating a travis job deployment (it publishes new binaries
-providing successful tests and the right credentials):
+providing successful tests and the right credentials, unless you also use the -r flag / dry-run):
 ```bash
 % ./_script/cibuild-docker -d
 ```

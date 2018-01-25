@@ -150,7 +150,7 @@ Emulation of a travis job execution using docker (of course, it needs docker):
 ```
 
 And also emulating a travis job deployment (it publishes new binaries
-providing successful tests and the right credentials):
+providing successful tests and the right credentials, unless you also use the -r flag / dry-run):
 ```bash
 % ./_script/cibuild-docker -d
 ```

@@ -27,7 +27,6 @@ function prepare_dir_permissions() {
 function prepare_docker_env() {
     sudo groupadd docker
     sudo usermod -aG docker travis
-    #newgrp docker
     sudo dockerd &
 }
 
