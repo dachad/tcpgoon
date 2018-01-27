@@ -3,6 +3,27 @@
 set -exuo pipefail
 cd $(dirname $0)/..
 
-echo "[*] Running Tests"
+# Initially looking official docs
+# http://docs.coveralls.io/go
+# But using this for multiple package support
+# https://github.com/vitalyisaev2/ads/blob/master/.travis.yml
 
+function install_coveralls() {
+    go get golang.org/x/tools/cmd/cover
+    go get github.com/mattn/goveralls
+}
+
+function coveralls_report() {
+    go test -v -covermode=count -coverprofile=coverage.out
+    $HOME/gopath/bin/goveralls -coverprofile=coverage.out -service=travis-ci -repotoken $COVERALLS_TOKEN
+}
+
+# main()
+echo "[*] Running Tests"
 go test -v -cover -race ./...
+
+# TO-DO: add badge and ensure we can simulate using docker
+# if BRANCH or MASTER
+#  install_coveralls
+#  coveralls_report
+
