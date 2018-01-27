@@ -8,6 +8,7 @@
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/b211244c4a674049864d45020aa8e883)](https://www.codacy.com/app/dachad/tcpgoon?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=dachad/tcpgoon&amp;utm_campaign=Badge_Grade)
 [![Build Status](https://travis-ci.org/dachad/tcpgoon.svg?branch=master)](https://travis-ci.org/dachad/tcpgoon)
 [![Go Report Card](https://goreportcard.com/badge/github.com/dachad/tcpgoon)](https://goreportcard.com/report/github.com/dachad/tcpgoon)
+[![Coverage Status](https://coveralls.io/repos/github/dachad/tcpgoon/badge.svg?branch=Issue45_CoverallsReport)](https://coveralls.io/github/dachad/tcpgoon?branch=Issue45_CoverallsReport)
 [![](https://images.microbadger.com/badges/image/dachad/tcpgoon.svg)](https://microbadger.com/images/dachad/tcpgoon "Get your own image badge on microbadger.com")
 [![](https://images.microbadger.com/badges/version/dachad/tcpgoon.svg)](https://microbadger.com/images/dachad/tcpgoon "Get your own version badge on microbadger.com")
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/dachad/tcpgoon/blob/master/LICENSE)
@@ -146,13 +147,13 @@ Main tests execution:
 
 Emulation of a travis job execution using docker (of course, it needs docker):
 ```bash
-% ./_script/cibuild-docker
+% COVERALLS_TOKEN="myToken" ./_script/cibuild-docker
 ```
 
 And also emulating a travis job deployment (it publishes new binaries
 providing successful tests and the right credentials, unless you also use the -r flag / dry-run):
 ```bash
-% ./_script/cibuild-docker -d
+% COVERALLS_TOKEN="myToken" ./_script/cibuild-docker -d
 ```
 
 
