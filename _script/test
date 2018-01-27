@@ -1,18 +1,36 @@
 #!/usr/bin/env bash
 
-set -exuo pipefail
+set -euo pipefail
 cd $(dirname $0)/..
 
 ### COVERALLS INTEGRATION NOTES ###
 # Initially looking official docs
 # http://docs.coveralls.io/go
-# But using this for multiple package support
-# https://github.com/vitalyisaev2/ads/blob/master/.travis.yml
+# But using this as a reference for multiple package support
+# https://stackoverflow.com/a/33448656
+
+function generate_coveralls_report_all_packages() {
+    echo "mode: set" > ${grouped_coveralls_report}
+    for dir_with_package in $(go list ./...);
+    do
+        if [[ ${dir_with_package} != *"/vendor/"* ]]
+        then
+            individual_report="/tmp/single.coverprofile"
+            go test -coverprofile=${individual_report} ${dir_with_package}
+            if [[ -f profile.out ]]
+            then
+                cat ${individual_report} | grep -v "mode: set" >> ${grouped_coveralls_report}
+                rm ${individual_report}
+            fi
+        fi
+    done
+}
 
 function coveralls_report() {
     echo "[*] Generating and uploading coveralls report"
-    overalls -project=github.com/dachad/tcpgoon -covermode=count
-    goveralls -coverprofile=overalls.coverprofile -service=travis-ci -repotoken $COVERALLS_TOKEN
+    grouped_coveralls_report="/tmp/grouped.coverprofile"
+    generate_coveralls_report_all_packages
+    goveralls -coverprofile=${grouped_coveralls_report} -service=travis-ci -repotoken $COVERALLS_TOKEN
 }
 
 function main_tests() {
