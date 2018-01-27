@@ -17,7 +17,7 @@ function generate_coveralls_report_all_packages() {
         then
             individual_report="/tmp/single.coverprofile"
             go test -coverprofile=${individual_report} ${dir_with_package}
-            if [[ -f profile.out ]]
+            if [[ -f $individual_report ]]
             then
                 cat ${individual_report} | grep -v "mode: set" >> ${grouped_coveralls_report}
                 rm ${individual_report}
