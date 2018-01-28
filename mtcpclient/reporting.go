@@ -11,10 +11,14 @@ import (
 func collectConnectionsStatus(connectionsStatusRegistry *GroupOfConnections, statusChannel <-chan tcpclient.Connection) {
 	for {
 		newConnectionStatusReported := <-statusChannel
-		connectionsStatusRegistry.connections[newConnectionStatusReported.ID] = newConnectionStatusReported
-		if len(connectionsStatusRegistry.getFilteredListByStatus([]tcpclient.ConnectionStatus{tcpclient.ConnectionEstablished})) > connectionsStatusRegistry.metrics.maxConcurrentEstablished {
-			connectionsStatusRegistry.metrics.maxConcurrentEstablished = len(connectionsStatusRegistry.getFilteredListByStatus([]tcpclient.ConnectionStatus{tcpclient.ConnectionEstablished}))
+		if newConnectionStatusReported.GetConnectionStatus() == tcpclient.ConnectionEstablished {
+			connectionsStatusRegistry.metrics.maxConcurrentEstablished++
+		} else {
+			if connectionsStatusRegistry.connections[newConnectionStatusReported.ID].GetConnectionStatus() == tcpclient.ConnectionEstablished {
+				connectionsStatusRegistry.metrics.maxConcurrentEstablished--
+			}
 		}
+		connectionsStatusRegistry.connections[newConnectionStatusReported.ID] = newConnectionStatusReported
 	}
 }
 
