@@ -4,8 +4,9 @@ set -euo pipefail
 cd $(dirname $0)/../..
 
 cd out/
-cmdline1="./tcpgoon --help"
-cmdline2="./tcpgoon run --help"
+PATH=".:$PATH"
+cmdline1="tcpgoon --help"
+cmdline2="tcpgoon run --help"
 
 echo "% "${cmdline1}
 eval "${cmdline1}"

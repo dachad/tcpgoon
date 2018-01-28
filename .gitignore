@@ -27,6 +27,10 @@ _testmain.go
 .idea
 env/
 
+# test coverage reports
+overalls.coverprofile
+profile.coverprofile
+
 # GO binary
 tcpgoon
 out/tcpgoon

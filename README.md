@@ -8,6 +8,7 @@
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/b211244c4a674049864d45020aa8e883)](https://www.codacy.com/app/dachad/tcpgoon?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=dachad/tcpgoon&amp;utm_campaign=Badge_Grade)
 [![Build Status](https://travis-ci.org/dachad/tcpgoon.svg?branch=master)](https://travis-ci.org/dachad/tcpgoon)
 [![Go Report Card](https://goreportcard.com/badge/github.com/dachad/tcpgoon)](https://goreportcard.com/report/github.com/dachad/tcpgoon)
+[![Coverage Status](https://coveralls.io/repos/github/dachad/tcpgoon/badge.svg?branch=Issue45_CoverallsReport)](https://coveralls.io/github/dachad/tcpgoon?branch=Issue45_CoverallsReport)
 [![](https://images.microbadger.com/badges/image/dachad/tcpgoon.svg)](https://microbadger.com/images/dachad/tcpgoon "Get your own image badge on microbadger.com")
 [![](https://images.microbadger.com/badges/version/dachad/tcpgoon.svg)](https://microbadger.com/images/dachad/tcpgoon "Get your own version badge on microbadger.com")
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/dachad/tcpgoon/blob/master/LICENSE)
@@ -44,7 +45,7 @@ is being updated continuously; you can bind to specific versions, or to the "lat
 ### Help
 
 ```bash
-% ./tcpgoon --help
+% tcpgoon --help
 tcpgoon tests concurrent connections towards a server listening on a TCP port
 
 Usage:
@@ -59,7 +60,7 @@ Flags:
   -h, --help   help for tcpgoon
 
 Use "tcpgoon [command] --help" for more information about a command.
-% ./tcpgoon run --help
+% tcpgoon run --help
 Run tcpgoon test
 
 Usage:
@@ -82,7 +83,7 @@ you may need to increase the number of file descriptors your user supports*
 
 Successful execution (connections were opened as expected):
 ```bash
-% ./tcpgoon run myhttpsamplehost.com 80 --connections 4 --sleep 999 -y
+% tcpgoon run myhttpsamplehost.com 80 --connections 4 --sleep 999 -y
 Total: 4, Dialing: 0, Established: 0, Closed: 0, Error: 0, NotInitiated: 4
 Total: 4, Dialing: 1, Established: 1, Closed: 0, Error: 0, NotInitiated: 2
 Total: 4, Dialing: 1, Established: 2, Closed: 0, Error: 0, NotInitiated: 1
@@ -90,7 +91,7 @@ Total: 4, Dialing: 1, Established: 3, Closed: 0, Error: 0, NotInitiated: 0
 Total: 4, Dialing: 0, Established: 4, Closed: 0, Error: 0, NotInitiated: 0
 --- myhttpsamplehost.com(216.58.201.131):80 tcp test statistics ---
 Total: 4, Dialing: 0, Established: 4, Closed: 0, Error: 0, NotInitiated: 0
-Response time stats for 4 established connections min/avg/max/dev = 17.692ms/20.593ms/22.391ms/1.844ms
+Response time stats for 4 established connections min/avg/max/dev = 59.842ms/70.798ms/100.766ms/17.312ms
 
 % echo $?
 0
@@ -98,7 +99,7 @@ Response time stats for 4 established connections min/avg/max/dev = 17.692ms/20.
 
 Unsuccessful execution (unable to open connections against the destination host:port):
 ```bash
-% ./tcpgoon run myhttpsamplehost.com 81 --connections 4 --sleep 999 -t 1 -y
+% tcpgoon run myhttpsamplehost.com 81 --connections 4 --sleep 999 -t 1 -y
 Total: 4, Dialing: 0, Established: 0, Closed: 0, Error: 0, NotInitiated: 4
 Total: 4, Dialing: 1, Established: 0, Closed: 0, Error: 1, NotInitiated: 2
 Total: 4, Dialing: 0, Established: 0, Closed: 0, Error: 3, NotInitiated: 1
@@ -106,7 +107,7 @@ Total: 4, Dialing: 0, Established: 0, Closed: 0, Error: 4, NotInitiated: 0
 Total: 4, Dialing: 0, Established: 0, Closed: 0, Error: 4, NotInitiated: 0
 --- myhttpsamplehost.com(216.58.201.131):81 tcp test statistics ---
 Total: 4, Dialing: 0, Established: 0, Closed: 0, Error: 4, NotInitiated: 0
-Time to error stats for 4 failed connections min/avg/max/dev = 1.096ms/1.171ms/1.261ms/61µs
+Time to error stats for 4 failed connections min/avg/max/dev = 1.085ms/1.107ms/1.148ms/24µs
 
 % echo $?
 2
@@ -198,13 +199,13 @@ Main tests execution:
 
 Emulation of a travis job execution using docker (of course, it needs docker):
 ```bash
-% ./_script/cibuild-docker
+% COVERALLS_TOKEN="myToken" ./_script/cibuild-docker
 ```
 
 And also emulating a travis job deployment (it publishes new binaries
 providing successful tests and the right credentials, unless you also use the -r flag / dry-run):
 ```bash
-% ./_script/cibuild-docker -d
+% COVERALLS_TOKEN="myToken" ./_script/cibuild-docker -d
 ```
 
 

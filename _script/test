@@ -1,8 +1,46 @@
 #!/usr/bin/env bash
 
-set -exuo pipefail
+set -euo pipefail
 cd $(dirname $0)/..
 
-echo "[*] Running Tests"
+### COVERALLS INTEGRATION NOTES ###
+# Initially looking official docs
+# http://docs.coveralls.io/go
+# But using this as a reference for multiple package support
+# https://stackoverflow.com/a/33448656
 
-go test -v -cover -race ./...
+function generate_coveralls_report_all_packages() {
+    echo "mode: set" > ${grouped_coveralls_report}
+    for dir_with_package in $(go list ./...);
+    do
+        if [[ ${dir_with_package} != *"/vendor/"* ]]
+        then
+            individual_report="/tmp/single.coverprofile"
+            go test -coverprofile=${individual_report} ${dir_with_package}
+            if [[ -f $individual_report ]]
+            then
+                cat ${individual_report} | grep -v "mode: set" >> ${grouped_coveralls_report}
+                rm ${individual_report}
+            fi
+        fi
+    done
+}
+
+function coveralls_report() {
+    echo "[*] Generating and uploading coveralls report"
+    grouped_coveralls_report="/tmp/grouped.coverprofile"
+    generate_coveralls_report_all_packages
+    goveralls -coverprofile=${grouped_coveralls_report} -service=travis-ci -repotoken $COVERALLS_TOKEN
+}
+
+function main_tests() {
+    echo "[*] Running Tests"
+    go test -v -cover -race ./...
+}
+
+# main()
+main_tests
+if [[ "$HOME" = "/home/travis" ]]
+then
+    coveralls_report
+fi
