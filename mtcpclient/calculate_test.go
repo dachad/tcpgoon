@@ -6,6 +6,22 @@ import (
 	"time"
 )
 
+func TestCalculateMetricsReport(t *testing.T) {
+	var testedGroupOfConnections GroupOfConnections = []tcpclient.Connection{}
+	mr := testedGroupOfConnections.calculateMetricsReport(tcpclient.ConnectionEstablished)
+	var emptyCollectionMetricsStats metricsCollectionStats = metricsCollectionStats{
+		avg:        0,
+		min:        0,
+		max:        0,
+		total:        0,
+		stdDev:        0,
+		numberOfConnections: 0,
+	}
+	if mr != emptyCollectionMetricsStats {
+		t.Error("Empty group of connections should report a zeroed metrics report, and its returning", mr)
+	}
+}
+
 func TestCalculateStdDev(t *testing.T) {
 	var stdDevScenariosChecks = []struct {
 		scenarioDescription string
@@ -40,21 +56,21 @@ func TestCalculateStdDev(t *testing.T) {
 		var sum int
 		for i, connectionDuration := range test.durationsInSecs {
 			gc = append(gc, tcpclient.NewConnection(i, tcpclient.ConnectionEstablished,
-				time.Duration(connectionDuration)*time.Second))
+				time.Duration(connectionDuration) * time.Second))
 			sum += connectionDuration
 		}
 
 		mr := metricsCollectionStats{}
 		if len(test.durationsInSecs) != 0 {
 			mr = metricsCollectionStats{
-				avg: time.Duration(sum/len(test.durationsInSecs)) * time.Second,
+				avg: time.Duration(sum / len(test.durationsInSecs)) * time.Second,
 			}
 		}
 
 		stddev := gc.calculateStdDev(tcpclient.ConnectionEstablished, mr)
 
-		if stddev != time.Duration(test.expectedStdDev)*time.Second {
-			t.Error(test.scenarioDescription+", and its", stddev)
+		if stddev != time.Duration(test.expectedStdDev) * time.Second {
+			t.Error(test.scenarioDescription + ", and its", stddev)
 		}
 	}
 }
