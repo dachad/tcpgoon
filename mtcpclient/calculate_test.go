@@ -40,6 +40,7 @@ func TestCalculateMetricsReport(t *testing.T) {
 			},
 		},
 		{
+			// TODO: We will need to extend this to cover a mix connections closed + established on closure, when the code supports it
 			scenarioDescription:        "Multiple connections with different statuses should generate a report that describes the metrics of the right subset",
 			groupOfConnectionsToReport: GroupOfConnections{
 				tcpclient.NewConnection(0, tcpclient.ConnectionEstablished, time.Duration(500) * time.Millisecond),
