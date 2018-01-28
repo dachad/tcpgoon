@@ -85,24 +85,25 @@ func (gc GroupOfConnections) getFilteredListByStatus(statuses []tcpclient.Connec
 	return filteredConnections
 }
 
-func (gc GroupOfConnections) pingStyleReport(status tcpclient.ConnectionStatus) (output string) {
+func (gc GroupOfConnections) pingStyleReport() (output string) {
 	var introduction string
 	var filteredConnections GroupOfConnections
 	var mr metricsCollectionStats
 
-	switch status {
-	case tcpclient.ConnectionEstablished:
+	if gc.AtLeastOneConnectionOK() {
 		filteredConnections.connections = gc.getFilteredListByStatus([]tcpclient.ConnectionStatus{tcpclient.ConnectionEstablished, tcpclient.ConnectionClosed})
 		mr = filteredConnections.calculateMetricsReport()
 		introduction = "Response time stats for " + strconv.Itoa(mr.numberOfConnections) +
 			" successful connections min/avg/max/dev = "
+	}
 
-	case tcpclient.ConnectionError:
+	if gc.AtLeastOneConnectionInError() {
 		filteredConnections.connections = gc.getFilteredListByStatus([]tcpclient.ConnectionStatus{tcpclient.ConnectionError})
 		mr = filteredConnections.calculateMetricsReport()
 		introduction = "Time to error stats for " + strconv.Itoa(mr.numberOfConnections) +
 			" failed connections min/avg/max/dev = "
 	}
+
 	output = introduction +
 		mr.min.Truncate(time.Microsecond).String() + "/" +
 		mr.avg.Truncate(time.Microsecond).String() + "/" +
