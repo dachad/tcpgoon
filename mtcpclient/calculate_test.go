@@ -7,18 +7,62 @@ import (
 )
 
 func TestCalculateMetricsReport(t *testing.T) {
-	var testedGroupOfConnections GroupOfConnections = []tcpclient.Connection{}
-	mr := testedGroupOfConnections.calculateMetricsReport(tcpclient.ConnectionEstablished)
-	var emptyCollectionMetricsStats metricsCollectionStats = metricsCollectionStats{
-		avg:                 0,
-		min:                 0,
-		max:                 0,
-		total:               0,
-		stdDev:              0,
-		numberOfConnections: 0,
+	var metricsReportScenariosChecks = []struct {
+		scenarioDescription         string
+		groupOfConnectionsToReport  GroupOfConnections
+		tcpStatusToReport           tcpclient.ConnectionStatus
+		expectedReportWithoutStdDev metricsCollectionStats
+	}{
+		{
+			scenarioDescription:        "Empty group of connections should report 0 as associated metrics",
+			groupOfConnectionsToReport: GroupOfConnections{},
+			tcpStatusToReport:          tcpclient.ConnectionEstablished,
+			expectedReportWithoutStdDev: metricsCollectionStats{
+				avg:                 0,
+				min:                 0,
+				max:                 0,
+				total:               0,
+				numberOfConnections: 0,
+			},
+		},
+		{
+			scenarioDescription:        "Single connection should generate a report that describes its associated metric",
+			groupOfConnectionsToReport: GroupOfConnections{
+				tcpclient.NewConnection(0, tcpclient.ConnectionEstablished, time.Duration(500) * time.Millisecond),
+			},
+			tcpStatusToReport:          tcpclient.ConnectionEstablished,
+			expectedReportWithoutStdDev: metricsCollectionStats{
+				avg:                 500 * time.Millisecond,
+				min:                 500 * time.Millisecond,
+				max:                 500 * time.Millisecond,
+				total:               500 * time.Millisecond,
+				numberOfConnections: 1,
+			},
+		},
+		{
+			scenarioDescription:        "Multiple connections with different statuses should generate a report that describes the metrics of the right subset",
+			groupOfConnectionsToReport: GroupOfConnections{
+				tcpclient.NewConnection(0, tcpclient.ConnectionEstablished, time.Duration(500) * time.Millisecond),
+				tcpclient.NewConnection(1, tcpclient.ConnectionError, time.Duration(1) * time.Second),
+				tcpclient.NewConnection(2, tcpclient.ConnectionError, time.Duration(3) * time.Second),
+			},
+			tcpStatusToReport:          tcpclient.ConnectionError,
+			expectedReportWithoutStdDev: metricsCollectionStats{
+				avg:                 2 * time.Second,
+				min:                 1 * time.Second,
+				max:                 3 * time.Second,
+				total:               4 * time.Second,
+				numberOfConnections: 2,
+			},
+		},
 	}
-	if mr != emptyCollectionMetricsStats {
-		t.Error("Empty group of connections should report a zeroed metrics report, and its returning", mr)
+
+	for _, test := range metricsReportScenariosChecks {
+		resultingReport := test.groupOfConnectionsToReport.calculateMetricsReport(test.tcpStatusToReport)
+		test.expectedReportWithoutStdDev.stdDev = test.groupOfConnectionsToReport.calculateStdDev(test.tcpStatusToReport, resultingReport)
+		if resultingReport != test.expectedReportWithoutStdDev {
+			t.Error(test.scenarioDescription + ", and its", resultingReport)
+		}
 	}
 }
 
@@ -50,27 +94,28 @@ func TestCalculateStdDev(t *testing.T) {
 			expectedStdDev:  2,
 		},
 	}
+
 	for _, test := range stdDevScenariosChecks {
 		var gc GroupOfConnections = []tcpclient.Connection{}
 
 		var sum int
 		for i, connectionDuration := range test.durationsInSecs {
 			gc = append(gc, tcpclient.NewConnection(i, tcpclient.ConnectionEstablished,
-				time.Duration(connectionDuration)*time.Second))
+				time.Duration(connectionDuration) * time.Second))
 			sum += connectionDuration
 		}
 
 		mr := metricsCollectionStats{}
 		if len(test.durationsInSecs) != 0 {
 			mr = metricsCollectionStats{
-				avg: time.Duration(sum/len(test.durationsInSecs)) * time.Second,
+				avg: time.Duration(sum / len(test.durationsInSecs)) * time.Second,
 			}
 		}
 
 		stddev := gc.calculateStdDev(tcpclient.ConnectionEstablished, mr)
 
-		if stddev != time.Duration(test.expectedStdDev)*time.Second {
-			t.Error(test.scenarioDescription+", and its", stddev)
+		if stddev != time.Duration(test.expectedStdDev) * time.Second {
+			t.Error(test.scenarioDescription + ", and its", stddev)
 		}
 	}
 }
