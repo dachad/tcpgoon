@@ -101,5 +101,5 @@ func run(params tcpgoonParams) {
 	mtcpclient.MultiTCPConnect(params.numberConnections, params.delay, params.target, params.port, connStatusCh, closureCh)
 	fmt.Fprintln(debugging.DebugOut, "Tests execution completed")
 
-	cmdutil.CloseNicely(params.targetip, params.target, params.port, connStatusTracker)
+	cmdutil.CloseNicely(params.targetip, params.target, params.port, *connStatusTracker)
 }

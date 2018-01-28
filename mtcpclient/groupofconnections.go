@@ -14,7 +14,7 @@ type GroupOfConnections struct {
 }
 
 type gcMetrics struct {
-	maxConcurrentEstalished int
+	maxConcurrentEstablished int
 }
 
 func (gc GroupOfConnections) String() string {
@@ -63,7 +63,7 @@ func appendConnections(previous_connections []tcpclient.Connection, new_connecti
 	// TODO implement as a method using as a reference
 	m := len(previous_connections)
 	n := m + len(new_connections)
-	if n > cap(previous_connections) { // if necessary, reallocate
+	if n > cap(previous_connections) {
 		// allocate double what's needed, for future growth.
 		newSlice := make([]tcpclient.Connection, (n+1)*2)
 		copy(newSlice, previous_connections)
@@ -74,9 +74,9 @@ func appendConnections(previous_connections []tcpclient.Connection, new_connecti
 	return previous_connections
 }
 
-func (gc GroupOfConnections) getFilteredListByStatus(status []tcpclient.ConnectionStatus) (filteredConnections []tcpclient.Connection) {
+func (gc GroupOfConnections) getFilteredListByStatus(statuses []tcpclient.ConnectionStatus) (filteredConnections []tcpclient.Connection) {
 	for _, connection := range gc.connections {
-		for _, s := range status {
+		for _, s := range statuses {
 			if connection.GetConnectionStatus() == s {
 				filteredConnections = appendConnections(filteredConnections, connection)
 			}

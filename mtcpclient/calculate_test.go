@@ -1,9 +1,10 @@
 package mtcpclient
 
 import (
-	"github.com/dachad/tcpgoon/tcpclient"
 	"testing"
 	"time"
+
+	"github.com/dachad/tcpgoon/tcpclient"
 )
 
 func TestCalculateMetricsReport(t *testing.T) {
@@ -101,7 +102,7 @@ func TestCalculateStdDev(t *testing.T) {
 		gc := GroupOfConnections{
 			connections: []tcpclient.Connection{},
 			metrics: gcMetrics{
-				maxConcurrentEstalished: 0,
+				maxConcurrentEstablished: 0,
 			},
 		}
 
