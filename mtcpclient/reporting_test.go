@@ -1,7 +1,6 @@
-package mtcpclient_test
+package mtcpclient
 
 import (
-	"github.com/dachad/tcpgoon/mtcpclient"
 	"github.com/dachad/tcpgoon/tcpclient"
 	"testing"
 	"time"
@@ -10,17 +9,17 @@ import (
 func TestFinalMetricsReport(t *testing.T) {
 	var finalMetricsReportScenariosChecks = []struct {
 		scenarioDescription        string
-		groupOfConnectionsToReport mtcpclient.GroupOfConnections
+		groupOfConnectionsToReport GroupOfConnections
 		expectedReport             string
 	}{
 		{
 			scenarioDescription:        "Empty group of connections should report nothing",
-			groupOfConnectionsToReport: mtcpclient.GroupOfConnections{},
+			groupOfConnectionsToReport: GroupOfConnections{},
 			expectedReport:             "\n",
 		},
 		{
 			scenarioDescription: "Single connection should generate a report that describes its associated metric",
-			groupOfConnectionsToReport: mtcpclient.GroupOfConnections{
+			groupOfConnectionsToReport: GroupOfConnections{
 				tcpclient.NewConnection(0, tcpclient.ConnectionEstablished, time.Duration(500)*time.Millisecond),
 			},
 			expectedReport: "Response time stats for 1 established connections min/avg/max/dev = 500ms/500ms/500ms/0s\n",
@@ -28,7 +27,7 @@ func TestFinalMetricsReport(t *testing.T) {
 		{
 			// TODO: We will need to extend this to cover a mix connections closed + established on closure, when the code supports it
 			scenarioDescription: "Multiple connections with different statuses should generate a report that describes the metrics of the right subset",
-			groupOfConnectionsToReport: mtcpclient.GroupOfConnections{
+			groupOfConnectionsToReport: GroupOfConnections{
 				tcpclient.NewConnection(0, tcpclient.ConnectionEstablished, time.Duration(500)*time.Millisecond),
 				tcpclient.NewConnection(1, tcpclient.ConnectionError, time.Duration(1)*time.Second),
 				tcpclient.NewConnection(2, tcpclient.ConnectionError, time.Duration(3)*time.Second),
@@ -39,7 +38,7 @@ func TestFinalMetricsReport(t *testing.T) {
 	}
 
 	for _, test := range finalMetricsReportScenariosChecks {
-		resultingReport := mtcpclient.FinalMetricsReport(test.groupOfConnectionsToReport)
+		resultingReport := FinalMetricsReport(test.groupOfConnectionsToReport)
 		if resultingReport != test.expectedReport {
 			t.Error(test.scenarioDescription+", and it is:", resultingReport)
 		}
