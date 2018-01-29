@@ -7,8 +7,8 @@ import (
 	"log"
 	"net"
 	"strconv"
-	"time"
 	"sync"
+	"time"
 )
 
 // Handler : Struct

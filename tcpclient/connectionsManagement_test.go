@@ -17,7 +17,7 @@ func TestTCPConnectEstablished(t *testing.T) {
 
 	dispatcher := &tcpserver.Dispatcher{
 		Handlers: make(map[string]*tcpserver.Handler),
-		Lock: sync.RWMutex{},
+		Lock:     sync.RWMutex{},
 	}
 
 	runTCPServer := func() {

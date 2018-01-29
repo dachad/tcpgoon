@@ -14,7 +14,7 @@ func tcpServer(t *testing.T) func() {
 		t.Log("Starting TCP server")
 		dispatcher := &Dispatcher{
 			Handlers: make(map[string]*Handler),
-			Lock: sync.RWMutex{},
+			Lock:     sync.RWMutex{},
 		}
 		if err := dispatcher.ListenHandlers(8888); err != nil {
 			t.Error("Could not start the TCP server", err)
