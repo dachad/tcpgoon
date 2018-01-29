@@ -15,7 +15,10 @@ func TestTCPConnectEstablished(t *testing.T) {
 	var host = "127.0.0.1"
 	var port = 55555
 
-	dispatcher := &tcpserver.Dispatcher{make(map[string]*tcpserver.Handler)}
+	dispatcher := &tcpserver.Dispatcher{
+		Handlers: make(map[string]*tcpserver.Handler),
+		Lock: sync.RWMutex{},
+	}
 
 	runTCPServer := func() {
 		t.Log("Starting TCP server...")
