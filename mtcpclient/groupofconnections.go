@@ -68,18 +68,17 @@ func (gc GroupOfConnections) AtLeastOneConnectionOK() bool {
 	return gc.isIn(tcpclient.ConnectionEstablished) || gc.isIn(tcpclient.ConnectionClosed)
 }
 
-func (gc GroupOfConnections) pingStyleReport() (output string) {
-	if gc.AtLeastOneConnectionOK() {
-		var connectionsThatWentWell GroupOfConnections
-		connectionsThatWentWell = gc.getConnectionsThatWentWell()
-		output += "Response time stats for " + strconv.Itoa(len(connectionsThatWentWell.connections)) +
-			" successful connections min/avg/max/dev = " + printStats(connectionsThatWentWell.calculateMetricsReport())
-	}
-	if gc.AtLeastOneConnectionInError() {
-		var getConnectionsThatWentBad GroupOfConnections
-		getConnectionsThatWentBad = gc.getConnectionsThatWentBad()
-		output += "Time to error stats for " + strconv.Itoa(len(getConnectionsThatWentBad.connections)) +
-			" failed connections min/avg/max/dev = " + printStats(getConnectionsThatWentBad.calculateMetricsReport())
+func (gc GroupOfConnections) pingStyleReport(typeOfReport string) (output string) {
+	var connectionsFiltered GroupOfConnections
+	switch typeOfReport {
+	case "successful":
+		connectionsFiltered = gc.getConnectionsThatWentWell()
+		output += "Response time stats for " + strconv.Itoa(len(connectionsFiltered.connections)) +
+			" successful connections min/avg/max/dev = " + printStats(connectionsFiltered.calculateMetricsReport())
+	case "errored":
+		connectionsFiltered = gc.getConnectionsThatWentBad()
+		output += "Time to error stats for " + strconv.Itoa(len(connectionsFiltered.connections)) +
+			" failed connections min/avg/max/dev = " + printStats(connectionsFiltered.calculateMetricsReport())
 	}
 	return output
 }
