@@ -68,49 +68,38 @@ func (gc GroupOfConnections) AtLeastOneConnectionOK() bool {
 	return gc.isIn(tcpclient.ConnectionEstablished) || gc.isIn(tcpclient.ConnectionClosed)
 }
 
-func appendConnections(previous_connections []tcpclient.Connection, new_connections ...tcpclient.Connection) []tcpclient.Connection {
-	// TODO implement as a method using as a reference
-	m := len(previous_connections)
-	n := m + len(new_connections)
-	if n > cap(previous_connections) {
-		// allocate double what's needed, for future growth.
-		newSlice := make([]tcpclient.Connection, (n+1)*2)
-		copy(newSlice, previous_connections)
-		previous_connections = newSlice
+func (gc GroupOfConnections) pingStyleReport() (output string) {
+	if gc.AtLeastOneConnectionOK() {
+		var connectionsThatWentWell GroupOfConnections
+		connectionsThatWentWell = gc.getConnectionsThatWentWell()
+		output += "Response time stats for " + strconv.Itoa(len(connectionsThatWentWell.connections)) +
+			" successful connections min/avg/max/dev = " + printStats(connectionsThatWentWell.calculateMetricsReport())
 	}
-	previous_connections = previous_connections[0:n]
-	copy(previous_connections[m:n], new_connections)
-	return previous_connections
+	if gc.AtLeastOneConnectionInError() {
+		var getConnectionsThatWentBad GroupOfConnections
+		getConnectionsThatWentBad = gc.getConnectionsThatWentBad()
+		output += "Time to error stats for " + strconv.Itoa(len(getConnectionsThatWentBad.connections)) +
+			" failed connections min/avg/max/dev = " + printStats(getConnectionsThatWentBad.calculateMetricsReport())
+	}
+	return output
 }
 
-func (gc GroupOfConnections) getFilteredListByStatus(statuses []tcpclient.ConnectionStatus) (filteredConnections []tcpclient.Connection) {
+func (gc GroupOfConnections) getConnectionsThatWentWell() (connectionsThatWentWell GroupOfConnections) {
 	for _, connection := range gc.connections {
-		if connection.IsStatusIn(statuses) {
-			filteredConnections = appendConnections(filteredConnections, connection)
+		if connection.WentOk() {
+			connectionsThatWentWell.connections = append(connectionsThatWentWell.connections, connection)
 		}
 	}
-	return filteredConnections
+	return connectionsThatWentWell
 }
 
-func (gc GroupOfConnections) pingStyleReport() (output string) {
-	var filteredConnections GroupOfConnections
-	var mr metricsCollectionStats
-
-	if gc.AtLeastOneConnectionOK() {
-		filteredConnections.connections = gc.getFilteredListByStatus([]tcpclient.ConnectionStatus{tcpclient.ConnectionEstablished, tcpclient.ConnectionClosed})
-		mr = filteredConnections.calculateMetricsReport()
-		output += "Response time stats for " + strconv.Itoa(mr.numberOfConnections) +
-			" successful connections min/avg/max/dev = " + printStats(mr)
+func (gc GroupOfConnections) getConnectionsThatWentBad() (connectionsThatWentBad GroupOfConnections) {
+	for _, connection := range gc.connections {
+		if connection.WentOk() == false {
+			connectionsThatWentBad.connections = append(connectionsThatWentBad.connections, connection)
+		}
 	}
-
-	if gc.AtLeastOneConnectionInError() {
-		filteredConnections.connections = gc.getFilteredListByStatus([]tcpclient.ConnectionStatus{tcpclient.ConnectionError})
-		mr = filteredConnections.calculateMetricsReport()
-		output += "Time to error stats for " + strconv.Itoa(mr.numberOfConnections) +
-			" failed connections min/avg/max/dev = " + printStats(mr)
-	}
-
-	return output
+	return connectionsThatWentBad
 }
 
 func printStats(mr metricsCollectionStats) string {
