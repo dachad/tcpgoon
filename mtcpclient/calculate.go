@@ -35,7 +35,7 @@ func (gc GroupOfConnections) calculateMetricsReport() (mr metricsCollectionStats
 			}
 		}
 		mr.avg = mr.total / time.Duration(mr.numberOfConnections)
-		mr.stdDev = gc.calculateStdDev(mr)
+		mr.stdDev = gc.calculateStdDev(mr.avg)
 	}
 <<<<<<< HEAD
 	if mr.numberOfConnections > 0 {
@@ -47,15 +47,16 @@ func (gc GroupOfConnections) calculateMetricsReport() (mr metricsCollectionStats
 	return mr
 }
 
-func (gc GroupOfConnections) calculateStdDev(mr metricsCollectionStats) time.Duration {
-	// TODO: passing the whole mr struct looks overkilling, given we only want a single value, the average, and maybe
-	//  we can actually use a version of the algorithm that calculates it (and the number of items)
+func (gc GroupOfConnections) calculateStdDev(avg time.Duration) time.Duration {
 	var sd float64
-	for _, item := range gc.connections {
-		sd += math.Pow(float64(item.GetTCPProcessingDuration())-float64(mr.avg), 2)
-	}
-	if mr.numberOfConnections == 0 {
+
+	if len(gc.connections) == 0 {
 		return 0
 	}
-	return time.Duration(math.Sqrt(sd / float64(mr.numberOfConnections)))
+
+	for _, item := range gc.connections {
+		sd += math.Pow(float64(item.GetTCPProcessingDuration())-float64(avg), 2)
+	}
+
+	return time.Duration(math.Sqrt(sd / float64(len(gc.connections))))
 }

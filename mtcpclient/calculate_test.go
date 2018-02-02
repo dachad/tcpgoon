@@ -122,7 +122,7 @@ func TestCalculateStdDev(t *testing.T) {
 			}
 		}
 
-		stddev := gc.calculateStdDev(mr)
+		stddev := gc.calculateStdDev(mr.avg)
 
 		if stddev != time.Duration(test.expectedStdDev)*time.Second {
 			t.Error(test.scenarioDescription+", and its", stddev)
