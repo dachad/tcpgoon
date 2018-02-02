@@ -105,7 +105,7 @@ func TestCalculateStdDev(t *testing.T) {
 		var sum int
 		for i, connectionDuration := range test.durationsInSecs {
 
-			gc.connections = appendConnections(gc.connections, tcpclient.NewConnection(i, tcpclient.ConnectionEstablished,
+			gc.connections = append(gc.connections, tcpclient.NewConnection(i, tcpclient.ConnectionEstablished,
 				time.Duration(connectionDuration)*time.Second))
 			sum += connectionDuration
 		}
