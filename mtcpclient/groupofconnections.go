@@ -85,10 +85,8 @@ func appendConnections(previous_connections []tcpclient.Connection, new_connecti
 
 func (gc GroupOfConnections) getFilteredListByStatus(statuses []tcpclient.ConnectionStatus) (filteredConnections []tcpclient.Connection) {
 	for _, connection := range gc.connections {
-		for _, s := range statuses {
-			if connection.GetConnectionStatus() == s {
-				filteredConnections = appendConnections(filteredConnections, connection)
-			}
+		if connection.IsStatusIn(statuses) {
+			filteredConnections = appendConnections(filteredConnections, connection)
 		}
 	}
 	return filteredConnections

@@ -13,10 +13,8 @@ func collectConnectionsStatus(connectionsStatusRegistry *GroupOfConnections, sta
 		newConnectionStatusReported := <-statusChannel
 		if newConnectionStatusReported.GetConnectionStatus() == tcpclient.ConnectionEstablished {
 			connectionsStatusRegistry.metrics.maxConcurrentEstablished++
-		} else {
-			if connectionsStatusRegistry.connections[newConnectionStatusReported.ID].GetConnectionStatus() == tcpclient.ConnectionEstablished {
-				connectionsStatusRegistry.metrics.maxConcurrentEstablished--
-			}
+		} else if connectionsStatusRegistry.connections[newConnectionStatusReported.ID].GetConnectionStatus() == tcpclient.ConnectionEstablished {
+			connectionsStatusRegistry.metrics.maxConcurrentEstablished--
 		}
 		connectionsStatusRegistry.connections[newConnectionStatusReported.ID] = newConnectionStatusReported
 	}

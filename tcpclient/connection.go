@@ -70,12 +70,24 @@ func (c Connection) String() string {
 }
 
 func (c Connection) GetTCPProcessingDuration() time.Duration {
-	switch c.status {
-	case ConnectionEstablished, ConnectionClosed:
+	if c.WentOk() {
 		return c.metrics.tcpEstablishedDuration
-	case ConnectionError:
-		return c.metrics.tcpErroredDuration
-	default:
-		return 0
 	}
+	return c.metrics.tcpErroredDuration
+}
+
+func (c Connection) IsStatusIn(statuses []ConnectionStatus) bool {
+	for _, s := range statuses {
+		if c.GetConnectionStatus() == s {
+			return true
+		}
+	}
+	return false
+}
+
+func (c Connection) WentOk() bool {
+	if c.IsStatusIn([]ConnectionStatus{ConnectionEstablished, ConnectionClosed}) {
+		return true
+	}
+	return false
 }
