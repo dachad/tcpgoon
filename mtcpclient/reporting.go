@@ -38,17 +38,14 @@ func StartBackgroundReporting(numberConnections int, rinterval int) (chan tcpcli
 	// A connection may report up to 3 messages: Dialing -> Established -> Closed
 	const maxMessagesWeMayGetPerConnection = 3
 	connStatusCh := make(chan tcpclient.Connection, numberConnections*maxMessagesWeMayGetPerConnection)
-	connStatusTracker := GroupOfConnections{
-		connections: make([]tcpclient.Connection, numberConnections),
-		metrics: gcMetrics{
-			maxConcurrentEstablished: 0,
-		},
-	}
 
-	go ReportConnectionsStatus(connStatusTracker, rinterval)
-	go collectConnectionsStatus(&connStatusTracker, connStatusCh)
+	var connStatusTracker *GroupOfConnections
+	connStatusTracker = newGroupOfConnections(numberConnections)
 
-	return connStatusCh, &connStatusTracker
+	go ReportConnectionsStatus(*connStatusTracker, rinterval)
+	go collectConnectionsStatus(connStatusTracker, connStatusCh)
+
+	return connStatusCh, connStatusTracker
 }
 
 func FinalMetricsReport(gc GroupOfConnections) (output string) {

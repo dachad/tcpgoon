@@ -99,12 +99,8 @@ func TestCalculateStdDev(t *testing.T) {
 
 	for _, test := range stdDevScenariosChecks {
 
-		gc := GroupOfConnections{
-			connections: []tcpclient.Connection{},
-			metrics: gcMetrics{
-				maxConcurrentEstablished: 0,
-			},
-		}
+		var gc *GroupOfConnections
+		gc = newGroupOfConnections(0)
 
 		var sum int
 		for i, connectionDuration := range test.durationsInSecs {

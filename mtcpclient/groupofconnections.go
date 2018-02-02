@@ -17,6 +17,15 @@ type gcMetrics struct {
 	maxConcurrentEstablished int
 }
 
+func newGroupOfConnections(numberConnections int) *GroupOfConnections {
+	gc := new(GroupOfConnections)
+	gc.connections = make([]tcpclient.Connection, numberConnections)
+	gc.metrics = gcMetrics{
+		maxConcurrentEstablished: 0,
+	}
+	return gc
+}
+
 func (gc GroupOfConnections) String() string {
 	var nDialing, nEstablished, nClosed, nNotInitiated, nError, nTotal int = 0, 0, 0, 0, 0, 0
 	for _, item := range gc.connections {
@@ -86,29 +95,29 @@ func (gc GroupOfConnections) getFilteredListByStatus(statuses []tcpclient.Connec
 }
 
 func (gc GroupOfConnections) pingStyleReport() (output string) {
-	var introduction string
 	var filteredConnections GroupOfConnections
 	var mr metricsCollectionStats
 
 	if gc.AtLeastOneConnectionOK() {
 		filteredConnections.connections = gc.getFilteredListByStatus([]tcpclient.ConnectionStatus{tcpclient.ConnectionEstablished, tcpclient.ConnectionClosed})
 		mr = filteredConnections.calculateMetricsReport()
-		introduction = "Response time stats for " + strconv.Itoa(mr.numberOfConnections) +
-			" successful connections min/avg/max/dev = "
+		output += "Response time stats for " + strconv.Itoa(mr.numberOfConnections) +
+			" successful connections min/avg/max/dev = " + printStats(mr)
 	}
 
 	if gc.AtLeastOneConnectionInError() {
 		filteredConnections.connections = gc.getFilteredListByStatus([]tcpclient.ConnectionStatus{tcpclient.ConnectionError})
 		mr = filteredConnections.calculateMetricsReport()
-		introduction = "Time to error stats for " + strconv.Itoa(mr.numberOfConnections) +
-			" failed connections min/avg/max/dev = "
+		output += "Time to error stats for " + strconv.Itoa(mr.numberOfConnections) +
+			" failed connections min/avg/max/dev = " + printStats(mr)
 	}
 
-	output = introduction +
-		mr.min.Truncate(time.Microsecond).String() + "/" +
+	return output
+}
+
+func printStats(mr metricsCollectionStats) string {
+	return mr.min.Truncate(time.Microsecond).String() + "/" +
 		mr.avg.Truncate(time.Microsecond).String() + "/" +
 		mr.max.Truncate(time.Microsecond).String() + "/" +
 		mr.stdDev.Truncate(time.Microsecond).String() + "\n"
-
-	return output
 }
