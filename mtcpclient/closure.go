@@ -2,13 +2,15 @@ package mtcpclient
 
 import (
 	"fmt"
-	"github.com/dachad/tcpgoon/debugging"
 	"os"
 	"os/signal"
 	"syscall"
 	"time"
+
+	"github.com/dachad/tcpgoon/debugging"
 )
 
+// StartBackgroundClosureTrigger creates proper channels to know when to close execution
 func StartBackgroundClosureTrigger(gc *GroupOfConnections) <-chan bool {
 	closureCh := make(chan bool)
 

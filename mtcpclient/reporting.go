@@ -46,6 +46,7 @@ func StartBackgroundReporting(numberConnections int, rinterval int) (chan tcpcli
 	return connStatusCh, connStatusTracker
 }
 
+// FinalMetricsReport creates the final reporting summary
 func FinalMetricsReport(gc GroupOfConnections) (output string) {
 	// Report Established Connections
 	output += "--- tcpgoon execution statistics --- \n" +
@@ -56,7 +57,7 @@ func FinalMetricsReport(gc GroupOfConnections) (output string) {
 		"Number of established connections on closure: " +
 		strconv.Itoa(len(gc.getConnectionsThatWentWell().connections)) + "\n"
 
-	if gc.AtLeastOneConnectionOK() {
+	if gc.atLeastOneConnectionOK() {
 		output += gc.pingStyleReport("successful")
 	}
 	if gc.AtLeastOneConnectionInError() {

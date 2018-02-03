@@ -8,6 +8,7 @@ import (
 	"github.com/dachad/tcpgoon/tcpclient"
 )
 
+// GroupOfConnections aggregates all the running connections plus some general metrics
 type GroupOfConnections struct {
 	connections []tcpclient.Connection
 	metrics     gcMetrics
@@ -56,6 +57,7 @@ func (gc GroupOfConnections) containsAConnectionWithStatus(status tcpclient.Conn
 	return false
 }
 
+// PendingConnections retuns True if at least one connection is being processed
 func (gc GroupOfConnections) PendingConnections() bool {
 	for _, connection := range gc.connections {
 		if connection.PendingToProcess() {
@@ -65,6 +67,7 @@ func (gc GroupOfConnections) PendingConnections() bool {
 	return false
 }
 
+// AtLeastOneConnectionInError returns True is at least one connection establishment failed
 func (gc GroupOfConnections) AtLeastOneConnectionInError() bool {
 	for _, connection := range gc.connections {
 		if connection.WithError() {
@@ -74,7 +77,7 @@ func (gc GroupOfConnections) AtLeastOneConnectionInError() bool {
 	return false
 }
 
-func (gc GroupOfConnections) AtLeastOneConnectionOK() bool {
+func (gc GroupOfConnections) atLeastOneConnectionOK() bool {
 	for _, connection := range gc.connections {
 		if connection.WentOk() {
 			return true
