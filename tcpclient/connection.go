@@ -91,3 +91,17 @@ func (c Connection) WentOk() bool {
 	}
 	return false
 }
+
+func (c Connection) WithError() bool {
+	if c.IsStatusIn([]ConnectionStatus{ConnectionError}) {
+		return true
+	}
+	return false
+}
+
+func (c Connection) PendingToProcess() bool {
+	if c.IsStatusIn([]ConnectionStatus{ConnectionNotInitiated, ConnectionDialing}) {
+		return true
+	}
+	return false
+}

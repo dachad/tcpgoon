@@ -47,7 +47,7 @@ func (gc GroupOfConnections) String() string {
 		nTotal, nDialing, nEstablished, nClosed, nError, nNotInitiated)
 }
 
-func (gc GroupOfConnections) isIn(status tcpclient.ConnectionStatus) bool {
+func (gc GroupOfConnections) containsAConnectionWithStatus(status tcpclient.ConnectionStatus) bool {
 	for _, item := range gc.connections {
 		if item.GetConnectionStatus() == status {
 			return true
@@ -57,15 +57,30 @@ func (gc GroupOfConnections) isIn(status tcpclient.ConnectionStatus) bool {
 }
 
 func (gc GroupOfConnections) PendingConnections() bool {
-	return gc.isIn(tcpclient.ConnectionNotInitiated) || gc.isIn(tcpclient.ConnectionDialing)
+	for _, connection := range gc.connections {
+		if connection.PendingToProcess() {
+			return true
+		}
+	}
+	return false
 }
 
 func (gc GroupOfConnections) AtLeastOneConnectionInError() bool {
-	return gc.isIn(tcpclient.ConnectionError)
+	for _, connection := range gc.connections {
+		if connection.WithError() {
+			return true
+		}
+	}
+	return false
 }
 
 func (gc GroupOfConnections) AtLeastOneConnectionOK() bool {
-	return gc.isIn(tcpclient.ConnectionEstablished) || gc.isIn(tcpclient.ConnectionClosed)
+	for _, connection := range gc.connections {
+		if connection.WentOk() {
+			return true
+		}
+	}
+	return false
 }
 
 func (gc GroupOfConnections) pingStyleReport(typeOfReport string) (output string) {
