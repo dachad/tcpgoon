@@ -19,6 +19,7 @@ type connectionMetrics struct {
 	// packets lost, retransmissions and other metrics could come
 }
 
+// Types of connection status
 const (
 	ConnectionNotInitiated ConnectionStatus = 0
 	ConnectionDialing      ConnectionStatus = 1
@@ -69,6 +70,7 @@ func (c Connection) String() string {
 
 }
 
+// GetTCPProcessingDuration returns the time spent processing the connection
 func (c Connection) GetTCPProcessingDuration() time.Duration {
 	if c.WentOk() {
 		return c.metrics.tcpEstablishedDuration
@@ -76,7 +78,7 @@ func (c Connection) GetTCPProcessingDuration() time.Duration {
 	return c.metrics.tcpErroredDuration
 }
 
-func (c Connection) IsStatusIn(statuses []ConnectionStatus) bool {
+func (c Connection) isStatusIn(statuses []ConnectionStatus) bool {
 	for _, s := range statuses {
 		if c.GetConnectionStatus() == s {
 			return true
@@ -85,22 +87,25 @@ func (c Connection) IsStatusIn(statuses []ConnectionStatus) bool {
 	return false
 }
 
+// WentOk return true when the Connection is Established or Closed state
 func (c Connection) WentOk() bool {
-	if c.IsStatusIn([]ConnectionStatus{ConnectionEstablished, ConnectionClosed}) {
+	if c.isStatusIn([]ConnectionStatus{ConnectionEstablished, ConnectionClosed}) {
 		return true
 	}
 	return false
 }
 
+// WithError return true when the Connection is in Error state
 func (c Connection) WithError() bool {
-	if c.IsStatusIn([]ConnectionStatus{ConnectionError}) {
+	if c.isStatusIn([]ConnectionStatus{ConnectionError}) {
 		return true
 	}
 	return false
 }
 
+//PendingToProcess return true when the Connection is Established or Closed state
 func (c Connection) PendingToProcess() bool {
-	if c.IsStatusIn([]ConnectionStatus{ConnectionNotInitiated, ConnectionDialing}) {
+	if c.isStatusIn([]ConnectionStatus{ConnectionNotInitiated, ConnectionDialing}) {
 		return true
 	}
 	return false
