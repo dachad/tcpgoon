@@ -119,7 +119,7 @@ func (gc GroupOfConnections) getConnectionsThatWentBad() (connectionsThatWentBad
 	return connectionsThatWentBad
 }
 
-func printStats(mr metricsCollectionStats) string {
+func printStats(mr *metricsCollectionStats) string {
 	return mr.min.Truncate(time.Microsecond).String() + "/" +
 		mr.avg.Truncate(time.Microsecond).String() + "/" +
 		mr.max.Truncate(time.Microsecond).String() + "/" +
