@@ -11,15 +11,16 @@ import (
 func collectConnectionsStatus(connectionsStatusRegistry *GroupOfConnections, statusChannel <-chan tcpclient.Connection) {
 	for {
 		newConnectionStatusReported := <-statusChannel
-		if newConnectionStatusReported.GetConnectionStatus() == tcpclient.ConnectionEstablished {
+		if newConnectionStatusReported.IsOk() {
 			connectionsStatusRegistry.metrics.maxConcurrentEstablished++
-		} else if connectionsStatusRegistry.connections[newConnectionStatusReported.ID].GetConnectionStatus() == tcpclient.ConnectionEstablished {
+		} else if connectionsStatusRegistry.connections[newConnectionStatusReported.ID].IsOk() {
 			connectionsStatusRegistry.metrics.maxConcurrentEstablished--
 		}
 		connectionsStatusRegistry.connections[newConnectionStatusReported.ID] = newConnectionStatusReported
 	}
 }
 
+// ReportConnectionsStatus keeps printing on screen the summary of connections states
 func ReportConnectionsStatus(gc GroupOfConnections, intervalBetweenUpdates int) {
 	for {
 		fmt.Println(gc)
@@ -55,7 +56,7 @@ func FinalMetricsReport(gc GroupOfConnections) (output string) {
 		"Max concurrent established connections: " +
 		strconv.Itoa(gc.metrics.maxConcurrentEstablished) + "\n" +
 		"Number of established connections on closure: " +
-		strconv.Itoa(len(gc.getConnectionsThatWentWell().connections)) + "\n"
+		strconv.Itoa(len(gc.getConnectionsThatAreOk().connections)) + "\n"
 
 	if gc.atLeastOneConnectionOK() {
 		output += gc.pingStyleReport("successful")

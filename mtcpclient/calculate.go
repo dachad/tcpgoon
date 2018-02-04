@@ -3,6 +3,8 @@ package mtcpclient
 import (
 	"math"
 	"time"
+
+	"github.com/dachad/tcpgoon/tcpclient"
 )
 
 type metricsCollectionStats struct {
@@ -17,7 +19,7 @@ type metricsCollectionStats struct {
 func newMetricsCollectionStats() *metricsCollectionStats {
 	mr := new(metricsCollectionStats)
 	mr.avg = 0
-	mr.min = 0
+	mr.min = time.Duration(time.Duration(tcpclient.DefaultDialTimeoutInMs)*time.Millisecond + 1)
 	mr.max = 0
 	mr.total = 0
 	mr.stdDev = 0
@@ -29,11 +31,7 @@ func (gc GroupOfConnections) calculateMetricsReport() (mr *metricsCollectionStat
 	mr = newMetricsCollectionStats()
 	if mr.numberOfConnections = len(gc.connections); mr.numberOfConnections > 0 {
 		for _, item := range gc.connections {
-			if mr.min != 0 {
-				mr.min = time.Duration(math.Min(float64(mr.min), float64(item.GetTCPProcessingDuration())))
-			} else {
-				mr.min = item.GetTCPProcessingDuration()
-			}
+			mr.min = time.Duration(math.Min(float64(mr.min), float64(item.GetTCPProcessingDuration())))
 			mr.max = time.Duration(math.Max(float64(mr.max), float64(item.GetTCPProcessingDuration())))
 			mr.total += item.GetTCPProcessingDuration()
 		}

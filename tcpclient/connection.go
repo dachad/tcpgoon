@@ -95,6 +95,14 @@ func (c Connection) WentOk() bool {
 	return false
 }
 
+// IsOk return true when the Connection is Established
+func (c Connection) IsOk() bool {
+	if c.isStatusIn([]ConnectionStatus{ConnectionEstablished}) {
+		return true
+	}
+	return false
+}
+
 // WithError return true when the Connection is in Error state
 func (c Connection) WithError() bool {
 	if c.isStatusIn([]ConnectionStatus{ConnectionError}) {

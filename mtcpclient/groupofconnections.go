@@ -119,6 +119,15 @@ func (gc GroupOfConnections) getConnectionsThatWentBad() (connectionsThatWentBad
 	return connectionsThatWentBad
 }
 
+func (gc GroupOfConnections) getConnectionsThatAreOk() (connectionsThatAreOk GroupOfConnections) {
+	for _, connection := range gc.connections {
+		if connection.IsOk() {
+			connectionsThatAreOk.connections = append(connectionsThatAreOk.connections, connection)
+		}
+	}
+	return connectionsThatAreOk
+}
+
 func printStats(mr *metricsCollectionStats) string {
 	return mr.min.Truncate(time.Microsecond).String() + "/" +
 		mr.avg.Truncate(time.Microsecond).String() + "/" +
