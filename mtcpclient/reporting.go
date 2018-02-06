@@ -43,6 +43,11 @@ func FinalMetricsReport(gc GroupOfConnections) (output string) {
 	// Report for Established connections
 	// TODO: remove duplication - this and the next block are almost equal. The MR structure could have a common
 	//  String() representation
+
+	if !(gc.AtLeastOneConnectionEstablished() || gc.AtLeastOneConnectionInError()) {
+		return "\n"
+	}
+
 	if gc.AtLeastOneConnectionEstablished() {
 		mr := gc.calculateMetricsReport(tcpclient.ConnectionEstablished)
 		output = "Response time stats for " + strconv.Itoa(mr.numberOfConnections) +

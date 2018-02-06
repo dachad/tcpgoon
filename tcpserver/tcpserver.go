@@ -7,6 +7,7 @@ import (
 	"log"
 	"net"
 	"strconv"
+	"sync"
 	"time"
 )
 
@@ -36,19 +37,23 @@ func (h *Handler) listen() {
 // Dispatcher : Struct with all the handlers
 type Dispatcher struct {
 	Handlers map[string]*Handler //`type:"map[ip]*Handler"`
+	Lock     sync.RWMutex
 }
 
 func (d *Dispatcher) addHandler(conn net.Conn) {
 	addr := conn.RemoteAddr().String()
 	handler := &Handler{conn, make(chan bool, 1)}
-	// TODO: this can generate concurrent writes against a map. This is not supported and generates
-	//  random errors
+
+	d.Lock.Lock()
 	d.Handlers[addr] = handler
+	d.Lock.Unlock()
 
 	go handler.listen()
 
 	<-handler.closed // when connection closed, remove handler from handlers
+	d.Lock.Lock()
 	delete(d.Handlers, addr)
+	d.Lock.Unlock()
 }
 
 // ListenHandlers : start listening on the handler

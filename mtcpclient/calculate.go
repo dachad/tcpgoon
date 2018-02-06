@@ -17,7 +17,7 @@ type metricsCollectionStats struct {
 }
 
 func (gc GroupOfConnections) calculateMetricsReport(status tcpclient.ConnectionStatus) (mr metricsCollectionStats) {
-	// TODO: There's something i don't like... initiatlizing values in the first loop, and the standard deviation
+	// TODO: There's something i don't like... initializing values in the first loop, and the standard deviation
 	//  requiring an extra pass considering all items... i'd move initialization out of the loop, and maybe iterate
 	//  over a filtered list rather than several loops over the original one, and maybe use specific generic functions...
 	//  requires further thinking in any case
@@ -39,7 +39,9 @@ func (gc GroupOfConnections) calculateMetricsReport(status tcpclient.ConnectionS
 			}
 		}
 	}
-	mr.avg = mr.total / time.Duration(mr.numberOfConnections)
+	if mr.numberOfConnections > 0 {
+		mr.avg = mr.total / time.Duration(mr.numberOfConnections)
+	}
 	mr.stdDev = gc.calculateStdDev(status, mr)
 	return mr
 }
