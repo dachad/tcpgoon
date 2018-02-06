@@ -19,7 +19,7 @@ type metricsCollectionStats struct {
 func newMetricsCollectionStats() *metricsCollectionStats {
 	mr := new(metricsCollectionStats)
 	mr.avg = 0
-	mr.min = time.Duration(time.Duration(tcpclient.DefaultDialTimeoutInMs)*time.Millisecond + 1)
+	mr.min = time.Duration(time.Duration(tcpclient.DefaultDialTimeoutInMs) * time.Millisecond)
 	mr.max = 0
 	mr.total = 0
 	mr.stdDev = 0
@@ -37,7 +37,6 @@ func (gc GroupOfConnections) calculateMetricsReport() (mr *metricsCollectionStat
 		}
 		mr.avg = mr.total / time.Duration(mr.numberOfConnections)
 		mr.stdDev = gc.calculateStdDev(mr.avg)
-		return mr
 	}
 <<<<<<< HEAD
 	if mr.numberOfConnections > 0 {

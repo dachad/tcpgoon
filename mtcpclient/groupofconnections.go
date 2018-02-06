@@ -48,10 +48,21 @@ func (gc GroupOfConnections) String() string {
 		nTotal, nDialing, nEstablished, nClosed, nError, nNotInitiated)
 }
 
-func (gc GroupOfConnections) containsAConnectionWithStatus(status tcpclient.ConnectionStatus) bool {
-	for _, item := range gc.connections {
-		if item.GetConnectionStatus() == status {
-			return true
+func (gc GroupOfConnections) containsAConnectionWithStatus(status string) bool {
+	for _, connection := range gc.connections {
+		switch status {
+		case "pending":
+			if connection.PendingToProcess() {
+				return true
+			}
+		case "error":
+			if connection.WithError() {
+				return true
+			}
+		case "established":
+			if connection.WentOk() {
+				return true
+			}
 		}
 	}
 	return false
@@ -59,31 +70,16 @@ func (gc GroupOfConnections) containsAConnectionWithStatus(status tcpclient.Conn
 
 // PendingConnections retuns True if at least one connection is being processed
 func (gc GroupOfConnections) PendingConnections() bool {
-	for _, connection := range gc.connections {
-		if connection.PendingToProcess() {
-			return true
-		}
-	}
-	return false
+	return gc.containsAConnectionWithStatus("pending")
 }
 
 // AtLeastOneConnectionInError returns True is at least one connection establishment failed
 func (gc GroupOfConnections) AtLeastOneConnectionInError() bool {
-	for _, connection := range gc.connections {
-		if connection.WithError() {
-			return true
-		}
-	}
-	return false
+	return gc.containsAConnectionWithStatus("error")
 }
 
 func (gc GroupOfConnections) atLeastOneConnectionOK() bool {
-	for _, connection := range gc.connections {
-		if connection.WentOk() {
-			return true
-		}
-	}
-	return false
+	return gc.containsAConnectionWithStatus("estabished")
 }
 
 func (gc GroupOfConnections) pingStyleReport(typeOfReport string) (output string) {

@@ -104,18 +104,23 @@ func TestCalculateStdDev(t *testing.T) {
 
 		var sum int
 		for i, connectionDuration := range test.durationsInSecs {
-
-			gc.connections = append(gc.connections, tcpclient.NewConnection(i, tcpclient.ConnectionEstablished,
-				time.Duration(connectionDuration)*time.Second))
+			if i%2 == 0 {
+				gc.connections = append(gc.connections, tcpclient.NewConnection(i, tcpclient.ConnectionEstablished,
+					time.Duration(connectionDuration)*time.Second))
+			} else {
+				gc.connections = append(gc.connections, tcpclient.NewConnection(i, tcpclient.ConnectionClosed,
+					time.Duration(connectionDuration)*time.Second))
+			}
 			sum += connectionDuration
 		}
 
-		mr := metricsCollectionStats{}
+		// mr := metricsCollectionStats{}
+		var mr *metricsCollectionStats
+		mr = newMetricsCollectionStats()
+
 		if len(test.durationsInSecs) != 0 {
-			mr = metricsCollectionStats{
-				avg:                 time.Duration(sum/len(test.durationsInSecs)) * time.Second,
-				numberOfConnections: len(gc.connections),
-			}
+			mr.avg = time.Duration(sum/len(test.durationsInSecs)) * time.Second
+			mr.numberOfConnections = len(gc.connections)
 		}
 
 		stddev := gc.calculateStdDev(mr.avg)

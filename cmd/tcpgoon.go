@@ -97,7 +97,7 @@ func run(params tcpgoonParams) {
 	//  one side to the other.. everything in a single structure, or applying something like the builder pattern,
 	//  may help
 	connStatusCh, connStatusTracker := mtcpclient.StartBackgroundReporting(params.numberConnections, params.reportingInterval)
-	closureCh := mtcpclient.StartBackgroundClosureTrigger(connStatusTracker)
+	closureCh := mtcpclient.StartBackgroundClosureTrigger(*connStatusTracker)
 	mtcpclient.MultiTCPConnect(params.numberConnections, params.delay, params.target, params.port, connStatusCh, closureCh)
 	fmt.Fprintln(debugging.DebugOut, "Tests execution completed")
 
