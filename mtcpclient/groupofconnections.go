@@ -79,21 +79,21 @@ func (gc GroupOfConnections) AtLeastOneConnectionInError() bool {
 }
 
 func (gc GroupOfConnections) atLeastOneConnectionOK() bool {
-	return gc.containsAConnectionWithStatus("estabished")
+	return gc.containsAConnectionWithStatus("established")
 }
 
 func (gc GroupOfConnections) pingStyleReport(typeOfReport string) (output string) {
-	var connectionsFiltered GroupOfConnections
+	var headerline string
 	switch typeOfReport {
 	case "successful":
-		connectionsFiltered = gc.getConnectionsThatWentWell()
-		output += "Response time stats for " + strconv.Itoa(len(connectionsFiltered.connections)) +
-			" successful connections min/avg/max/dev = " + printStats(connectionsFiltered.calculateMetricsReport())
-	case "errored":
-		connectionsFiltered = gc.getConnectionsThatWentBad()
-		output += "Time to error stats for " + strconv.Itoa(len(connectionsFiltered.connections)) +
-			" failed connections min/avg/max/dev = " + printStats(connectionsFiltered.calculateMetricsReport())
+		headerline = "Response time"
+	case "failed":
+		headerline = "Time to error"
 	}
+
+	output += headerline + " stats for " + strconv.Itoa(len(gc.connections)) + " " + typeOfReport +
+		" connections min/avg/max/dev = " + printStats(gc.calculateMetricsReport())
+
 	return output
 }
 

@@ -59,10 +59,10 @@ func FinalMetricsReport(gc GroupOfConnections) (output string) {
 		strconv.Itoa(len(gc.getConnectionsThatAreOk().connections)) + "\n"
 
 	if gc.atLeastOneConnectionOK() {
-		output += gc.pingStyleReport("successful")
+		output += gc.getConnectionsThatWentWell().pingStyleReport("successful")
 	}
 	if gc.AtLeastOneConnectionInError() {
-		output += gc.pingStyleReport("errored")
+		output += gc.getConnectionsThatWentBad().pingStyleReport("failed")
 	}
 
 	return output
