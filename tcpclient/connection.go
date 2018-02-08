@@ -21,11 +21,11 @@ type connectionMetrics struct {
 
 // Types of connection status
 const (
-	ConnectionNotInitiated ConnectionStatus = 0
-	ConnectionDialing      ConnectionStatus = 1
-	ConnectionEstablished  ConnectionStatus = 2
-	ConnectionClosed       ConnectionStatus = 3
-	ConnectionError        ConnectionStatus = 4
+	ConnectionNotInitiated ConnectionStatus = iota + 0
+	ConnectionDialing
+	ConnectionEstablished
+	ConnectionClosed
+	ConnectionError
 )
 
 // NewConnection initializes a connection given all values that are actually stored internally. This is just being used
