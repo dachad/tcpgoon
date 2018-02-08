@@ -2,6 +2,7 @@ package mtcpclient
 
 import (
 	"fmt"
+	"math"
 	"strconv"
 	"time"
 
@@ -9,12 +10,15 @@ import (
 )
 
 func collectConnectionsStatus(connectionsStatusRegistry *GroupOfConnections, statusChannel <-chan tcpclient.Connection) {
+	concurrentEstablished := 0
 	for {
 		newConnectionStatusReported := <-statusChannel
 		if newConnectionStatusReported.IsOk() {
-			connectionsStatusRegistry.metrics.maxConcurrentEstablished++
+			concurrentEstablished++
+			connectionsStatusRegistry.metrics.maxConcurrentEstablished = int(math.Max(float64(concurrentEstablished),
+				float64(connectionsStatusRegistry.metrics.maxConcurrentEstablished)))
 		} else if connectionsStatusRegistry.connections[newConnectionStatusReported.ID].IsOk() {
-			connectionsStatusRegistry.metrics.maxConcurrentEstablished--
+			concurrentEstablished--
 		}
 		connectionsStatusRegistry.connections[newConnectionStatusReported.ID] = newConnectionStatusReported
 	}
