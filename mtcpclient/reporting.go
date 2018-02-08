@@ -52,17 +52,17 @@ func FinalMetricsReport(gc GroupOfConnections) (output string) {
 	// Report Established Connections
 	output += "--- tcpgoon execution statistics --- \n" +
 		"Total established connections: " +
-		strconv.Itoa(len(gc.getConnectionsThatWentWell().connections)) + "\n" +
+		strconv.Itoa(len(gc.getConnectionsThatWentWell(true).connections)) + "\n" +
 		"Max concurrent established connections: " +
 		strconv.Itoa(gc.metrics.maxConcurrentEstablished) + "\n" +
 		"Number of established connections on closure: " +
 		strconv.Itoa(len(gc.getConnectionsThatAreOk().connections)) + "\n"
 
 	if gc.atLeastOneConnectionOK() {
-		output += gc.getConnectionsThatWentWell().pingStyleReport("successful")
+		output += gc.getConnectionsThatWentWell(true).pingStyleReport("successful")
 	}
 	if gc.AtLeastOneConnectionInError() {
-		output += gc.getConnectionsThatWentBad().pingStyleReport("failed")
+		output += gc.getConnectionsThatWentWell(false).pingStyleReport("failed")
 	}
 
 	return output

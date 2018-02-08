@@ -97,22 +97,13 @@ func (gc GroupOfConnections) pingStyleReport(typeOfReport string) (output string
 	return output
 }
 
-func (gc GroupOfConnections) getConnectionsThatWentWell() (connectionsThatWentWell GroupOfConnections) {
+func (gc GroupOfConnections) getConnectionsThatWentWell(itWentWell bool) (connectionsThatWent GroupOfConnections) {
 	for _, connection := range gc.connections {
-		if connection.WentOk() {
-			connectionsThatWentWell.connections = append(connectionsThatWentWell.connections, connection)
+		if connection.WentOk() == itWentWell {
+			connectionsThatWent.connections = append(connectionsThatWent.connections, connection)
 		}
 	}
-	return connectionsThatWentWell
-}
-
-func (gc GroupOfConnections) getConnectionsThatWentBad() (connectionsThatWentBad GroupOfConnections) {
-	for _, connection := range gc.connections {
-		if connection.WentOk() == false {
-			connectionsThatWentBad.connections = append(connectionsThatWentBad.connections, connection)
-		}
-	}
-	return connectionsThatWentBad
+	return connectionsThatWent
 }
 
 func (gc GroupOfConnections) getConnectionsThatAreOk() (connectionsThatAreOk GroupOfConnections) {
