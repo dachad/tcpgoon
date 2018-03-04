@@ -103,18 +103,18 @@ func TestCalculateStdDev(t *testing.T) {
 		gc = newGroupOfConnections(0)
 
 		var sum int
+		var connectionState tcpclient.ConnectionStatus
 		for i, connectionDuration := range test.durationsInSecs {
 			if i%2 == 0 {
-				gc.connections = append(gc.connections, tcpclient.NewConnection(i, tcpclient.ConnectionEstablished,
-					time.Duration(connectionDuration)*time.Second))
+				connectionState = tcpclient.ConnectionEstablished
 			} else {
-				gc.connections = append(gc.connections, tcpclient.NewConnection(i, tcpclient.ConnectionClosed,
-					time.Duration(connectionDuration)*time.Second))
+				connectionState = tcpclient.ConnectionClosed
 			}
+			gc.connections = append(gc.connections, tcpclient.NewConnection(i, connectionState,
+				time.Duration(connectionDuration)*time.Second))
 			sum += connectionDuration
 		}
 
-		// mr := metricsCollectionStats{}
 		var mr *metricsCollectionStats
 		mr = newMetricsCollectionStats()
 

@@ -52,17 +52,11 @@ func (gc GroupOfConnections) containsAConnectionWithStatus(status string) bool {
 	for _, connection := range gc.connections {
 		switch status {
 		case "pending":
-			if connection.PendingToProcess() {
-				return true
-			}
+			return connection.PendingToProcess()
 		case "error":
-			if connection.WithError() {
-				return true
-			}
+			return connection.WithError()
 		case "established":
-			if connection.WentOk() {
-				return true
-			}
+			return connection.WentOk()
 		}
 	}
 	return false
