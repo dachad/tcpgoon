@@ -38,13 +38,6 @@ func (gc GroupOfConnections) calculateMetricsReport() (mr *metricsCollectionStat
 		mr.avg = mr.total / time.Duration(mr.numberOfConnections)
 		mr.stdDev = gc.calculateStdDev(mr.avg)
 	}
-<<<<<<< HEAD
-	if mr.numberOfConnections > 0 {
-		mr.avg = mr.total / time.Duration(mr.numberOfConnections)
-	}
-	mr.stdDev = gc.calculateStdDev(status, mr)
-=======
->>>>>>> Refact methods to calculate metrics and include closed connections in final report
 	return mr
 }
 

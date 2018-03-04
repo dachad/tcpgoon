@@ -10,13 +10,13 @@ import (
 func TestCalculateMetricsReport(t *testing.T) {
 	var metricsReportScenariosChecks = []struct {
 		scenarioDescription         string
-		groupOfConnectionsToReport  GroupOfConnections
+		groupOfConnectionsToReport  *GroupOfConnections
 		tcpStatusToReport           tcpclient.ConnectionStatus
 		expectedReportWithoutStdDev metricsCollectionStats
 	}{
 		{
 			scenarioDescription:        "Empty group of connections should report 0 as associated metrics",
-			groupOfConnectionsToReport: GroupOfConnections{},
+			groupOfConnectionsToReport: newGroupOfConnections(0),
 			tcpStatusToReport:          tcpclient.ConnectionEstablished,
 			expectedReportWithoutStdDev: metricsCollectionStats{
 				avg:                 0,
@@ -27,11 +27,9 @@ func TestCalculateMetricsReport(t *testing.T) {
 			},
 		},
 		{
-			scenarioDescription: "Single connection should generate a report that describes its associated metric",
-			groupOfConnectionsToReport: GroupOfConnections{
-				tcpclient.NewConnection(0, tcpclient.ConnectionEstablished, time.Duration(500)*time.Millisecond),
-			},
-			tcpStatusToReport: tcpclient.ConnectionEstablished,
+			scenarioDescription:        "Single connection should generate a report that describes its associated metric",
+			groupOfConnectionsToReport: addSingleConnection(),
+			tcpStatusToReport:          tcpclient.ConnectionEstablished,
 			expectedReportWithoutStdDev: metricsCollectionStats{
 				avg:                 500 * time.Millisecond,
 				min:                 500 * time.Millisecond,
@@ -42,13 +40,9 @@ func TestCalculateMetricsReport(t *testing.T) {
 		},
 		{
 			// TODO: We will need to extend this to cover a mix connections closed + established on closure, when the code supports it
-			scenarioDescription: "Multiple connections with different statuses should generate a report that describes the metrics of the right subset",
-			groupOfConnectionsToReport: GroupOfConnections{
-				tcpclient.NewConnection(0, tcpclient.ConnectionEstablished, time.Duration(500)*time.Millisecond),
-				tcpclient.NewConnection(1, tcpclient.ConnectionError, time.Duration(1)*time.Second),
-				tcpclient.NewConnection(2, tcpclient.ConnectionError, time.Duration(3)*time.Second),
-			},
-			tcpStatusToReport: tcpclient.ConnectionError,
+			scenarioDescription:        "Multiple connections with different statuses should generate a report that describes the metrics of the right subset",
+			groupOfConnectionsToReport: addMultipleConnections(),
+			tcpStatusToReport:          tcpclient.ConnectionError,
 			expectedReportWithoutStdDev: metricsCollectionStats{
 				avg:                 2 * time.Second,
 				min:                 1 * time.Second,
@@ -60,9 +54,9 @@ func TestCalculateMetricsReport(t *testing.T) {
 	}
 
 	for _, test := range metricsReportScenariosChecks {
-		resultingReport := test.groupOfConnectionsToReport.calculateMetricsReport(test.tcpStatusToReport)
-		test.expectedReportWithoutStdDev.stdDev = test.groupOfConnectionsToReport.calculateStdDev(test.tcpStatusToReport, resultingReport)
-		if resultingReport != test.expectedReportWithoutStdDev {
+		resultingReport := test.groupOfConnectionsToReport.calculateMetricsReport()
+		test.expectedReportWithoutStdDev.stdDev = test.groupOfConnectionsToReport.calculateStdDev(resultingReport.avg)
+		if resultingReport.stdDev != test.expectedReportWithoutStdDev.stdDev {
 			t.Error(test.scenarioDescription+", and its", resultingReport)
 		}
 	}
