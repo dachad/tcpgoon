@@ -6,7 +6,7 @@ import (
 	"github.com/dachad/tcpgoon/tcpclient"
 )
 
-func addSingleConnection() *GroupOfConnections {
+func newSampleSingleConnection() *GroupOfConnections {
 	var gc *GroupOfConnections
 	gc = newGroupOfConnections(0)
 	gc.connections = append(gc.connections, tcpclient.NewConnection(0, tcpclient.ConnectionEstablished,
@@ -15,7 +15,7 @@ func addSingleConnection() *GroupOfConnections {
 	return gc
 }
 
-func addMultipleConnections() *GroupOfConnections {
+func newSampleMultipleConnections() *GroupOfConnections {
 	var gc *GroupOfConnections
 	gc = newGroupOfConnections(0)
 	gc.connections = append(gc.connections, tcpclient.NewConnection(0, tcpclient.ConnectionEstablished,

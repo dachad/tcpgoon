@@ -28,7 +28,7 @@ func TestCalculateMetricsReport(t *testing.T) {
 		},
 		{
 			scenarioDescription:        "Single connection should generate a report that describes its associated metric",
-			groupOfConnectionsToReport: addSingleConnection(),
+			groupOfConnectionsToReport: newSampleSingleConnection(),
 			tcpStatusToReport:          tcpclient.ConnectionEstablished,
 			expectedReportWithoutStdDev: metricsCollectionStats{
 				avg:                 500 * time.Millisecond,
@@ -41,7 +41,7 @@ func TestCalculateMetricsReport(t *testing.T) {
 		{
 			// TODO: We will need to extend this to cover a mix connections closed + established on closure, when the code supports it
 			scenarioDescription:        "Multiple connections with different statuses should generate a report that describes the metrics of the right subset",
-			groupOfConnectionsToReport: addMultipleConnections(),
+			groupOfConnectionsToReport: newSampleMultipleConnections(),
 			tcpStatusToReport:          tcpclient.ConnectionError,
 			expectedReportWithoutStdDev: metricsCollectionStats{
 				avg:                 2 * time.Second,

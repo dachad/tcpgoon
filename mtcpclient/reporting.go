@@ -13,15 +13,20 @@ func collectConnectionsStatus(connectionsStatusRegistry *GroupOfConnections, sta
 	concurrentEstablished := 0
 	for {
 		newConnectionStatusReported := <-statusChannel
-		if newConnectionStatusReported.IsOk() {
-			concurrentEstablished++
-			connectionsStatusRegistry.metrics.maxConcurrentEstablished = int(math.Max(float64(concurrentEstablished),
-				float64(connectionsStatusRegistry.metrics.maxConcurrentEstablished)))
-		} else if connectionsStatusRegistry.connections[newConnectionStatusReported.ID].IsOk() {
-			concurrentEstablished--
-		}
+		concurrentEstablished = updateConcurrentEstablished(concurrentEstablished, newConnectionStatusReported, connectionsStatusRegistry)
 		connectionsStatusRegistry.connections[newConnectionStatusReported.ID] = newConnectionStatusReported
 	}
+}
+
+func updateConcurrentEstablished(concurrentEstablished int, newConnectionStatusReported tcpclient.Connection, connectionsStatusRegistry *GroupOfConnections) int {
+	if newConnectionStatusReported.IsOk() {
+		concurrentEstablished++
+		connectionsStatusRegistry.metrics.maxConcurrentEstablished = int(math.Max(float64(concurrentEstablished),
+			float64(connectionsStatusRegistry.metrics.maxConcurrentEstablished)))
+	} else if connectionsStatusRegistry.connections[newConnectionStatusReported.ID].IsOk() {
+		concurrentEstablished--
+	}
+	return concurrentEstablished
 }
 
 // ReportConnectionsStatus keeps printing on screen the summary of connections states
@@ -42,8 +47,7 @@ func StartBackgroundReporting(numberConnections int, rinterval int) (chan tcpcli
 	const maxMessagesWeMayGetPerConnection = 3
 	connStatusCh := make(chan tcpclient.Connection, numberConnections*maxMessagesWeMayGetPerConnection)
 
-	var connStatusTracker *GroupOfConnections
-	connStatusTracker = newGroupOfConnections(numberConnections)
+	connStatusTracker := newGroupOfConnections(numberConnections)
 
 	go ReportConnectionsStatus(*connStatusTracker, rinterval)
 	go collectConnectionsStatus(connStatusTracker, connStatusCh)
@@ -63,10 +67,10 @@ func FinalMetricsReport(gc GroupOfConnections) (output string) {
 		strconv.Itoa(len(gc.getConnectionsThatAreOk().connections)) + "\n"
 
 	if gc.atLeastOneConnectionOK() {
-		output += gc.getConnectionsThatWentWell(true).pingStyleReport("successful")
+		output += gc.getConnectionsThatWentWell(true).pingStyleReport(successfulExecution)
 	}
 	if gc.AtLeastOneConnectionInError() {
-		output += gc.getConnectionsThatWentWell(false).pingStyleReport("failed")
+		output += gc.getConnectionsThatWentWell(false).pingStyleReport(failedExecution)
 	}
 
 	return output

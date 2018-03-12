@@ -82,17 +82,23 @@ func (gc GroupOfConnections) atLeastOneConnectionOK() bool {
 	return gc.containsAConnectionWithStatus("established")
 }
 
-func (gc GroupOfConnections) pingStyleReport(typeOfReport string) (output string) {
-	var headerline string
-	switch typeOfReport {
-	case "successful":
-		headerline = "Response time"
-	case "failed":
-		headerline = "Time to error"
-	}
+const (
+	successfulExecution int = iota + 0
+	failedExecution
+)
 
-	output += headerline + " stats for " + strconv.Itoa(len(gc.connections)) + " " + typeOfReport +
-		" connections min/avg/max/dev = " + printStats(gc.calculateMetricsReport())
+func (gc GroupOfConnections) pingStyleReport(typeOfReport int) (output string) {
+	var headerline, state string
+	switch typeOfReport {
+	case successfulExecution:
+		headerline = "Response time"
+		state = "successful"
+	case failedExecution:
+		headerline = "Time to error"
+		state = "failed"
+	}
+	output += headerline + " stats for " + strconv.Itoa(len(gc.connections)) + " " + state +
+		" connections min/avg/max/dev = " + gc.calculateMetricsReport().String()
 
 	return output
 }
@@ -115,7 +121,7 @@ func (gc GroupOfConnections) getConnectionsThatAreOk() (connectionsThatAreOk Gro
 	return connectionsThatAreOk
 }
 
-func printStats(mr *metricsCollectionStats) string {
+func (mr *metricsCollectionStats) String() string {
 	return mr.min.Truncate(time.Microsecond).String() + "/" +
 		mr.avg.Truncate(time.Microsecond).String() + "/" +
 		mr.max.Truncate(time.Microsecond).String() + "/" +
