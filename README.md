@@ -91,7 +91,11 @@ Total: 4, Dialing: 1, Established: 3, Closed: 0, Error: 0, NotInitiated: 0
 Total: 4, Dialing: 0, Established: 4, Closed: 0, Error: 0, NotInitiated: 0
 --- myhttpsamplehost.com(216.58.201.131):80 tcp test statistics ---
 Total: 4, Dialing: 0, Established: 4, Closed: 0, Error: 0, NotInitiated: 0
-Response time stats for 4 established connections min/avg/max/dev = 59.842ms/70.798ms/100.766ms/17.312ms
+--- tcpgoon execution statistics ---
+Total established connections: 4
+Max concurrent established connections: 4
+Number of established connections on closure: 4
+Response time stats for 4 successful connections min/avg/max/dev = 49.892ms/50.205ms/50.74ms/319µs
 
 % echo $?
 0
@@ -107,7 +111,11 @@ Total: 4, Dialing: 0, Established: 0, Closed: 0, Error: 4, NotInitiated: 0
 Total: 4, Dialing: 0, Established: 0, Closed: 0, Error: 4, NotInitiated: 0
 --- myhttpsamplehost.com(216.58.201.131):81 tcp test statistics ---
 Total: 4, Dialing: 0, Established: 0, Closed: 0, Error: 4, NotInitiated: 0
-Time to error stats for 4 failed connections min/avg/max/dev = 1.085ms/1.107ms/1.148ms/24µs
+--- tcpgoon execution statistics ---
+Total established connections: 0
+Max concurrent established connections: 0
+Number of established connections on closure: 0
+Time to error stats for 4 failed connections min/avg/max/dev = 1ms/1.122ms/1.165ms/37µs
 
 % echo $?
 2

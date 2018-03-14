@@ -58,7 +58,7 @@ func StartBackgroundReporting(numberConnections int, rinterval int) (chan tcpcli
 // FinalMetricsReport creates the final reporting summary
 func FinalMetricsReport(gc GroupOfConnections) (output string) {
 	// Report Established Connections
-	output += "--- tcpgoon execution statistics --- \n" +
+	output += "--- tcpgoon execution statistics ---\n" +
 		"Total established connections: " +
 		strconv.Itoa(len(gc.getConnectionsThatWentWell(true).connections)) + "\n" +
 		"Max concurrent established connections: " +
