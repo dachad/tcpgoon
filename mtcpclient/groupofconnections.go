@@ -48,21 +48,10 @@ func (gc GroupOfConnections) String() string {
 		nTotal, nDialing, nEstablished, nClosed, nError, nNotInitiated)
 }
 
-func (gc GroupOfConnections) containsAConnectionWithStatus(status string) bool {
+func (gc GroupOfConnections) containsAConnectionWithStatus(fn tcpclient.ConnectionFunc) bool {
 	for _, connection := range gc.connections {
-		switch status {
-		case "pending":
-			if connection.PendingToProcess() {
-				return true
-			}
-		case "error":
-			if connection.WithError() {
-				return true
-			}
-		case "established":
-			if connection.WentOk() {
-				return true
-			}
+		if fn(connection) {
+			return true
 		}
 	}
 	return false
@@ -70,16 +59,16 @@ func (gc GroupOfConnections) containsAConnectionWithStatus(status string) bool {
 
 // PendingConnections retuns True if at least one connection is being processed
 func (gc GroupOfConnections) PendingConnections() bool {
-	return gc.containsAConnectionWithStatus("pending")
+	return gc.containsAConnectionWithStatus(tcpclient.PendingToProcess)
 }
 
 // AtLeastOneConnectionInError returns True is at least one connection establishment failed
 func (gc GroupOfConnections) AtLeastOneConnectionInError() bool {
-	return gc.containsAConnectionWithStatus("error")
+	return gc.containsAConnectionWithStatus(tcpclient.WithError)
 }
 
 func (gc GroupOfConnections) atLeastOneConnectionOK() bool {
-	return gc.containsAConnectionWithStatus("established")
+	return gc.containsAConnectionWithStatus(tcpclient.WentOk)
 }
 
 const (
@@ -105,7 +94,7 @@ func (gc GroupOfConnections) pingStyleReport(typeOfReport int) (output string) {
 
 func (gc GroupOfConnections) getConnectionsThatWentWell(itWentWell bool) (connectionsThatWent GroupOfConnections) {
 	for _, connection := range gc.connections {
-		if connection.WentOk() == itWentWell {
+		if tcpclient.WentOk(connection) == itWentWell {
 			connectionsThatWent.connections = append(connectionsThatWent.connections, connection)
 		}
 	}
@@ -114,7 +103,7 @@ func (gc GroupOfConnections) getConnectionsThatWentWell(itWentWell bool) (connec
 
 func (gc GroupOfConnections) getConnectionsThatAreOk() (connectionsThatAreOk GroupOfConnections) {
 	for _, connection := range gc.connections {
-		if connection.IsOk() {
+		if tcpclient.IsOk(connection) {
 			connectionsThatAreOk.connections = append(connectionsThatAreOk.connections, connection)
 		}
 	}

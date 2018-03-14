@@ -28,6 +28,9 @@ const (
 	ConnectionError
 )
 
+// ConnectionFunc type to use connection functions as an argument
+type ConnectionFunc func(Connection) bool
+
 // NewConnection initializes a connection given all values that are actually stored internally. This is just being used
 // as the first (dirty) approach for tests
 func NewConnection(id int, status ConnectionStatus, procTime time.Duration) Connection {
@@ -72,7 +75,7 @@ func (c Connection) String() string {
 
 // GetTCPProcessingDuration returns the time spent processing the connection
 func (c Connection) GetTCPProcessingDuration() time.Duration {
-	if c.WentOk() {
+	if WentOk(c) {
 		return c.metrics.tcpEstablishedDuration
 	}
 	return c.metrics.tcpErroredDuration
@@ -88,21 +91,21 @@ func (c Connection) isStatusIn(statuses []ConnectionStatus) bool {
 }
 
 // WentOk return true when the Connection is Established or Closed state
-func (c Connection) WentOk() bool {
+func WentOk(c Connection) bool {
 	return c.isStatusIn([]ConnectionStatus{ConnectionEstablished, ConnectionClosed})
 }
 
 // IsOk return true when the Connection is Established
-func (c Connection) IsOk() bool {
+func IsOk(c Connection) bool {
 	return c.isStatusIn([]ConnectionStatus{ConnectionEstablished})
 }
 
 // WithError return true when the Connection is in Error state
-func (c Connection) WithError() bool {
+func WithError(c Connection) bool {
 	return c.isStatusIn([]ConnectionStatus{ConnectionError})
 }
 
 //PendingToProcess return true when the Connection is Established or Closed state
-func (c Connection) PendingToProcess() bool {
+func PendingToProcess(c Connection) bool {
 	return c.isStatusIn([]ConnectionStatus{ConnectionNotInitiated, ConnectionDialing})
 }

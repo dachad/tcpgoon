@@ -19,11 +19,11 @@ func collectConnectionsStatus(connectionsStatusRegistry *GroupOfConnections, sta
 }
 
 func updateConcurrentEstablished(concurrentEstablished int, newConnectionStatusReported tcpclient.Connection, connectionsStatusRegistry *GroupOfConnections) int {
-	if newConnectionStatusReported.IsOk() {
+	if tcpclient.IsOk(newConnectionStatusReported) {
 		concurrentEstablished++
 		connectionsStatusRegistry.metrics.maxConcurrentEstablished = int(math.Max(float64(concurrentEstablished),
 			float64(connectionsStatusRegistry.metrics.maxConcurrentEstablished)))
-	} else if connectionsStatusRegistry.connections[newConnectionStatusReported.ID].IsOk() {
+	} else if tcpclient.IsOk(connectionsStatusRegistry.connections[newConnectionStatusReported.ID]) {
 		concurrentEstablished--
 	}
 	return concurrentEstablished
