@@ -13,7 +13,7 @@ func TestFinalMetricsReport(t *testing.T) {
 		{
 			scenarioDescription:        "Empty group of connections should report empty values",
 			groupOfConnectionsToReport: newGroupOfConnections(0),
-			expectedReport: "--- tcpgoon execution statistics --- \n" +
+			expectedReport: "--- tcpgoon execution statistics ---\n" +
 				"Total established connections: 0\n" +
 				"Max concurrent established connections: 0\n" +
 				"Number of established connections on closure: 0\n",
@@ -21,7 +21,7 @@ func TestFinalMetricsReport(t *testing.T) {
 		{
 			scenarioDescription:        "Single connection should generate a report that describes its associated metric",
 			groupOfConnectionsToReport: newSampleSingleConnection(),
-			expectedReport: "--- tcpgoon execution statistics --- \n" +
+			expectedReport: "--- tcpgoon execution statistics ---\n" +
 				"Total established connections: 1\n" +
 				"Max concurrent established connections: 1\n" +
 				"Number of established connections on closure: 1\n" +
@@ -31,7 +31,7 @@ func TestFinalMetricsReport(t *testing.T) {
 			// TODO: We will need to extend this to cover a mix connections closed + established on closure, when the code supports it
 			scenarioDescription:        "Multiple connections with different statuses should generate a report that describes the metrics of the right subset",
 			groupOfConnectionsToReport: newSampleMultipleConnections(),
-			expectedReport: "--- tcpgoon execution statistics --- \n" +
+			expectedReport: "--- tcpgoon execution statistics ---\n" +
 				"Total established connections: 1\n" +
 				"Max concurrent established connections: 1\n" +
 				"Number of established connections on closure: 1\n" +
