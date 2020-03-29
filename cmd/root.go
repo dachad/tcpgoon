@@ -26,4 +26,5 @@ func Execute(buildstamp string, githash string) {
 func AddCommands() {
 	rootCmd.AddCommand(runCmd)
 	rootCmd.AddCommand(versionCmd)
+	rootCmd.AddCommand(serverCmd)
 }
