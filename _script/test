@@ -40,7 +40,7 @@ function end_to_end_test(){
     NUM_CONNECTIONS=5
 
     # Run the server
-    go run main.go server -p $TCP_PORT -m $NUM_CONNECTIONS > /dev/null 2>&1 &
+    go run main.go server -p $TCP_PORT -m $NUM_CONNECTIONS  &
 
     # Run the client
     res=$(go run main.go run 127.0.0.1 $TCP_PORT -c $NUM_CONNECTIONS -s 1000 -y)
