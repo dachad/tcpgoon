@@ -1,23 +1,22 @@
 package cmd
 
 import (
+	"errors"
 	"fmt"
-	"sync"
 	"os"
 	"os/signal"
-	"errors"
 	"strconv"
+	"sync"
 
 	"github.com/dachad/tcpgoon/tcpserver"
 
 	"github.com/spf13/cobra"
 )
 
-
 type TCPServerParams struct {
-	port			int
-	maxconnections	int
-	duration		int
+	port           int
+	maxconnections int
+	duration       int
 }
 
 var tcpserverparams TCPServerParams
@@ -45,7 +44,7 @@ func init() {
 }
 
 func validateTCPServerArgs(params *TCPServerParams) error {
-	if (params.port < 1024 || params.port > 65535) {
+	if params.port < 1024 || params.port > 65535 {
 		return errors.New(strconv.Itoa(params.port) + " is not a valid TCP port number for the server")
 	}
 
@@ -90,9 +89,9 @@ func WaitForCtrlC(end_waiter *sync.WaitGroup) {
 	fmt.Printf("Press Ctrl+C to end\n")
 	signal.Notify(signal_channel, os.Interrupt)
 
-    go func() {
+	go func() {
 		<-signal_channel
 		fmt.Println()
 		end_waiter.Done()
-    }()
+	}()
 }
