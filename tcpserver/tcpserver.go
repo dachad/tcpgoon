@@ -82,7 +82,7 @@ func (d *Dispatcher) ListenHandlersComplete(port int, maxconnections int, durati
 	for {
 		if maxconnections != 0 && served_connections == maxconnections {
 			fmt.Println("Reached max number of connections:", maxconnections)
-			end_waiter.Done()
+			return nil
 		}
 
 		conn, err := ln.Accept()
