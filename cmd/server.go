@@ -67,24 +67,24 @@ func runTcpgoonServer(params TCPServerParams) {
 		Lock:     sync.RWMutex{},
 	}
 
-	var end_waiter sync.WaitGroup
-	end_waiter.Add(1)
+	var endWaiter sync.WaitGroup
+	endWaiter.Add(1)
 
 	runTCPServer := func() {
 		fmt.Println("Starting TCP server")
-		if err := dispatcher.ListenHandlersComplete(params.port, params.maxconnections, params.duration, &end_waiter); err != nil {
+		if err := dispatcher.ListenHandlersComplete(params.port, params.maxconnections, params.duration, &endWaiter); err != nil {
 			fmt.Println("Could not start the TCP server", err)
 			return
 		}
 	}
 	go runTCPServer()
 
-	WaitForCtrlC(&end_waiter)
+	waitForCtrlC(&endWaiter)
 
-	end_waiter.Wait()
+	endWaiter.Wait()
 }
 
-func WaitForCtrlC(end_waiter *sync.WaitGroup) {
+func waitForCtrlC(endWaiter *sync.WaitGroup) {
 	signal_channel := make(chan os.Signal, 1)
 	fmt.Printf("Press Ctrl+C to end\n")
 	signal.Notify(signal_channel, os.Interrupt)
@@ -92,6 +92,6 @@ func WaitForCtrlC(end_waiter *sync.WaitGroup) {
 	go func() {
 		<-signal_channel
 		fmt.Println()
-		end_waiter.Done()
+		endWaiter.Done()
 	}()
 }
