@@ -52,6 +52,7 @@ function end_to_end_test(){
         echo "End to end test passed"
     else
         echo "Not reached the desired number of TCP connections"
+        echo $res
         exit 1
     fi
 }
