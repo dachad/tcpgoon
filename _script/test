@@ -46,7 +46,7 @@ function end_to_end_test(){
     # Run the client
     res=$(go run main.go run 127.0.0.1 $TCP_PORT -c $NUM_CONNECTIONS -s 1000 -y)
 
-    DESIRED_OUTPUT="Max concurrent established connections: $NUM_CONNECTIONS"
+    DESIRED_OUTPUT="Total established connections: $NUM_CONNECTIONS"
 
     if [[ $res == *${DESIRED_OUTPUT}* ]]; then
         echo "End to end test passed"
