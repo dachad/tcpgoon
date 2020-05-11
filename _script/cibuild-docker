@@ -60,7 +60,7 @@ function activate_deploy_flags() {
 function docker_run_cmdline_generator() {
     script_name=$(echo $(basename $0) | cut -d "-" -f 1)
     # https://docs.travis-ci.com/user/common-build-problems/#Troubleshooting-Locally-in-a-Docker-Image
-    test_docker_image="travisci/ci-garnet:packer-1503972846"
+    test_docker_image="travisci/ci-garnet:packer-1515445631-7dfb2e1"
     travis_user="travis"
     travis_home="/home/${travis_user}"
     if $(test "$sim_deploy" = "yes")

@@ -57,7 +57,17 @@ func (d *Dispatcher) addHandler(conn net.Conn) {
 }
 
 // ListenHandlers : start listening on the handler
-func (d *Dispatcher) ListenHandlers(port int) error {
+func (d *Dispatcher) ListenHandlersComplete(port int, maxconnections int, duration int, end_waiter *sync.WaitGroup) error {
+	if duration != 0 {
+		timer := time.NewTimer(time.Duration(duration) * time.Second)
+		go func() {
+			// https://gobyexample.com/timers
+			<-timer.C
+			fmt.Println("Reached max duration:", duration, "seconds")
+			end_waiter.Done()
+		}()
+	}
+
 	sport := strconv.Itoa(port)
 
 	ln, err := net.Listen("tcp", ":"+sport)
@@ -68,7 +78,14 @@ func (d *Dispatcher) ListenHandlers(port int) error {
 
 	defer ln.Close()
 
+	served_connections := 0
 	for {
+		if maxconnections != 0 && served_connections == maxconnections {
+			fmt.Println("Reached max number of connections:", maxconnections)
+			end_waiter.Done()
+			return nil
+		}
+
 		conn, err := ln.Accept()
 		if err != nil {
 			log.Println(err)
@@ -81,5 +98,12 @@ func (d *Dispatcher) ListenHandlers(port int) error {
 		tcpconn.SetKeepAlivePeriod(10 * time.Second)
 
 		go d.addHandler(conn)
+
+		served_connections++
 	}
+}
+
+func (d *Dispatcher) ListenHandlers(port int) error {
+	var fake_waiter sync.WaitGroup
+	return d.ListenHandlersComplete(port, 0, 0, &fake_waiter)
 }
