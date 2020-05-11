@@ -42,6 +42,7 @@ function end_to_end_test(){
     # Run the server
     go run main.go server -p $TCP_PORT -m $NUM_CONNECTIONS  &
     sleep 2
+
     # Run the client
     res=$(go run main.go run 127.0.0.1 $TCP_PORT -c $NUM_CONNECTIONS -s 1000 -y)
 
