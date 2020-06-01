@@ -33,9 +33,34 @@ function coveralls_report() {
     goveralls -coverprofile=${grouped_coveralls_report} -service=travis-ci -repotoken $COVERALLS_TOKEN
 }
 
+function end_to_end_test(){
+    echo "[*] Running basic end to end test"
+
+    TCP_PORT=50421
+    NUM_CONNECTIONS=5
+
+    # Run the server
+    go run main.go server -p $TCP_PORT -m $NUM_CONNECTIONS  &
+    sleep 2
+
+    # Run the client
+    res=$(go run main.go run 127.0.0.1 $TCP_PORT -c $NUM_CONNECTIONS -s 1000 -y)
+
+    DESIRED_OUTPUT="Total established connections: $NUM_CONNECTIONS"
+
+    if [[ $res == *${DESIRED_OUTPUT}* ]]; then
+        echo "End to end test passed"
+    else
+        echo "Not reached the desired number of TCP connections"
+        echo $res
+        exit 1
+    fi
+}
+
 function main_tests() {
     echo "[*] Running Tests"
     go test -v -cover -race ./...
+    end_to_end_test
 }
 
 # main()
