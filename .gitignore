@@ -26,6 +26,7 @@ _testmain.go
 # tools and virtualenv
 .idea
 env/
+.vscode/
 
 # test coverage reports
 overalls.coverprofile
